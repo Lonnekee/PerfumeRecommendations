@@ -11,7 +11,7 @@ class SampleApp(tk.Tk):
       self._frame = None
       self.switch_frame(StartPage)
       self.first_name = None
-      self.outcome = None
+      self.outcome = tk.StringVar()
 
     def switch_frame(self, frame_class):
       new_frame = frame_class(self)
@@ -49,14 +49,20 @@ class PageTwo(tk.Frame):
       tk.Label(self, text="Welcome %s" % (master.first_name), font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
       tk.Label(self, text="Do you like the smell of roses?", font=('Helvetica', 12)).pack(side="top", fill="x", pady=5)
       v = tk.IntVar()
-      tk.Radiobutton(self, text="Yes", variable=v, value=1, indicatoron=0, command=lambda: master.switch_frame(EndPage)).pack()
-      tk.Radiobutton(self, text="No", variable=v, value=2, indicatoron=0, command=lambda: master.switch_frame(EndPage)).pack()
+      def yesButton():
+        (master.outcome).set("Eau de Rose")
+        master.switch_frame(EndPage)
+      def noButton():
+        (master.outcome).set("Not Rose")
+        master.switch_frame(EndPage)
+      tk.Radiobutton(self, text="Yes", variable=v, value=1, indicatoron=0, command=yesButton).pack()
+      tk.Radiobutton(self, text="No", variable=v, value=2, indicatoron=0, command=noButton).pack()
       
 
 class EndPage(tk.Frame):
   def __init__(self, master):
     tk.Frame.__init__(self, master)
-    tk.Label(self, text="Your recommended scent is %s" % (master.outcome), font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
+    tk.Label(self, text="Your recommended scent is %s" % ((master.outcome).get()), font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
     tk.Button(self, text="Go back to start page", command=lambda: master.switch_frame(StartPage)).pack(side="bottom")
 
 if __name__ == "__main__":
