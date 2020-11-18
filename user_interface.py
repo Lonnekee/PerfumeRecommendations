@@ -10,7 +10,7 @@ class SampleApp(tk.Tk):
       self.title('Perfume Knowledge System')
       self._frame = None
       self.switch_frame(StartPage)
-      self.first_name = None
+      self.first_name = tk.StringVar()
       self.outcome = tk.StringVar()
 
     def switch_frame(self, frame_class):
@@ -38,15 +38,15 @@ class PageOne(tk.Frame):
       name_entry.pack()
       def get_input():
         first_name = name_string.get()
-        master.first_name.set(first_name)
-      tk.Button(self, text="Submit", command = lambda: get_input).pack()
+        (master.first_name).set(first_name)
+      tk.Button(self, text="Submit", command = get_input).pack()
       tk.Button(self, text="Next",
                 command=lambda: master.switch_frame(PageTwo)).pack()
 
 class PageTwo(tk.Frame):
   def __init__(self, master):
       tk.Frame.__init__(self, master)
-      tk.Label(self, text="Welcome %s" % (master.first_name), font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
+      tk.Label(self, text="Welcome %s" % ((master.first_name).get()), font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
       tk.Label(self, text="Do you like the smell of roses?", font=('Helvetica', 12)).pack(side="top", fill="x", pady=5)
       v = tk.IntVar()
       def yesButton():
