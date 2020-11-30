@@ -1,3 +1,16 @@
-id,Question,Question type,Answers,Labels,Value
-1,Zoekt u een geur voor uzelf of voor een ander?,Voor mezelf;Voor een ander
-2,Waar wilt u het product gebruiken?,Op de huid,Voor in huis
+ID,IDnext,Question,Type,Answers,Labels,Value
+1,2,Hello there! What is your name?,Text,,,
+2,3;18,What kind of product are you looking for?,Single,For on my skin;For in my house,,
+3,4;6,Are you already familiar with the Perfume Lounge's collection?,Single,Yes;No,,
+4,10,Still has to be implemented.,Single,Continue,,
+6,10,Still has to be implemented.,Single,Continue,,
+10,11,Do you prefer perfumes for a specific gender?,Single,Yes I prefer feminine perfumes.;Yes I prefer masculine perfumes;No I don't have a preference,Collection:Voor de man;Collection:Op en top vrouwelijk,-1.0;-1.0
+11,12;13,Are you looking for a bold perfume?;Single,Yes;No,Collection:Top 10 avant-garde parfums+Collection:Skanky, lekker viezig;,+0.5;+0
+12,13,What is your age?;Single,Below 25;Between 26 and 45;Above 45,
+
+100,5,Which products if any do you like?,Drag,productList;I don't know,takeVendor;takeFamily,+0.5
+101,6,Which products if any do you dislike?,Drag,productList;I don't know, takeVendor;takeFamily,-0.5
+102,7,Which olfactory families if any do you like?,Drag,familyList;I don't know,takeFamily,+0.25
+103,8,Which olfactory families if any do you dislike?,Drag,familyList;I don't know,takeFamily,-0.25
+104,9,Which ingredients if any do you like?,Drag,ingredientList;I don't know,takeIngredient,+0.25
+105,10,Which ingredients families if any do you dislike?,Drag,ingredientList;I don't know,takeIngredient,-0.25
