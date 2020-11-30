@@ -3,6 +3,8 @@ try:
 except:
     import tkinter as tk
 
+import engine.InferenceEngine as ie
+
 
 class SampleApp(tk.Tk):
     def __init__(self):
@@ -70,6 +72,26 @@ class PageTwo(tk.Frame):
         tk.Radiobutton(self, text="Yes", variable=v, value=1, indicatoron=0, command=yesButton).pack()
         tk.Radiobutton(self, text="No", variable=v, value=2, indicatoron=0, command=noButton).pack()
 
+class NewPage(tk.Frame):
+    # recursive call: make new page for each question until you reach the last
+    if ie.has_reached_goal(self):
+        master.switch_frame(EndPage)
+    else:
+        def __init__(self, master):
+            tk.Frame.__init__(self, master)
+            # read question text
+            tk.Label(self, text="%s" % (ie._ask_question(self)), font=('Helvetica', 12)).pack(side="top", fill="x", pady=5)
+            if Question.type == "radio":
+                for i in Question.answers:
+                    tk.Radiobutton(self, text = Question.answers(i)).pack()
+                    # TODO: command->new frame
+            else if Question.type == "multiple":
+                Listbox(window, selectmode = "multiple")
+                for i in range(len(Question.answers)):
+                    list.insert(END, Question.answers(i))
+                    # TODO: command-> new frame
+
+
 
 class EndPage(tk.Frame):
     def __init__(self, master):
@@ -79,6 +101,7 @@ class EndPage(tk.Frame):
         tk.Button(self, text="Go back to start page", command=lambda: master.switch_frame(StartPage)).pack(
             side="bottom")
 
+question_types = ['radio', 'multiple', 'last']
 
 if __name__ == "__main__":
     app = SampleApp()
