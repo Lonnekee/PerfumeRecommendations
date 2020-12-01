@@ -19,7 +19,6 @@ ID,IDnext,Question,Type,Answers,Labels,Value
 21,22,Do you plan to use your perfume as standalone or for layering?,Single
 22,0,Do you prefer a perfume for which matching body care is also available?,Single
 
-
 100,5,Which products if any do you like?,Drag,productList;I don't know,takeVendor;takeFamily,+0.5
 101,6,Which products if any do you dislike?,Drag,productList;I don't know, takeVendor;takeFamily,-0.5
 102,7,Which olfactory families if any do you like?,Drag,familyList;I don't know,takeFamily,+0.25
