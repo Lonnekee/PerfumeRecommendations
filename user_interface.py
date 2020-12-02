@@ -82,9 +82,9 @@ class NewPage(tk.Frame):
 
     def __init__(self, master):
         self.master = master
-        self.given_answer = tk.IntVar()
+        #self.given_answer = tk.IntVar()
 
-        # recursive call: make new page for each question until you reach the last
+        # Recursive call: make new page for each question until you reach the last
         if master.engine.has_reached_goal():
             master.switch_frame(EndPage)
         else:
@@ -98,17 +98,20 @@ class NewPage(tk.Frame):
 
             # Add the appropriate buttons or fields for the answers
             if q.type == qt.CHOICE_SINGLE_SELECT:  # radio buttons needed
+                self.given_answer = tk.IntVar()
                 for i, answer in enumerate(q.answers):
                     radios = tk.Radiobutton(self, text=answer, variable=self.given_answer, value=i)
                     radios.pack()
 
             elif q.type == qt.CHOICE_MULTIPLE_SELECT:  # selectable boxes or images needed (?)
-                tk.Listbox(self, selectmode="multiple")
                 for i in range(len(q.answers)):
-                    list.insert(END, q.answers(i))
                     # TODO: command-> new frame
+                    c = tk.Checkbutton(self, text = q.answers[i], variable=self.given_answer)
+                    c.pack()
+                
 
             # Create submit button that can send the answer to the inference engine
+            # TODO: implement for multiple selection; now only works for single answer option
             submit = tk.Button(self, text="Next question", width=10, command=self._send_result)
             submit.pack()
 
@@ -127,8 +130,6 @@ class EndPage(tk.Frame):
         tk.Button(self, text="Go back to start page", command=lambda: master.switch_frame(StartPage)).pack(
             side="bottom")
 
-
-question_types = ['radio', 'multiple', 'last']
 
 if __name__ == "__main__":
     app = SampleApp()

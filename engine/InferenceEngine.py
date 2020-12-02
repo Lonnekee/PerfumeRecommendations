@@ -50,7 +50,8 @@ class InferenceEngine:
             line = questions.iloc[index]
             q = line["Question"]
             q_id = int(line["ID"])
-            if line["Type"] == "Single":
+
+            if line["Type"] == "Single" or line["Type"] == "Multiple":
                 # Split answers if there are any
                 answers = None
                 if not pd.isna(line["Answers"]):
@@ -70,16 +71,26 @@ class InferenceEngine:
                 value = line["Value"]
                 if isinstance(value, str):
                     value = value.split(';')
-
-                self.__questions[q_id] = QuestionChoice(q_id,
-                                                        q,
-                                                        qt.CHOICE_SINGLE_SELECT,
-                                                        self,
-                                                        next_ids,
-                                                        labels,
-                                                        value,
-                                                        self.__perfumes,
-                                                        answers)
+                if line["Type"] == "Single":
+                    self.__questions[q_id] = QuestionChoice(q_id,
+                                                            q,
+                                                            qt.CHOICE_SINGLE_SELECT,
+                                                            self,
+                                                            next_ids,
+                                                            labels,
+                                                            value,
+                                                            self.__perfumes,
+                                                            answers)
+                elif line["Type"] == "Multiple":
+                    self.__questions[q_id] = QuestionChoice(q_id,
+                                                            q,
+                                                            qt.CHOICE_MULTIPLE_SELECT,
+                                                            self,
+                                                            next_ids,
+                                                            labels,
+                                                            value,
+                                                            self.__perfumes,
+                                                            answers)
             elif line["Type"] == "Drag":
                 pass
             elif line["Type"] == "Text":
