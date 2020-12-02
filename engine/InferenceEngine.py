@@ -4,6 +4,8 @@ from engine.question.QuestionType import QuestionType as qt
 import xlrd
 import openpyxl
 from engine.question.QuestionChoice import QuestionChoice
+import csv
+from pathlib import Path
 
 
 # The inference engine uses forward chaining and is based on a sort of fuzzy logic.
@@ -24,7 +26,10 @@ class InferenceEngine:
         self._read_questions()
 
         # Store all perfumes and their initial 'truth-values'.
-        self.__perfumes = pd.read_csv(filtered_database_file)
+        base_path = Path(__file__).parent
+        # Set explicit path to filteredDatabase.csv
+        database_path = (base_path / "../filteredDatabase.csv").resolve()
+        self.__perfumes = pd.read_csv(open(database_path))
         truth_values = [0] * len(self.__perfumes.index)
         self.__perfumes['value'] = truth_values
 
@@ -32,7 +37,10 @@ class InferenceEngine:
 
     # TODO for now, only reading multiple choice questions
     def _read_questions(self):
-        questions = pd.read_csv(questions_file)
+        base_path = Path(__file__).parent
+        # Set explicit path to question_answer_pairs.csv
+        questionanswer_path = (base_path / "../engine/question/data/question_answer_pairs.csv").resolve()
+        questions = pd.read_csv(open(questionanswer_path))
         no_questions = len(questions.index)
         max_question_id = questions["ID"].iloc[no_questions-1]
         self.__final_question_id = max_question_id
@@ -43,19 +51,21 @@ class InferenceEngine:
             q = line["Question"]
             q_id = int(line["ID"])
             if line["Type"] == "Single":
-                answers = line["Answers"].split(';')
+                # Split answers if there are any
+                if not pd.isna(line["Answers"]):
+                    answers = line["Answers"].split(';')
 
-                value = line["Value"]
-                if isinstance(line["Value"], str):
-                    value.split(';')
+                    value = line["Value"]
+                    if isinstance(line["Value"], str):
+                        value.split(';')
 
-                self.__questions[q_id] = QuestionChoice(q_id,
-                                                         q,
-                                                         qt.CHOICE_SINGLE_SELECT,
-                                                         self,
-                                                         line["IDnext"].split(';'),
-                                                         value,
-                                                         answers)
+                    self.__questions[q_id] = QuestionChoice(q_id,
+                                                            q,
+                                                            qt.CHOICE_SINGLE_SELECT,
+                                                            self,
+                                                            line["IDnext"].split(';'),
+                                                            value,
+                                                            answers)
             elif line["Type"] == "Drag":
                 pass
             elif line["Type"] == "Text":

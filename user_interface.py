@@ -11,6 +11,7 @@ class SampleApp(tk.Tk):
         tk.Tk.__init__(self)
         self.geometry('750x500')
         self.title('Perfume Knowledge System')
+        self.engine = ie.InferenceEngine()
         self._frame = None
         self.switch_frame(StartPage)
         self.first_name = tk.StringVar()
@@ -73,11 +74,11 @@ class PageTwo(tk.Frame):
         tk.Radiobutton(self, text="No", variable=v, value=2, indicatoron=0, command=noButton).pack()
 
 class NewPage(tk.Frame):
+    def __init__(self, master):
     # recursive call: make new page for each question until you reach the last
-    if ie.has_reached_goal(self):
-        master.switch_frame(EndPage)
-    else:
-        def __init__(self, master):
+        if self.engine.has_reached_goal(self):
+            master.switch_frame(EndPage)
+        else:
             tk.Frame.__init__(self, master)
             # read question text
             tk.Label(self, text="%s" % (ie._ask_question(self)), font=('Helvetica', 12)).pack(side="top", fill="x", pady=5)
@@ -85,7 +86,7 @@ class NewPage(tk.Frame):
                 for i in Question.answers:
                     tk.Radiobutton(self, text = Question.answers(i)).pack()
                     # TODO: command->new frame
-            else if Question.type == "multiple":
+            elif Question.type == "multiple":
                 Listbox(window, selectmode = "multiple")
                 for i in range(len(Question.answers)):
                     list.insert(END, Question.answers(i))
