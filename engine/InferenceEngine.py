@@ -22,16 +22,16 @@ class InferenceEngine:
         # Set username: the name that we will use to address the user.
         self.username = "Sir/Madam"
 
-        # Save all possible questions.
-        self._read_questions()
-
         # Store all perfumes and their initial 'truth-values'.
         base_path = Path(__file__).parent
         # Set explicit path to filteredDatabase.csv
         database_path = (base_path / "../filteredDatabase.csv").resolve()
         self.__perfumes = pd.read_csv(open(database_path))
         truth_values = [0] * len(self.__perfumes.index)
-        self.__perfumes['value'] = truth_values
+        self.__perfumes['rank'] = truth_values
+
+        # Save all possible questions.
+        self._read_questions()
 
     ## Methods
 
@@ -52,24 +52,33 @@ class InferenceEngine:
             q_id = int(line["ID"])
             if line["Type"] == "Single":
                 # Split answers if there are any
+                answers = None
                 if not pd.isna(line["Answers"]):
                     answers = line["Answers"].split(';')
-
-                value = line["Value"]
-                if isinstance(value, str):
-                    value = value.split(';')
 
                 next_ids = line["IDnext"]
                 if isinstance(next_ids, str):
                     next_ids = next_ids.split(';')
                     next_ids = [int(i) for i in next_ids]
 
+                labels = line["Labels"]
+                if isinstance(labels, str):
+                    labels = labels.split(';')
+                else:
+                    print("Error: Labels of Q", q_id, " not of type string")
+
+                value = line["Value"]
+                if isinstance(value, str):
+                    value = value.split(';')
+
                 self.__questions[q_id] = QuestionChoice(q_id,
                                                         q,
                                                         qt.CHOICE_SINGLE_SELECT,
                                                         self,
                                                         next_ids,
+                                                        labels,
                                                         value,
+                                                        self.__perfumes,
                                                         answers)
             elif line["Type"] == "Drag":
                 pass
@@ -129,6 +138,7 @@ class InferenceEngine:
 if __name__ == "__main__":
     engine = InferenceEngine()
     engine.set_username("Lonneke")
+
     while True:
         q = engine.get_next_question()
         print("Q: ", q.question)
