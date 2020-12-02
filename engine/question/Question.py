@@ -3,12 +3,12 @@
 # explicitly in Python.)
 class Question:
     def __init__(self, q_id, question, q_type, engine, id_next, value):
-        self.id = q_id
-        self.engine = engine
-        self.type = q_type
-        self.question = question
-        self.id_next = id_next
-        self.value = value
+        self.id = q_id             # type: int
+        self.engine = engine       # type: InferenceEngine
+        self.type = q_type         # type: QuestionType
+        self.question = question   # type: string
+        self.id_next = id_next     # type: int
+        self.value = value         # type: ... ?
 
     def set_answer(self, value):
-        pass
+        print("Setting answer: ", value)

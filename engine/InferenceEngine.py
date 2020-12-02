@@ -1,5 +1,4 @@
 import pandas as pd
-from constants import *
 from engine.question.QuestionType import QuestionType as qt
 import xlrd
 import openpyxl
@@ -13,6 +12,7 @@ from pathlib import Path
 class InferenceEngine:
     ## Attributes
     __questions = []
+    __current_question = None
     __next_question_id = 2
     __final_question_id = 0
     __perfumes = []
@@ -42,7 +42,7 @@ class InferenceEngine:
         questionanswer_path = (base_path / "../engine/question/data/question_answer_pairs.csv").resolve()
         questions = pd.read_csv(open(questionanswer_path))
         no_questions = len(questions.index)
-        max_question_id = questions["ID"].iloc[no_questions-1]
+        max_question_id = questions["ID"].iloc[no_questions - 1]
         self.__final_question_id = max_question_id
         self.__questions = self.__final_question_id * [None]
 
@@ -55,17 +55,22 @@ class InferenceEngine:
                 if not pd.isna(line["Answers"]):
                     answers = line["Answers"].split(';')
 
-                    value = line["Value"]
-                    if isinstance(line["Value"], str):
-                        value.split(';')
+                value = line["Value"]
+                if isinstance(value, str):
+                    value = value.split(';')
 
-                    self.__questions[q_id] = QuestionChoice(q_id,
-                                                            q,
-                                                            qt.CHOICE_SINGLE_SELECT,
-                                                            self,
-                                                            line["IDnext"].split(';'),
-                                                            value,
-                                                            answers)
+                next_ids = line["IDnext"]
+                if isinstance(next_ids, str):
+                    next_ids = next_ids.split(';')
+                    next_ids = [int(i) for i in next_ids]
+
+                self.__questions[q_id] = QuestionChoice(q_id,
+                                                        q,
+                                                        qt.CHOICE_SINGLE_SELECT,
+                                                        self,
+                                                        next_ids,
+                                                        value,
+                                                        answers)
             elif line["Type"] == "Drag":
                 pass
             elif line["Type"] == "Text":
@@ -75,13 +80,12 @@ class InferenceEngine:
                 self.__final_question_id = q_id
 
     # Check if we need to/can ask another question.
-    def _has_reached_goal(self):
-        if self.__next_question_id == -1 or self.__next_question_id > self.__final_question_id\
+    def has_reached_goal(self):
+        if self.__next_question_id == -1 or self.__next_question_id > self.__final_question_id \
                 or not self.__next_question_id:
             return True
         return False
         # TODO Maybe we should add an option st the user is able to stop earlier?
-
 
     ## Getters and setters
 
@@ -90,13 +94,32 @@ class InferenceEngine:
 
     # Returns the next question and removes it from the list of remaining questions.
     def get_next_question(self):
-        if not self._has_reached_goal():
-            return self.__questions[self.__next_question_id]
+        if not self.has_reached_goal():
+            self.__current_question = self.__questions[self.__next_question_id]
+            if (self.__current_question == None):
+                print("NOTE: question with ID ", self.__next_question_id, " does not exist (yet).")
+                exit(1)
+            print(self.__current_question.question)
+            self.__next_question_id = None
+            return self.__current_question
         return None
 
-    def set_next_question(self, value):
-        print("Set next question: ", value)
-        self.__next_question_id = int(value)
+    def set_answer(self, value):
+        q = self.__current_question
+        q.set_answer(value)
+
+        if len(q.id_next) == 1:
+            self.__next_question_id = q.id_next[0]
+        elif not isinstance(value, int):
+            index = q.answers.index(value)
+            self.__next_question_id = index
+        elif value >= len(q.id_next):
+            print("Question ", q.id, " should have the same number of next IDs as answers (or only 1 next ID).")
+            exit(1)
+        else:
+            self.__next_question_id = q.id_next[value]
+
+        print("\nNext up: ", self.__next_question_id)
 
     # Returns a number of recommended perfumes based on the current state of the knowledge base.
     def get_recommendation(self):
@@ -108,7 +131,6 @@ if __name__ == "__main__":
     engine.set_username("Lonneke")
     while True:
         q = engine.get_next_question()
-        print(q)
-        print(q.question)
-        print("Answer: ", q.answers[0])
-        q.set_answer(0)
+        print("Q: ", q.question)
+        print("A: ", q.answers[0])
+        engine.set_answer(0)

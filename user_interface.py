@@ -1,9 +1,12 @@
+from engine.question.Question import Question
+
 try:
     import Tkinter as tk
 except:
     import tkinter as tk
 
 import engine.InferenceEngine as ie
+from engine.question.QuestionType import QuestionType as qt
 
 
 class SampleApp(tk.Tk):
@@ -47,7 +50,7 @@ class PageOne(tk.Frame):
         def get_input():
             first_name = name_string.get()
             (master.first_name).set(first_name)
-            master.switch_frame(PageTwo)
+            master.switch_frame(NewPage)
 
         tk.Button(self, text="Next", command=get_input).pack()
 
@@ -73,25 +76,47 @@ class PageTwo(tk.Frame):
         tk.Radiobutton(self, text="Yes", variable=v, value=1, indicatoron=0, command=yesButton).pack()
         tk.Radiobutton(self, text="No", variable=v, value=2, indicatoron=0, command=noButton).pack()
 
+
 class NewPage(tk.Frame):
+    given_answer = None
+
     def __init__(self, master):
-    # recursive call: make new page for each question until you reach the last
-        if self.engine.has_reached_goal(self):
+        self.master = master
+        self.given_answer = tk.IntVar()
+
+        # recursive call: make new page for each question until you reach the last
+        if master.engine.has_reached_goal():
             master.switch_frame(EndPage)
         else:
+            # Initialise frame
             tk.Frame.__init__(self, master)
-            # read question text
-            tk.Label(self, text="%s" % (ie._ask_question(self)), font=('Helvetica', 12)).pack(side="top", fill="x", pady=5)
-            if Question.type == "radio":
-                for i in Question.answers:
-                    tk.Radiobutton(self, text = Question.answers(i)).pack()
-                    # TODO: command->new frame
-            elif Question.type == "multiple":
-                Listbox(window, selectmode = "multiple")
-                for i in range(len(Question.answers)):
-                    list.insert(END, Question.answers(i))
+
+            q = master.engine.get_next_question()
+
+            # Display the question that this frame is about
+            tk.Label(self, text="%s" % q.question, font=('Helvetica', 12)).pack(side="top", fill="x", pady=5)
+
+            # Add the appropriate buttons or fields for the answers
+            if q.type == qt.CHOICE_SINGLE_SELECT:  # radio buttons needed
+                for i, answer in enumerate(q.answers):
+                    radios = tk.Radiobutton(self, text=answer, variable=self.given_answer, value=i)
+                    radios.pack()
+
+            elif q.type == qt.CHOICE_MULTIPLE_SELECT:  # selectable boxes or images needed (?)
+                tk.Listbox(self, selectmode="multiple")
+                for i in range(len(q.answers)):
+                    list.insert(END, q.answers(i))
                     # TODO: command-> new frame
 
+            # Create submit button that can send the answer to the inference engine
+            submit = tk.Button(self, text="Next question", width=10, command=self._send_result)
+            submit.pack()
+
+    def _send_result(self):
+        print("sending result")
+        value = int(self.given_answer.get())
+        self.master.engine.set_answer(value)
+        self.master.switch_frame(NewPage)
 
 
 class EndPage(tk.Frame):
@@ -101,6 +126,7 @@ class EndPage(tk.Frame):
                  font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
         tk.Button(self, text="Go back to start page", command=lambda: master.switch_frame(StartPage)).pack(
             side="bottom")
+
 
 question_types = ['radio', 'multiple', 'last']
 
