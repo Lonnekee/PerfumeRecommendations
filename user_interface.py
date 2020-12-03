@@ -79,10 +79,10 @@ class PageTwo(tk.Frame):
 
 class NewPage(tk.Frame):
     given_answer = None
+    question = None
 
     def __init__(self, master):
         self.master = master
-        #self.given_answer = tk.IntVar()
 
         # Recursive call: make new page for each question until you reach the last
         if master.engine.has_reached_goal():
@@ -92,6 +92,7 @@ class NewPage(tk.Frame):
             tk.Frame.__init__(self, master)
 
             q = master.engine.get_next_question()
+            self.question = q
 
             # Display the question that this frame is about
             tk.Label(self, text="%s" % q.question, font=('Helvetica', 12)).pack(side="top", fill="x", pady=5)
@@ -104,20 +105,27 @@ class NewPage(tk.Frame):
                     radios.pack()
 
             elif q.type == qt.CHOICE_MULTIPLE_SELECT:  # selectable boxes or images needed (?)
+                self.given_answer = len(q.answers) * [0]
                 for i in range(len(q.answers)):
-                    # TODO: command-> new frame
-                    c = tk.Checkbutton(self, text = q.answers[i], variable=self.given_answer)
+                    self.given_answer[i] = tk.IntVar()
+                    c = tk.Checkbutton(self, text=q.answers[i], variable=self.given_answer[i])
                     c.pack()
-                
 
             # Create submit button that can send the answer to the inference engine
             # TODO: implement for multiple selection; now only works for single answer option
             submit = tk.Button(self, text="Next question", width=10, command=self._send_result)
             submit.pack()
 
+    # Sends result to inference engine and switches frame
     def _send_result(self):
-        print("sending result")
-        value = int(self.given_answer.get())
+        value = None
+        if self.question.type == qt.CHOICE_SINGLE_SELECT:
+            value = int(self.given_answer.get())
+        elif self.question.type == qt.CHOICE_MULTIPLE_SELECT:
+            value = [int(a.get()) for a in self.given_answer]
+            print(value)
+        else:
+            print("Question type's answer can not be processed yet.")
         self.master.engine.set_answer(value)
         self.master.switch_frame(NewPage)
 

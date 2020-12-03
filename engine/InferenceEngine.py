@@ -1,4 +1,7 @@
 import pandas as pd
+
+from engine.question.QuestionChoiceMultiple import QuestionChoiceMultiple
+from engine.question.QuestionChoiceSingle import QuestionChoiceSingle
 from engine.question.QuestionType import QuestionType as qt
 import xlrd
 import openpyxl
@@ -72,25 +75,23 @@ class InferenceEngine:
                 if isinstance(value, str):
                     value = value.split(';')
                 if line["Type"] == "Single":
-                    self.__questions[q_id] = QuestionChoice(q_id,
-                                                            q,
-                                                            qt.CHOICE_SINGLE_SELECT,
-                                                            self,
-                                                            next_ids,
-                                                            labels,
-                                                            value,
-                                                            self.__perfumes,
-                                                            answers)
+                    self.__questions[q_id] = QuestionChoiceSingle(q_id=q_id,
+                                                                  question=q,
+                                                                  engine=self,
+                                                                  id_next=next_ids,
+                                                                  labels=labels,
+                                                                  value=value,
+                                                                  perfumes=self.__perfumes,
+                                                                  answer_options=answers)
                 elif line["Type"] == "Multiple":
-                    self.__questions[q_id] = QuestionChoice(q_id,
-                                                            q,
-                                                            qt.CHOICE_MULTIPLE_SELECT,
-                                                            self,
-                                                            next_ids,
-                                                            labels,
-                                                            value,
-                                                            self.__perfumes,
-                                                            answers)
+                    self.__questions[q_id] = QuestionChoiceMultiple(q_id,
+                                                                    q,
+                                                                    self,
+                                                                    next_ids,
+                                                                    labels,
+                                                                    value,
+                                                                    self.__perfumes,
+                                                                    answers)
             elif line["Type"] == "Drag":
                 pass
             elif line["Type"] == "Text":
@@ -125,19 +126,28 @@ class InferenceEngine:
         return None
 
     def set_answer(self, value):
+        # Set answer inside relevant question
         q = self.__current_question
         q.set_answer(value)
 
+        # Set next question id
         if len(q.id_next) == 1:
             self.__next_question_id = q.id_next[0]
-        elif not isinstance(value, int):
+        elif isinstance(value, int):
+            if value >= len(q.id_next):
+                print("Question ", q.id, " should have the same number of next IDs as answers (or only 1 next ID).")
+                exit(1)
+            self.__next_question_id = q.id_next[value]
+        elif isinstance(value, list):
+            print("We don't yet know how to go to the next question for certain multiple choice questions.")
+            exit(1)
+        elif isinstance(value, str):
             index = q.answers.index(value)
             self.__next_question_id = index
-        elif value >= len(q.id_next):
-            print("Question ", q.id, " should have the same number of next IDs as answers (or only 1 next ID).")
-            exit(1)
         else:
-            self.__next_question_id = q.id_next[value]
+            # TODO A case I haven't considered yet.
+            assert False
+            exit(1)
 
         print("\nNext up: ", self.__next_question_id)
 
