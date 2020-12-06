@@ -12,7 +12,14 @@ def load_data(file):
     print(data['Title'])
 
     # Search for all products with specific tag
-    print(data[data['Tags'].str.contains('ingr:amber') == True].index)
+    rows = data['Tags'].str.contains('ingr:amber') == True
+    print(data[rows].index)
+
+    # Updating truth-values of certain rows only
+    truth_values = [0] * len(data.index)
+    data['rank'] = truth_values
+    data.loc[rows, ['rank']] += 1
+    print(data.loc[:, ['rank']])
 
 
 def main():
