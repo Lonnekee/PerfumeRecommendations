@@ -24,9 +24,11 @@ class InferenceEngine:
 
         # Store all perfumes and their initial 'truth-values'.
         base_path = Path(__file__).parent
+        # print(base_path)
         # Set explicit path to filteredDatabase.csv
         database_path = (base_path / "../filteredDatabase.csv").resolve()
-        self.__perfumes = pd.read_csv(open(database_path))
+        # print(database_path)
+        self.__perfumes = pd.read_csv(open(database_path, encoding="utf-8"))
         truth_values = [0] * len(self.__perfumes.index)
         self.__perfumes['rank'] = truth_values
 
@@ -40,7 +42,7 @@ class InferenceEngine:
         base_path = Path(__file__).parent
         # Set explicit path to question_answer_pairs.csv
         questionanswer_path = (base_path / "../engine/question/data/question_answer_pairs.csv").resolve()
-        questions = pd.read_csv(open(questionanswer_path))
+        questions = pd.read_csv(open(questionanswer_path), encoding="utf8")
         no_questions = len(questions.index)
         max_question_id = questions["ID"].iloc[no_questions - 1]
         self.__final_question_id = max_question_id
