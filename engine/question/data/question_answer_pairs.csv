@@ -1,27 +1,36 @@
 ID,IDnext,Question,Type,Answers,Labels,Value
-0,END,What is your budget,,,,
+0,END,What is your budget (the avg..?),Text,,,
 1,2,Hello there! What is your name?,Text,,,
 2,3;23,What kind of product are you looking for?,Single,For on my skin;For in my house,,
 3,4;6,Are you already familiar with the Perfume Lounge's collection?,Single,Yes;No,,
-4,10,Still has to be implemented.,Single,Continue,,
-6,10,Still has to be implemented.,Single,Continue,,
-10,11,Do you prefer perfumes for a specific gender?,Single,Yes I prefer feminine perfumes.;Yes I prefer masculine perfumes;No I don't have a preference,Collection:Voor de man;Collection:Op en top vrouwelijk,-1.0;-1.0
-11,12;13,Are you looking for a bold perfume?,Single,Yes;No,Collection:Top 10 avant-garde parfums+Collection:Skanky lekker viezig,+0.5;+0
-12,13,What is your age?,Single,Below 25;Between 26 and 45;Above 45,Collection:Bestsellers jong;Collection;Bestsellers mid;Collection;Bestsellers X,+0.2;+0.2;+0.2
-13,14,What are your main reasons for wearing perfume?,Multiple,To feel well-groomed;To distinguish myself;To feel happier;To feel more energetic;To calm down;To seduce,Collection:Verzorgd & schoon;Collection:Top 10 avant-garde parfums+Vendor:Baruti+Vendor:BeauFort London+Vendor:Bogue Profumo+Vendor:Francesca Bianchi+Mood:Rebels;Collection:Feestelijk & vrolijk+Collection:Ontdek de fruitige geurfamilie+Collection:Lente+Collection:Lentebloesem;Familie:citrus+Collection:Verfrissend & optimistisch;mood:Zen;Collection:Verleidelijk en sensueel+Collection:Wild verleidelijk,+0.2;+0.2;+0.2;+0.2;+0.2;+0.2
-14,15;16;16;16;16;16,For what occassion do you plan to wear perfume?,Multiple,On the job;While working out;To a chique party;Going out at night;Casually;Intimately,Collection:Zakelijk en subtiel;Collection:Ontdek de friss geurfamilies;Collection:Parfums voor de feestdagen;Collection:Feestelijk & vrolijk;mood:Comfy;ingr:musk+Collection:Verleidelijk en sensueel,+0.2;+0.2;+0.2;+0.2;+0.2;+0.2
-15,16,How would you best describe your job?,Single,
-16,17,What styles do you identify most with?,Multiple,
-17,18,Would you describe your clothing as classical or modern?,Single,
+4,5,Which products if any do you like?,Drag,productList;I don't know,takeVendor;takeFamily,+0.5
+5,6,Which products if any do you dislike?,Drag,productList;I don't know, takeVendor;takeFamily,-0.5
+6,7,Which olfactory families if any do you like?,Drag,familyList;I don't know,takeFamily,+0.25
+7,8,Which olfactory families if any do you dislike?,Drag,familyList;I don't know,takeFamily,-0.25
+8,9,Which ingredients if any do you like?,Drag,ingredientList;I don't know,takeIngredient,+0.25
+9,10,Which ingredients families if any do you dislike?,Drag,ingredientList;I don't know,takeIngredient,-0.25
+10,11,Do you prefer perfumes for a specific gender?,Single,Yes I prefer feminine perfumes.;Yes I prefer masculine perfumes;No I don't have a preference,Collection:voor-de-man;Collection:op-en-top-vrouwelijk,-1.0;-1.0
+11,12;13,Are you looking for a bold perfume?,Single,Yes;No,Collection:top 10-avant-garde-parfums+Collection:skanky-lekker-viezig,+0.5;+0
+12,13,What is your age?,Single,Below 25;Between 26 and 45;Above 45,Collection:bestsellers-jong;Collection:Bestsellers-mid;Collection:Bestsellers-X,+0.2;+0.2;+0.2
+13,14,What are your main reasons for wearing perfume?,Multiple,To feel well-groomed;To distinguish myself;To feel happier;To feel more energetic;To calm down;To seduce,Collection:verzorgd-schoon;Collection:top-10-avant-garde-parfums+Vendor:Baruti+Vendor:BeauFort London+Vendor:Bogue Profumo+Vendor:Francesca Bianchi+Tag:mood:rebels;Collection:feestelijk-vrolijk+Collection:ontdek-de-fruitige-geurfamilie+Collection:lente+Collection:lentebloesem;Tag:Familie:citrus+Collection:verfrissend-optimistisch;Tag:mood:zen;Collection:verleidelijk-en-sensueel+Collection:wild-verleidelijk,+0.2;+0.2;+0.2;+0.2;+0.2;+0.2
+14,15;16;16;16;16;16,For what occassion do you plan to wear perfume?,Multiple,On the job;While working out;To a chique party;Going out at night;Casually;Intimately,Collection:zakelijk-en-subtiel;Collection:ontdek-de-frisse-geurfamilies;Collection:parfums-voor-de-feestdagen;Collection:feestelijk-vrolijk;Tag:mood:comfy;Tag:ingr:musk+Collection:verleidelijk-en-sensueel,+0.2;+0.2;+0.2;+0.2;+0.2;+0.2
+15,16,How would you best describe your job?,Single,Contact profession (medical);Contact profession (non-medical);Managerial;Service;Creative,Collection:zakelijk-en-subtiel+Collection:verzorgd-schoon;mood:sexy+Collection:wild-verleidelijk;Tag:Familie:woodyoriental+Tag:woody+Tag:ingr:leer;Tag:Familie:floral+Tag:Familie:softfloral+Tag:floral;Tag:mood:rebels,+0.2;+0.2;+0.2;+0.2;+0.2
+16,17,What styles do you identify most with?,Multiple,A minimalistic/Scandinavian style;A Mediterranean style;A Japanese style;An Arabic style;A french style,Collection:puur-minimalistisch+Tag:minimal;Collection:Italy+Collection:Spain;Vendor:Parfum Satori;Collection:oudh+Collection:oudh+collection+Tag:ingr:oud+Vendor:strangelove nyc;Collection:France,+0.2;+0.2;+0.2;+0.2;+0.2
+17,18,Would you describe your clothing as classical or modern?,Single,Classical;Modern,Vendor:Caron+Vendor:Vendor:Shalini+Vendor:Houbigant+Vendor:Nicolai Paris;Vendor:Parle Moi de Parfum+Vendor:strangelove nyc+Vendor:Marc-Antoine Barrois;+0.1;+0.1
 18,19;0,Would you consider yourself a perfume expert? If yes you will continue with more technical questions regarding for example sillage and longevity.,Single,Yes;No,,
-19,20,How much sillage do you prefer?,Single
-20,21,What is the longevity you are looking for?,Multiple
-21,22,Do you plan to use your perfume as standalone or for layering?,Single
-22,0,Do you prefer a perfume for which matching body care is also available?,Single
-
-100,5,Which products if any do you like?,Drag,productList;I don't know,takeVendor;takeFamily,+0.5
-101,6,Which products if any do you dislike?,Drag,productList;I don't know, takeVendor;takeFamily,-0.5
-102,7,Which olfactory families if any do you like?,Drag,familyList;I don't know,takeFamily,+0.25
-103,8,Which olfactory families if any do you dislike?,Drag,familyList;I don't know,takeFamily,-0.25
-104,9,Which ingredients if any do you like?,Drag,ingredientList;I don't know,takeIngredient,+0.25
-105,10,Which ingredients families if any do you dislike?,Drag,ingredientList;I don't know,takeIngredient,-0.25
+19,20,How much sillage do you prefer?,Single,A small sillage;A large sillage;I don't have a preference,Tag:sillage-klein;Tag:sillage-groot;,+0.4;+0.4;
+20,21,What is the longevity you are looking for?,Multiple;1-4 hours;5-8 hours;More than 8 hours,Tag:longevity-kort;Tag:longevity-middel;Tag:longevity-lang,+0.4;+0.4;+0.4
+21,22,Do you plan to use your perfume as standalone or for layering?,Single,As standalone;For layering,;Collection:layering-live-stream-mei-2020+Collection:geuren-om-mee-te-layeren+Collection:layering-collection;,+0.4;
+22,0,Do you prefer a perfume for which matching body care is also available?,Single,Yes;No,Tag:bodycare-available;,+0.5;
+23,24;25;26;27,How large is the room you wish to scent?,Single,5-10 m2;11-40 m2;26-40 m2;Larger than 40 m2,Tag:room-5-10;Tag:room-11-25;Tag:room16-40;Tag:room-40-plus,+0.3;+0.3;+0.3;+0.3
+24,28,Tip: For small spaces you can use scented sticks or a scented candle to create a pleasant atmosphere. Also consider a room spray for direct air freshening.,Display,,,
+25,28,Tip: For medium-sized rooms we recommend using 1 or more scented sticks or candles, but a room spray and incense also work well in a larger space.,Display,,,
+26,28,Tip: For medium-sized rooms we recommend using 1 or more scented sticks or candles, but a room spray and incense also work well in a larger space.,Display,,,
+27,28,Tip: For large spaces, we recommend placing multiple scented products. For example 2 to 3 fragrance sticks, several candles or incense.,Display,,,
+28,29;30;31;32;33,What do you wish to achieve with the scented room?,Single,To create an ambience;To create a constant scent experience;To get direct effect on demand;I do not have a preference,Type:geurkaars;Type:geurstokjes+Type:geurzakjes;Type:room spray+Type:wierook;,+0.4;+0.4;+0.4;+0.4;
+29,33,Tip: Scented candles are ideal for creating an atmosphere and spreading a beautiful scent at the same time.,Display,,,
+30,33,Tip: Fragrance sticks or sachets are perfect for constantly scenting a room in a subtle way. Easy and evenly distributed without having to worry about anything.,Display,,,
+31,33,Tip: Room sprays and incense are a practical and effective way to instantly refresh a room. You can also use a room spray on color-true fabrics such as a curtain, rug and even the car mat to make a fragrance linger longer. Always test this first on a piece of fabric out of sight.,Display,,,
+33,34,What kind of room do you use your product in?,Single,The living room;The bedroom;The kitchen;The bathroom;The corridor,Collection:huisparfums-intiem-warm-en-geborgen+Collection:huisparfums-chique-en-stijlvol+Collection:huisparfums-vrolijk-en-kleurrijk;Collection:huisparfums-romantisch-en-sensueel+Collection:huisparfums-intiem-warm-en-geborgen+Collection:huisparfums-kalmerend;Collection:huisparfums-schoon-fris-en-verzorgd+Collection:huisparfums-natuurlijk-en-puur;Collection:huisparfums-schoon-fris-en-verzorgd+Collection:huisparfums-natuurlijk-en-puur;Collection:huisparfums-natuurlijk-en-puur+Collection:huisparfums-vrolijk-en-kleurrijk;+0.2;+0.2;+0.2;+0.2;+0.2
+34,35,What kind of atmosphere do you wish to create?,Single,Clean and well-groomed;Intimite and warm;Nature and pure;Happy and colourful;Romantic and sensual;Peaceful;I do not know,Collection:huisparfums-schoon-fris-en-verzorgd;Collection:huisparfums-intiem-warm-en-geborgen;Collection:huisparfums-natuurlijk-en-puur;Collection:huisparfums-vrolijk-en-kleurrijk;Collection:huisparfums-chique-en-stijlvol;Collection:huisparfums-romantisch-en-sensueel;Collection:huisparfums-kalmerend;,+0.4;+0.4;+0.4;+0.4;+0.4;+0.4;+0.4;+0.4
+35,0,Which scents make you happy?,Multiple,Floral;Woods;Sweet;Green;Refreshing;Spicy and warm;Powdery;,Collection:huisparfums-bloemen;Collection:huisparfums-woody;Collection:huisparfums-zoet;Collection:huisparfums-groen;Collection:huisparfums-verfrissend;Collection:huisparfums-kruidig;Collection:huisparfums-poederig,+0.2;+0.2;+0.2;+0.2;+0.2;+0.2;+0.2
