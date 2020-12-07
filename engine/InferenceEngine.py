@@ -45,6 +45,7 @@ class InferenceEngine:
         base_path = Path(__file__).parent
         # Set explicit path to question_answer_pairs.csv
         questionanswer_path = (base_path / "../engine/question/data/question_answer_pairs.csv").resolve()
+        #TODO de encoding staat hier anders dan hierboven op line 34, klopt dat?
         questions = pd.read_csv(open(questionanswer_path), encoding="utf8")
         no_questions = len(questions.index)
         max_question_id = questions["ID"].iloc[no_questions - 1]
@@ -97,6 +98,8 @@ class InferenceEngine:
             elif line["Type"] == "Drag":
                 pass
             elif line["Type"] == "Text":
+                pass
+            elif line["Type"] == "Display":
                 pass
 
             if q_id > self.__final_question_id:
