@@ -111,6 +111,9 @@ class NewPage(tk.Frame):
                     c = tk.Checkbutton(self, text=q.answers[i], variable=self.given_answer[i])
                     c.pack()
 
+            elif q.type == qt.CHOICE_DISPLAY:
+                print("only show question")
+
             # Create submit button that can send the answer to the inference engine
             # TODO: implement for multiple selection; now only works for single answer option
             submit = tk.Button(self, text="Next question", width=10, command=self._send_result)

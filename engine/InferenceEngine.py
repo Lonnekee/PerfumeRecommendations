@@ -2,6 +2,7 @@ import pandas as pd
 
 from engine.question.QuestionChoiceMultiple import QuestionChoiceMultiple
 from engine.question.QuestionChoiceSingle import QuestionChoiceSingle
+from engine.question.QuestionDisplay import QuestionDisplay
 from engine.question.QuestionType import QuestionType as qt
 import xlrd
 import openpyxl
@@ -100,7 +101,14 @@ class InferenceEngine:
             elif line["Type"] == "Text":
                 pass
             elif line["Type"] == "Display":
-                pass
+                self.__questions[q_id] = QuestionDisplay(q_id,
+                                                                q,
+                                                                self,
+                                                                next_ids,
+                                                                labels,
+                                                                value,
+                                                                self.__perfumes,
+                                                                answers)
 
             if q_id > self.__final_question_id:
                 self.__final_question_id = q_id
@@ -134,7 +142,8 @@ class InferenceEngine:
         # Set answer inside relevant question
         q = self.__current_question
         q.set_answer(value)
-
+        
+        print(q.id_next)
         # Set next question id
         if len(q.id_next) == 1:
             self.__next_question_id = q.id_next[0]
@@ -150,6 +159,7 @@ class InferenceEngine:
             index = q.answers.index(value)
             self.__next_question_id = index
         else:
+            print("display")
             # TODO A case I haven't considered yet.
             assert False
             exit(1)
