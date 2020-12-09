@@ -118,13 +118,13 @@ class NewPage(tk.Frame):
                 # perfumes = q.get_perfumes()  list of strings, describing perfume name and brand
                 print(q.labels)
                 if("takePerfume" in q.labels):
-                    droplist,tags = q.get_perfumes()  # lists of strings, describing perfume name and brand and their tags
+                    droplist = q.get_perfumes()  # lists of strings, describing perfume name and brand and their tags
                 elif("takeFamily" in q.labels):
-                    droplist,tags = q.get_families()  # lists of strings, describing olfactory families and their tags
+                    droplist = q.get_families()  # lists of strings, describing olfactory families and their tags
                 elif("takeIngredient" in q.labels):
-                    droplist,tags = q.get_ingredients()  # lists of strings, describing ingredients and their tags
+                    droplist = q.get_ingredients()  # lists of strings, describing ingredients and their tags
                 else:
-                    droplist,tags = None,None
+                    droplist = None
                     print("Appropriate dropdown not found.")
 
                 # add scrollbar to listbox
@@ -136,7 +136,7 @@ class NewPage(tk.Frame):
                 scrollbar.config(command = self.lbox.yview)
                 self.lbox.pack()
                 self.given_answer = tk.StringVar()
-                self.given_answer.set(perfumes[0])
+                self.given_answer.set(droplist[0])
                 
                 # TODO: (autocomplete) search bar
                 self.search_var = tk.StringVar()
@@ -146,7 +146,7 @@ class NewPage(tk.Frame):
                 #search = tk.Button(self, text="Search", width=10, command=search_term)
                 #search.pack()
                 self.lbox.delete(0, tk.END)
-                for item in perfumes:
+                for item in droplist:
                     if search_term.lower() in item.lower():
                         self.lbox.insert(tk.END, item)
 

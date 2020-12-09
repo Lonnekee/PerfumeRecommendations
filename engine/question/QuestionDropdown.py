@@ -23,19 +23,19 @@ class QuestionDropdown(Question):
             name = item["Title"] + " (" + item["Vendor"] + ")"
             products[index] = name
 
-        return products,None
+        return products
 
     def get_families(self):
         base_path = Path(__file__).parent
         families_path = (base_path / "../question/data/olfactory_families.csv").resolve()
         families = pd.read_csv(open(families_path), encoding="utf-8")
-        return families["Family"].tolist(),families["Tag"].tolist()
+        return families["Family"].tolist()#,families["Tag"].tolist()
 
     def get_ingredients(self):
         base_path = Path(__file__).parent
         ingredients_path = (base_path / "../question/data/ingredients.csv").resolve()
         ingredients = pd.read_csv(open(ingredients_path), encoding="utf-8")
-        return ingredients["Ingredient"].tolist(),ingredients["Tag"].tolist()
+        return ingredients["Ingredient"].tolist()#,ingredients["Tag"].tolist()
 
     def set_answer(self, perfume_indices):
         print("Setting answer QuestionDropdown: ", perfume_indices)
