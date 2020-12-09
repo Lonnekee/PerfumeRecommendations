@@ -116,10 +116,28 @@ class NewPage(tk.Frame):
 
             elif q.type == qt.DROPDOWN:  # a dropdown list is needed, where multiple items can be selected
                 perfumes = q.get_perfumes()  # list of strings, describing perfume name and brand
+                # add scrollbar to listbox
+                scrollbar = tk.Scrollbar(self)
+                scrollbar.pack(side = tk.RIGHT, fill=tk.BOTH)
+
+                self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=15)
+                self.lbox.config(yscrollcommand = scrollbar.set)
+                scrollbar.config(command = self.lbox.yview)
+                self.lbox.pack()
                 self.given_answer = tk.StringVar()
                 self.given_answer.set(perfumes[0])
-                dropdown_menu = tk.OptionMenu(self, self.given_answer, *perfumes)
-                dropdown_menu.pack()
+                
+                # TODO: (autocomplete) search bar
+                self.search_var = tk.StringVar()
+                #search_bar = tk.Entry(self, textvariable=self.search_var)
+                #search_bar.pack()
+                search_term = self.search_var.get()
+                #search = tk.Button(self, text="Search", width=10, command=search_term)
+                #search.pack()
+                self.lbox.delete(0, tk.END)
+                for item in perfumes:
+                    if search_term.lower() in item.lower():
+                        self.lbox.insert(tk.END, item)
 
             # Create submit button that can send the answer to the inference engine
             submit = tk.Button(self, text="Next question", width=10, command=self._send_result)
@@ -133,7 +151,7 @@ class NewPage(tk.Frame):
         elif self.question.type == qt.CHOICE_MULTIPLE_SELECT:
             value = [int(a.get()) for a in self.given_answer]
         elif self.question.type == qt.DROPDOWN:
-            value = [1, 2]  # TODO! give list of indices of (multiple) selected answers
+            value = [int(index) for index in list(self.lbox.curselection())]
         elif self.question.type == qt.CHOICE_DISPLAY:
             print("Display UI: no choice needed")
         else:
