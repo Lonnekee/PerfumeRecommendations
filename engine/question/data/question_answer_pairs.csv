@@ -23,9 +23,9 @@ ID,IDnext,Question,Type,Answers,Labels,Value
 22,36,Do you prefer a perfume for which matching body care is also available?,Single,Yes;No,Tag:bodycare-available;,+0.5;
 23,24;25;26;27,How large is the room you wish to scent?,Single,5-10 m2;11-40 m2;26-40 m2;Larger than 40 m2,Tag:room-5-10;Tag:room-11-25;Tag:room16-40;Tag:room-40-plus,+0.3;+0.3;+0.3;+0.3
 24,28,Tip: For small spaces you can use scented sticks or a scented candle to create a pleasant atmosphere. Also consider a room spray for direct air freshening.,Display,,,
-25,28,Tip: For medium-sized rooms we recommend using 1 or more scented sticks or candles but a room spray and incense also work well in a larger space.,Display,,,
-26,28,Tip: For medium-sized rooms we recommend using 1 or more scented sticks or candles but a room spray and incense also work well in a larger space.,Display,,,
-27,28,Tip: For large spaces we recommend placing multiple scented products. For example 2 to 3 fragrance sticks several candles or incense.,Display,,,
+25,28,Tip: For medium-sized rooms we recommend using 1 or more scented sticks or candles but a room spray and incense also work well in a larger space.,Display,0,,
+26,28,Tip: For medium-sized rooms we recommend using 1 or more scented sticks or candles but a room spray and incense also work well in a larger space.,Display,0,,
+27,28,Tip: For large spaces we recommend placing multiple scented products. For example 2 to 3 fragrance sticks several candles or incense.,Display,0,,
 28,29;30;31;32;33,What do you wish to achieve with the scented room?,Single,To create an ambience;To create a constant scent experience;To get direct effect on demand;I do not have a preference,Type:geurkaars;Type:geurstokjes+Type:geurzakjes;Type:room spray+Type:wierook;,+0.4;+0.4;+0.4;+0.4;
 29,33,Tip: Scented candles are ideal for creating an atmosphere and spreading a beautiful scent at the same time.,Display,,,
 30,33,Tip: Fragrance sticks or sachets are perfect for constantly scenting a room in a subtle way. Easy and evenly distributed without having to worry about anything.,Display,,,
