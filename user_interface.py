@@ -115,7 +115,18 @@ class NewPage(tk.Frame):
                 print("Display, no buttons needed.")
 
             elif q.type == qt.DROPDOWN:  # a dropdown list is needed, where multiple items can be selected
-                perfumes = q.get_perfumes()  # list of strings, describing perfume name and brand
+                # perfumes = q.get_perfumes()  list of strings, describing perfume name and brand
+                print(q.labels)
+                if("takePerfume" in q.labels):
+                    droplist,tags = q.get_perfumes()  # lists of strings, describing perfume name and brand and their tags
+                elif("takeFamily" in q.labels):
+                    droplist,tags = q.get_families()  # lists of strings, describing olfactory families and their tags
+                elif("takeIngredient" in q.labels):
+                    droplist,tags = q.get_ingredients()  # lists of strings, describing ingredients and their tags
+                else:
+                    droplist,tags = None,None
+                    print("Appropriate dropdown not found.")
+
                 # add scrollbar to listbox
                 scrollbar = tk.Scrollbar(self)
                 scrollbar.pack(side = tk.RIGHT, fill=tk.BOTH)

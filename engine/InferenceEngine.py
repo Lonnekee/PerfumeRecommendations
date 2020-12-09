@@ -46,7 +46,6 @@ class InferenceEngine:
         base_path = Path(__file__).parent
         # Set explicit path to question_answer_pairs.csv
         questionanswer_path = (base_path / "../engine/question/data/question_answer_pairs.csv").resolve()
-        #TODO de encoding staat hier anders dan hierboven op line 34, klopt dat? --> nee, vgm niet. Heb 'm aangepast! (allebei utf-8 ipv utf8)
         questions = pd.read_csv(open(questionanswer_path), encoding="utf-8")
         no_questions = len(questions.index)
         max_question_id = questions["ID"].iloc[no_questions - 1]
