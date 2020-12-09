@@ -136,7 +136,7 @@ class NewPage(tk.Frame):
                 scrollbar.config(command = self.lbox.yview)
                 self.lbox.pack()
                 self.given_answer = tk.StringVar()
-                self.given_answer.set(perfumes[0])
+                self.given_answer.set(droplist[0])
                 
                 # TODO: (autocomplete) search bar
                 self.search_var = tk.StringVar()
@@ -146,7 +146,7 @@ class NewPage(tk.Frame):
                 #search = tk.Button(self, text="Search", width=10, command=search_term)
                 #search.pack()
                 self.lbox.delete(0, tk.END)
-                for item in perfumes:
+                for item in droplist:
                     if search_term.lower() in item.lower():
                         self.lbox.insert(tk.END, item)
 
