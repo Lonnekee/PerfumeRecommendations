@@ -138,8 +138,12 @@ class NewPage(tk.Frame):
             print("Display UI: no choice needed")
         else:
             print("Question type's answer can not be processed yet.")
+
         self.master.engine.set_answer(value)
-        self.master.switch_frame(NewPage)
+        if self.master.engine.has_reached_goal():
+            self.master.switch_frame(EndPage)
+        else:
+            self.master.switch_frame(NewPage)
 
 
 class EndPage(tk.Frame):

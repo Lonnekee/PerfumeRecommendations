@@ -4,16 +4,14 @@ from engine.question.QuestionDropdown import QuestionDropdown
 from engine.question.QuestionChoiceMultiple import QuestionChoiceMultiple
 from engine.question.QuestionChoiceSingle import QuestionChoiceSingle
 from engine.question.QuestionDisplay import QuestionDisplay
-from engine.question.QuestionType import QuestionType as qt
-import xlrd
-import openpyxl
-from engine.question.QuestionChoice import QuestionChoice
-import csv
 from pathlib import Path
 
 
 # The inference engine uses forward chaining and is based on a sort of fuzzy logic.
 # Based on the answer to every questions, perfumes will be upvoted or downvoted.
+from engine.question.QuestionText import QuestionText
+
+
 class InferenceEngine:
     ## Attributes
     __questions = []
@@ -21,6 +19,7 @@ class InferenceEngine:
     __next_question_id = 2
     __final_question_id = 0
     __perfumes = []
+    __additional_info = {}
 
     ## Constructor
     def __init__(self):
@@ -39,10 +38,10 @@ class InferenceEngine:
 
         # Save all possible questions.
         self._read_questions()
+        print(self.__questions)
 
     ## Methods
 
-    # TODO for now, only reading multiple choice questions
     def _read_questions(self):
         base_path = Path(__file__).parent
         # Set explicit path to question_answer_pairs.csv
@@ -59,7 +58,7 @@ class InferenceEngine:
             q = line["Question"]
             q_id = int(line["ID"])
 
-            if line["Type"] == "Single" or line["Type"] == "Multiple" or line["Type"] == "Drag":
+            if line["Type"] == "Single" or line["Type"] == "Multiple" or line["Type"] == "Drag" or line["Type"] == "Text":
                 # Split answers if there are any
                 answers = None
                 if not pd.isna(line["Answers"]):
@@ -68,7 +67,7 @@ class InferenceEngine:
                 next_ids = line["IDnext"]
                 if isinstance(next_ids, str):
                     next_ids = next_ids.split(';')
-                    next_ids = [int(i) for i in next_ids]
+                    next_ids = [int(i) if i != 'END' else -1 for i in next_ids]
 
                 labels = line["Labels"]
                 if isinstance(labels, str):
@@ -106,8 +105,12 @@ class InferenceEngine:
                                                               labels=labels,
                                                               value=value,
                                                               perfumes=self.__perfumes)
-            elif line["Type"] == "Text":
-                pass
+                elif line["Type"] == "Text":
+                    self.__questions[q_id] = QuestionText(q_id=q_id,
+                                                          question=q,
+                                                          engine=self,
+                                                          id_next=next_ids,
+                                                          perfumes=self.__perfumes)
             elif line["Type"] == "Display":
                 next_ids = line["IDnext"]
                 if isinstance(next_ids, str):
@@ -115,24 +118,27 @@ class InferenceEngine:
                     next_ids = [int(i) for i in next_ids]
 
                 self.__questions[q_id] = QuestionDisplay(q_id,
-                                                                q,
-                                                                self,
-                                                                next_ids,
-                                                                labels,
-                                                                value,
-                                                                self.__perfumes,
-                                                                answers)
+                                                         q,
+                                                         self,
+                                                         next_ids,
+                                                         labels,
+                                                         value,
+                                                         self.__perfumes,
+                                                         answers)
 
             if q_id > self.__final_question_id:
                 self.__final_question_id = q_id
 
     # Check if we need to/can ask another question.
     def has_reached_goal(self):
-        if self.__next_question_id == 'END' or self.__next_question_id > self.__final_question_id \
+        if self.__next_question_id == -1 or self.__next_question_id > self.__final_question_id \
                 or not self.__next_question_id:
             return True
         return False
         # TODO Maybe we should add an option st the user is able to stop earlier?
+
+    def add_additional_info(self, entry_name, value):
+        self.__additional_info[entry_name] = value
 
     ## Getters and setters
 
@@ -141,7 +147,6 @@ class InferenceEngine:
 
     # Returns the next question and removes it from the list of remaining questions.
     def get_next_question(self):
-        print("getting new question")
         if not self.has_reached_goal():
             self.__current_question = self.__questions[self.__next_question_id]
             if self.__current_question is None:
