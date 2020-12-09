@@ -101,6 +101,11 @@ class InferenceEngine:
             elif line["Type"] == "Text":
                 pass
             elif line["Type"] == "Display":
+                next_ids = line["IDnext"]
+                if isinstance(next_ids, str):
+                    next_ids = next_ids.split(';')
+                    next_ids = [int(i) for i in next_ids]
+
                 self.__questions[q_id] = QuestionDisplay(q_id,
                                                                 q,
                                                                 self,
@@ -128,6 +133,7 @@ class InferenceEngine:
 
     # Returns the next question and removes it from the list of remaining questions.
     def get_next_question(self):
+        print("getting new question")
         if not self.has_reached_goal():
             self.__current_question = self.__questions[self.__next_question_id]
             if (self.__current_question == None):
@@ -143,8 +149,6 @@ class InferenceEngine:
         q = self.__current_question
         q.set_answer(value)
         
-        print(q.id_next)
-        print(len(q.id_next))
         # Set next question id
         if len(q.id_next) == 1:
             self.__next_question_id = q.id_next[0]
@@ -159,12 +163,7 @@ class InferenceEngine:
         elif isinstance(value, str):
             index = q.answers.index(value)
             self.__next_question_id = index
-        elif value is None:
-            print("display")
-            self.__next_question_id = q.id_next[0]
         else:
-            # self.__next_question_id = q.id_next[0]
-            # print("display")
             # TODO A case I haven't considered yet.
             assert False
             exit(1)

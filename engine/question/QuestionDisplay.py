@@ -14,5 +14,3 @@ class QuestionDisplay(QuestionChoice):
                          value,
                          perfumes,
                          answer_options)
-
-

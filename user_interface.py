@@ -95,7 +95,7 @@ class NewPage(tk.Frame):
             self.question = q
 
             # Display the question that this frame is about
-            tk.Label(self, text="%s" % q.question, font=('Helvetica', 12)).pack(side="top", fill="x", pady=5)
+            tk.Label(self, text="%s" % q.question,wraplengt=600, font=('Helvetica', 12)).pack(side="top", fill="x", pady=5)
 
             # Add the appropriate buttons or fields for the answers
             if q.type == qt.CHOICE_SINGLE_SELECT:  # radio buttons needed
@@ -112,7 +112,7 @@ class NewPage(tk.Frame):
                     c.pack()
 
             elif q.type == qt.CHOICE_DISPLAY:
-                print("only show question")
+                print("Display, no buttons needed.")
 
             # Create submit button that can send the answer to the inference engine
             # TODO: implement for multiple selection; now only works for single answer option
@@ -128,8 +128,7 @@ class NewPage(tk.Frame):
             value = [int(a.get()) for a in self.given_answer]
             print(value)
         elif self.question.type == qt.CHOICE_DISPLAY:
-            # no answer is give, just go to next
-            print("display ui")
+            print("Display UI: no choice needed")
         else:
             print("Question type's answer can not be processed yet.")
         self.master.engine.set_answer(value)
