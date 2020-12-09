@@ -144,6 +144,7 @@ class InferenceEngine:
         q.set_answer(value)
         
         print(q.id_next)
+        print(len(q.id_next))
         # Set next question id
         if len(q.id_next) == 1:
             self.__next_question_id = q.id_next[0]
@@ -158,8 +159,12 @@ class InferenceEngine:
         elif isinstance(value, str):
             index = q.answers.index(value)
             self.__next_question_id = index
-        else:
+        elif value is None:
             print("display")
+            self.__next_question_id = q.id_next[0]
+        else:
+            # self.__next_question_id = q.id_next[0]
+            # print("display")
             # TODO A case I haven't considered yet.
             assert False
             exit(1)

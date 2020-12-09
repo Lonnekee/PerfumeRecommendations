@@ -127,6 +127,9 @@ class NewPage(tk.Frame):
         elif self.question.type == qt.CHOICE_MULTIPLE_SELECT:
             value = [int(a.get()) for a in self.given_answer]
             print(value)
+        elif self.question.type == qt.CHOICE_DISPLAY:
+            # no answer is give, just go to next
+            print("display ui")
         else:
             print("Question type's answer can not be processed yet.")
         self.master.engine.set_answer(value)
