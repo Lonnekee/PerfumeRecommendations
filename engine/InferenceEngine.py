@@ -3,6 +3,7 @@ import pandas as pd
 from engine.question.QuestionDropdown import QuestionDropdown
 from engine.question.QuestionChoiceMultiple import QuestionChoiceMultiple
 from engine.question.QuestionChoiceSingle import QuestionChoiceSingle
+from engine.question.QuestionDisplay import QuestionDisplay
 from engine.question.QuestionType import QuestionType as qt
 import xlrd
 import openpyxl
@@ -107,7 +108,19 @@ class InferenceEngine:
             elif line["Type"] == "Text":
                 pass
             elif line["Type"] == "Display":
-                pass
+                next_ids = line["IDnext"]
+                if isinstance(next_ids, str):
+                    next_ids = next_ids.split(';')
+                    next_ids = [int(i) for i in next_ids]
+
+                self.__questions[q_id] = QuestionDisplay(q_id,
+                                                                q,
+                                                                self,
+                                                                next_ids,
+                                                                labels,
+                                                                value,
+                                                                self.__perfumes,
+                                                                answers)
 
             if q_id > self.__final_question_id:
                 self.__final_question_id = q_id
@@ -127,6 +140,7 @@ class InferenceEngine:
 
     # Returns the next question and removes it from the list of remaining questions.
     def get_next_question(self):
+        print("getting new question")
         if not self.has_reached_goal():
             self.__current_question = self.__questions[self.__next_question_id]
             if (self.__current_question == None):
@@ -141,7 +155,7 @@ class InferenceEngine:
         # Set answer inside relevant question
         q = self.__current_question
         q.set_answer(value)
-
+        
         # Set next question id
         if len(q.id_next) == 1:
             self.__next_question_id = q.id_next[0]
