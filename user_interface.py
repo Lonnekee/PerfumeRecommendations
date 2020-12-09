@@ -114,8 +114,14 @@ class NewPage(tk.Frame):
             elif q.type == qt.CHOICE_DISPLAY:
                 print("Display, no buttons needed.")
 
+            elif q.type == qt.DROPDOWN:  # a dropdown list is needed, where multiple items can be selected
+                perfumes = q.get_perfumes()  # list of strings, describing perfume name and brand
+                self.given_answer = tk.StringVar()
+                self.given_answer.set(perfumes[0])
+                dropdown_menu = tk.OptionMenu(self, self.given_answer, *perfumes)
+                dropdown_menu.pack()
+
             # Create submit button that can send the answer to the inference engine
-            # TODO: implement for multiple selection; now only works for single answer option
             submit = tk.Button(self, text="Next question", width=10, command=self._send_result)
             submit.pack()
 
@@ -126,7 +132,8 @@ class NewPage(tk.Frame):
             value = int(self.given_answer.get())
         elif self.question.type == qt.CHOICE_MULTIPLE_SELECT:
             value = [int(a.get()) for a in self.given_answer]
-            print(value)
+        elif self.question.type == qt.DROPDOWN:
+            value = [1, 2]  # TODO! give list of indices of (multiple) selected answers
         elif self.question.type == qt.CHOICE_DISPLAY:
             print("Display UI: no choice needed")
         else:

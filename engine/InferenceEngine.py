@@ -34,7 +34,7 @@ class InferenceEngine:
         database_path = (base_path / "../filteredDatabase.csv").resolve()
         # print(database_path)
         self.__perfumes = pd.read_csv(open(database_path, encoding="utf-8"))
-        truth_values = [0] * len(self.__perfumes.index)
+        truth_values = [0.0] * len(self.__perfumes.index)
         self.__perfumes['rank'] = truth_values
 
         # Save all possible questions.
@@ -47,12 +47,12 @@ class InferenceEngine:
         base_path = Path(__file__).parent
         # Set explicit path to question_answer_pairs.csv
         questionanswer_path = (base_path / "../engine/question/data/question_answer_pairs.csv").resolve()
-        #TODO de encoding staat hier anders dan hierboven op line 34, klopt dat?
-        questions = pd.read_csv(open(questionanswer_path), encoding="utf8")
+        #TODO de encoding staat hier anders dan hierboven op line 34, klopt dat? --> nee, vgm niet. Heb 'm aangepast! (allebei utf-8 ipv utf8)
+        questions = pd.read_csv(open(questionanswer_path), encoding="utf-8")
         no_questions = len(questions.index)
         max_question_id = questions["ID"].iloc[no_questions - 1]
         self.__final_question_id = max_question_id
-        self.__questions = self.__final_question_id * [None]
+        self.__questions = (self.__final_question_id + 1) * [None]  # + 1 door zero-indexing, maar IDs beginnen bij 1
 
         for index in range(no_questions):
             line = questions.iloc[index]
@@ -79,6 +79,7 @@ class InferenceEngine:
                 value = line["Value"]
                 if isinstance(value, str):
                     value = value.split(';')
+                    value = [float(x) for x in value if x != '']
                 if line["Type"] == "Single":
                     self.__questions[q_id] = QuestionChoiceSingle(q_id=q_id,
                                                                   question=q,
@@ -127,7 +128,7 @@ class InferenceEngine:
 
     # Check if we need to/can ask another question.
     def has_reached_goal(self):
-        if self.__next_question_id == -1 or self.__next_question_id > self.__final_question_id \
+        if self.__next_question_id == 'END' or self.__next_question_id > self.__final_question_id \
                 or not self.__next_question_id:
             return True
         return False
@@ -143,7 +144,7 @@ class InferenceEngine:
         print("getting new question")
         if not self.has_reached_goal():
             self.__current_question = self.__questions[self.__next_question_id]
-            if (self.__current_question == None):
+            if self.__current_question is None:
                 print("NOTE: question with ID ", self.__next_question_id, " does not exist (yet).")
                 exit(1)
             print(self.__current_question.question)

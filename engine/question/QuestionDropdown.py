@@ -8,16 +8,27 @@ class QuestionDropdown(Question):
     def __init__(self, q_id, question, engine, id_next, labels, value, perfumes):
         super().__init__(q_id,
                          question,
-                         qt.CHOICE_DROPDOWN,
+                         qt.DROPDOWN,
                          engine,
                          id_next,
                          labels,
                          value,
                          perfumes)
 
+    def get_perfumes(self):
+        products = len(self.perfumes.index) * [""]
+        df = self.perfumes[["Title", "Vendor"]]
+
+        for index, item in df.iterrows():
+            name = item["Title"] + " (" + item["Vendor"] + ")"
+            products[index] = name
+
+        return products
+
     def set_answer(self, perfume_indices):
         print("Setting answer QuestionDropdown: ", perfume_indices)
-
+        print(type(self.perfumes.loc[perfume_indices, ["rank"]]))
+        print(self.perfumes.loc[perfume_indices, ["rank"]])
         self.perfumes.loc[perfume_indices, ["rank"]] += self.value
 
 

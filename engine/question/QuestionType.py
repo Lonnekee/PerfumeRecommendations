@@ -8,4 +8,4 @@ class QuestionType(Enum):
     CHOICE_DISPLAY = auto(),
     INTEGER = auto(),
     STRING = auto(),
-    CHOICE_DROPDOWN = auto()
+    DROPDOWN = auto()
