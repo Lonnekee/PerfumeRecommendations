@@ -6,4 +6,5 @@ class QuestionType(Enum):
     CHOICE_SINGLE_SELECT = auto(),
     CHOICE_MULTIPLE_SELECT = auto(),
     INTEGER = auto(),
-    STRING = auto()
+    STRING = auto(),
+    CHOICE_DROPDOWN = auto()

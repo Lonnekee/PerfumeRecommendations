@@ -1,5 +1,6 @@
 import pandas as pd
 
+from engine.question.QuestionDropdown import QuestionDropdown
 from engine.question.QuestionChoiceMultiple import QuestionChoiceMultiple
 from engine.question.QuestionChoiceSingle import QuestionChoiceSingle
 from engine.question.QuestionType import QuestionType as qt
@@ -57,7 +58,7 @@ class InferenceEngine:
             q = line["Question"]
             q_id = int(line["ID"])
 
-            if line["Type"] == "Single" or line["Type"] == "Multiple":
+            if line["Type"] == "Single" or line["Type"] == "Multiple" or line["Type"] == "Drag":
                 # Split answers if there are any
                 answers = None
                 if not pd.isna(line["Answers"]):
@@ -87,16 +88,22 @@ class InferenceEngine:
                                                                   perfumes=self.__perfumes,
                                                                   answer_options=answers)
                 elif line["Type"] == "Multiple":
-                    self.__questions[q_id] = QuestionChoiceMultiple(q_id,
-                                                                    q,
-                                                                    self,
-                                                                    next_ids,
-                                                                    labels,
-                                                                    value,
-                                                                    self.__perfumes,
-                                                                    answers)
-            elif line["Type"] == "Drag":
-                pass
+                    self.__questions[q_id] = QuestionChoiceMultiple(q_id=q_id,
+                                                                    question=q,
+                                                                    engine=self,
+                                                                    id_next=next_ids,
+                                                                    labels=labels,
+                                                                    value=value,
+                                                                    perfumes=self.__perfumes,
+                                                                    answer_options=answers)
+                elif line["Type"] == "Drag":
+                    self.__questions[q_id] = QuestionDropdown(q_id=q_id,
+                                                              question=q,
+                                                              engine=self,
+                                                              id_next=next_ids,
+                                                              labels=labels,
+                                                              value=value,
+                                                              perfumes=self.__perfumes)
             elif line["Type"] == "Text":
                 pass
             elif line["Type"] == "Display":
@@ -144,8 +151,8 @@ class InferenceEngine:
                 exit(1)
             self.__next_question_id = q.id_next[value]
         elif isinstance(value, list):
-            print("We don't yet know how to go to the next question for certain multiple choice questions.")
-            exit(1)
+            ids = [q.id_next[index] for index, x in enumerate(value) if value]
+            self.__next_question_id = min(ids)
         elif isinstance(value, str):
             index = q.answers.index(value)
             self.__next_question_id = index

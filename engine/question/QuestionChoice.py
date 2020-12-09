@@ -1,7 +1,6 @@
 from engine.question.Question import Question
 
 
-# TODO Single select multiple choice or multi select multiple choice.
 class QuestionChoice(Question):
     def __init__(self, q_id, question, q_type, engine, id_next, labels, value, perfumes, answer_options):
         super().__init__(q_id, question, q_type, engine, id_next, labels, value, perfumes)
