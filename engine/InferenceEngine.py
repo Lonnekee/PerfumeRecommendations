@@ -9,6 +9,7 @@ from pathlib import Path
 
 # The inference engine uses forward chaining and is based on a sort of fuzzy logic.
 # Based on the answer to every questions, perfumes will be upvoted or downvoted.
+from engine.question.QuestionNumber import QuestionNumber
 from engine.question.QuestionText import QuestionText
 
 
@@ -57,7 +58,11 @@ class InferenceEngine:
             q = line["Question"]
             q_id = int(line["ID"])
 
-            if line["Type"] == "Single" or line["Type"] == "Multiple" or line["Type"] == "Drag" or line["Type"] == "Text":
+            if line["Type"] == "Single" \
+                    or line["Type"] == "Multiple" \
+                    or line["Type"] == "Drag" \
+                    or line["Type"] == "Text" \
+                    or line["Type"] == "Number":
                 # Split answers if there are any
                 answers = None
                 if not pd.isna(line["Answers"]):
@@ -110,6 +115,12 @@ class InferenceEngine:
                                                           engine=self,
                                                           id_next=next_ids,
                                                           perfumes=self.__perfumes)
+                elif line["Type"] == "Number":
+                    self.__questions[q_id] = QuestionNumber(q_id=q_id,
+                                                            question=q,
+                                                            engine=self,
+                                                            id_next=next_ids,
+                                                            perfumes=self.__perfumes)
             elif line["Type"] == "Display":
                 next_ids = line["IDnext"]
                 if isinstance(next_ids, str):
@@ -183,8 +194,9 @@ class InferenceEngine:
         print("\nNext up: ", self.__next_question_id)
 
     # Returns a number of recommended perfumes based on the current state of the knowledge base.
-    def get_recommendation(self):
-        return self.__perfumes  # TODO for now
+    def get_recommendations(self):
+        sorted_list = self.__perfumes.sort_values(axis=0, by="rank", ascending=False, inplace=False)
+        return sorted_list.iloc[0:5, :]
 
 
 if __name__ == "__main__":

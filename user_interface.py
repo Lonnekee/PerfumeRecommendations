@@ -114,7 +114,7 @@ class NewPage(tk.Frame):
             elif q.type == qt.CHOICE_DISPLAY:
                 print("Display, no buttons needed.")
 
-            elif q.type == qt.DROPDOWN:  # a dropdown list is needed, where multiple items can be selected
+            elif q.type == qt.DROPDOWN:  # a list is needed, where multiple items can be selected
                 # perfumes = q.get_perfumes()  list of strings, describing perfume name and brand
                 print(q.labels)
                 if("takePerfume" in q.labels):
@@ -129,7 +129,7 @@ class NewPage(tk.Frame):
 
                 # add scrollbar to listbox
                 scrollbar = tk.Scrollbar(self)
-                scrollbar.pack(side = tk.RIGHT, fill=tk.BOTH)
+                scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
 
                 self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=15)
                 self.lbox.config(yscrollcommand = scrollbar.set)
@@ -150,6 +150,11 @@ class NewPage(tk.Frame):
                     if search_term.lower() in item.lower():
                         self.lbox.insert(tk.END, item)
 
+            elif q.type == qt.NUMBER:
+                self.given_answer = tk.DoubleVar()
+                number_entry = tk.Entry(master, textvariable=self.given_answer)
+                number_entry.pack()
+
             # Create submit button that can send the answer to the inference engine
             submit = tk.Button(self, text="Next question", width=10, command=self._send_result)
             submit.pack()
@@ -165,6 +170,8 @@ class NewPage(tk.Frame):
             value = [int(index) for index in list(self.lbox.curselection())]
         elif self.question.type == qt.CHOICE_DISPLAY:
             print("Display UI: no choice needed")
+        elif self.question.type == qt.NUMBER:
+            value = float(self.given_answer.get())
         else:
             print("Question type's answer can not be processed yet.")
 
@@ -178,10 +185,17 @@ class NewPage(tk.Frame):
 class EndPage(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Label(self, text="Your recommended scent is %s" % ((master.outcome).get()),
+        tk.Label(self, text="Your recommendations",
                  font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
         tk.Button(self, text="Go back to start page", command=lambda: master.switch_frame(StartPage)).pack(
             side="bottom")
+
+        # TODO print nicely in GUI, not in terminal
+        recommendations = master.engine.get_recommendations()  # Pandas dataframe
+
+        for index in range(len(recommendations.index)):
+            text = "'" + recommendations['Title'].iloc[index] + "' by " + recommendations['Vendor'].iloc[index]
+            tk.Label(self, text=text).pack()
 
 
 if __name__ == "__main__":

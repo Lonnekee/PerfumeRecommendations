@@ -7,4 +7,7 @@ class QuestionText(Question):
         super().__init__(q_id, question, qt.STRING, engine, id_next, [], [], perfumes)
 
     def set_answer(self, value):
-        self.engine.add_additional_info("budget", value)  # TODO hardcoded budget for now
+        if value.isnumeric():
+            self.engine.add_additional_info("budget", float(value))  # TODO hardcoded budget for now
+        else:
+            print()
