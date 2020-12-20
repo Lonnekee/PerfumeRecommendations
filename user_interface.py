@@ -113,7 +113,7 @@ class NewPage(tk.Frame):
                 scrollbar = tk.Scrollbar(self)
                 scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
 
-                self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=15)
+                self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=10)
                 self.lbox.config(yscrollcommand = scrollbar.set)
                 scrollbar.config(command = self.lbox.yview)
                 self.lbox.pack()
@@ -122,15 +122,28 @@ class NewPage(tk.Frame):
                 
                 # TODO: (autocomplete) search bar
                 self.search_var = tk.StringVar()
-                #search_bar = tk.Entry(self, textvariable=self.search_var)
-                #search_bar.pack()
-                search_term = self.search_var.get()
-                #search = tk.Button(self, text="Search", width=10, command=search_term)
-                #search.pack()
+                search_bar = tk.Entry(self, textvariable=self.search_var)
+                search_bar.pack()
+                #self.extrabox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=35, height=10)
+                def search_keyword():
+                    search_term = self.search_var.get()
+                    for item in droplist:
+                        if search_term.lower() in item.lower():
+                            self.lbox.insert(tk.END, item)
+
+                def clear_list(box):
+                    box.delete(0, tk.END)
+
+
+
+                search = tk.Button(self, text="Search", width=10, command=search_keyword)
+                clear = tk.Button(self, text="clear", width=10, command=clear_list(self.lbox))
+                search.pack()
+                clear.pack()
                 self.lbox.delete(0, tk.END)
-                for item in droplist:
-                    if search_term.lower() in item.lower():
-                        self.lbox.insert(tk.END, item)
+                #for item in droplist:
+                #    if search_term.lower() in item.lower():
+                #        self.lbox.insert(tk.END, item)
 
             elif q.type == qt.NUMBER:
                 self.given_answer = tk.DoubleVar()
