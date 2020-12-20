@@ -14,6 +14,7 @@ class SampleApp(tk.Tk):
         tk.Tk.__init__(self)
         self.geometry('750x500')
         self.title('Perfume Knowledge System')
+        #self.title = tk.StringVar()
         self.engine = ie.InferenceEngine()
         self._frame = None
         self.switch_frame(StartPage)
@@ -31,6 +32,7 @@ class SampleApp(tk.Tk):
 class StartPage(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+        master.title('Perfume Knowledge System')
         tk.Label(self,
                  text="Welcome to the perfume knowledge system! After you have answered the questions, the system will determine the ideal scented product for your personal use.",
                  wraplength=750, font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
@@ -49,32 +51,12 @@ class PageOne(tk.Frame):
 
         def get_input():
             first_name = name_string.get()
-            (master.first_name).set(first_name)
-            master.switch_frame(NewPage)
+            if first_name != '':
+                (master.first_name).set(first_name)
+                master.title('Perfume Recommendations for %s' % first_name)
+            self.master.switch_frame(NewPage)
 
         tk.Button(self, text="Next", command=get_input).pack()
-
-
-class PageTwo(tk.Frame):
-    def __init__(self, master):
-        tk.Frame.__init__(self, master)
-        tk.Label(self, text="Welcome %s" % ((master.first_name).get()), font=('Helvetica', 18, "bold")).pack(side="top",
-                                                                                                             fill="x",
-                                                                                                             pady=5)
-        tk.Label(self, text="Do you like the smell of roses?", font=('Helvetica', 12)).pack(side="top", fill="x",
-                                                                                            pady=5)
-
-        def yesButton():
-            (master.outcome).set("Eau de Rose")
-            master.switch_frame(EndPage)
-
-        def noButton():
-            (master.outcome).set("Not Rose")
-            master.switch_frame(EndPage)
-
-        v = tk.IntVar()
-        tk.Radiobutton(self, text="Yes", variable=v, value=1, indicatoron=0, command=yesButton).pack()
-        tk.Radiobutton(self, text="No", variable=v, value=2, indicatoron=0, command=noButton).pack()
 
 
 class NewPage(tk.Frame):
@@ -152,7 +134,7 @@ class NewPage(tk.Frame):
 
             elif q.type == qt.NUMBER:
                 self.given_answer = tk.DoubleVar()
-                number_entry = tk.Entry(master, textvariable=self.given_answer)
+                number_entry = tk.Entry(self, textvariable=self.given_answer)
                 number_entry.pack()
 
             # Create submit button that can send the answer to the inference engine
@@ -182,14 +164,14 @@ class NewPage(tk.Frame):
             self.master.switch_frame(NewPage)
 
 
+
 class EndPage(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Label(self, text="Your recommendations",
+        tk.Label(self, text="Hi %s, here are your scent recommendations" % master.first_name.get(),
                  font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
-        tk.Button(self, text="Go back to start page", command=lambda: master.switch_frame(StartPage)).pack(
-            side="bottom")
-
+        tk.Button(self, text="Go back to start page", command=self._reset).pack(side="bottom")
+        
         # TODO print nicely in GUI, not in terminal
         recommendations = master.engine.get_recommendations()  # Pandas dataframe
 
@@ -197,6 +179,9 @@ class EndPage(tk.Frame):
             text = "'" + recommendations['Title'].iloc[index] + "' by " + recommendations['Vendor'].iloc[index]
             tk.Label(self, text=text).pack()
 
+    def _reset(self):
+        self.master.first_name.set('')
+        self.master.switch_frame(StartPage)
 
 if __name__ == "__main__":
     app = SampleApp()
