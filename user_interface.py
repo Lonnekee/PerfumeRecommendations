@@ -134,11 +134,23 @@ class NewPage(tk.Frame):
                 self.search_bar = tk.Entry(self, textvariable=self.search_var)
                 self.search_bar.pack()
 
+                self.value = []
+                self.product_index = []
+
+                def add_selected(selection):
+                    if len(selection)>0:
+                        for item in range(len(selection)):
+                            self.value.append(self.lbox.get(selection[item]))
+                    for product in self.value:
+                        if product in droplist:
+                            self.product_index.append(droplist.index(product))
+                    print("selection:"'%s' % self.value)
+                    self.given_answer = list(set(self.product_index))
+                    print("indexes:", self.given_answer)
+
                 def search_keyword():
                     selection=self.lbox.curselection()
-                    if len(selection)>0:
-                        value = self.lbox.get(selection[0])
-                        print("selection:", selection, ": '%s'" % value)
+                    add_selected(selection)
                     search_term = self.search_var.get()
                     self.lbox.delete(0, tk.END)
                     for item in droplist:
@@ -147,9 +159,7 @@ class NewPage(tk.Frame):
 
                 def clear_list():
                     selection=self.lbox.curselection()
-                    if len(selection)>0:
-                        value = self.lbox.get(selection[0])
-                        print("selection:", selection, ": '%s'" % value)
+                    add_selected(selection)
                     self.lbox.delete(0, tk.END)
                     self.search_bar.delete(0, tk.END)
                     self.lbox.insert("end", *droplist)
@@ -182,7 +192,8 @@ class NewPage(tk.Frame):
         elif self.question.type == qt.MULTIPLE:
             value = [int(a.get()) for a in self.given_answer]
         elif self.question.type == qt.DROPDOWN:
-            value = [int(index) for index in list(self.lbox.curselection())]
+            #value = [int(index) for index in list(self.lbox.curselection())]
+            value = [a for a in self.given_answer]
         elif self.question.type == qt.DISPLAY:
             print("Display UI: no choice needed")
         elif self.question.type == qt.BUDGET:
