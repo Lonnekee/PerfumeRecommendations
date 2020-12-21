@@ -7,7 +7,7 @@ class QuestionChoiceMultiple(QuestionChoice):
     def __init__(self, q_id, question, engine, id_next, labels, value, perfumes, answer_options):
         super().__init__(q_id,
                          question,
-                         qt.CHOICE_MULTIPLE_SELECT,
+                         qt.MULTIPLE,
                          engine,
                          id_next,
                          labels,

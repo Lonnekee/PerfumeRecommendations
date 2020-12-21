@@ -87,20 +87,20 @@ class NewPage(tk.Frame):
                                                                                                pady=5)
 
             # Add the appropriate buttons or fields for the answers
-            if q.type == qt.CHOICE_SINGLE_SELECT:  # radio buttons needed
+            if q.type == qt.SINGLE:  # radio buttons needed
                 self.given_answer = tk.IntVar()
                 for i, answer in enumerate(q.answers):
                     radios = tk.Radiobutton(self, text=answer, fg="#FBF8EE", bg='#8A5C3C', variable=self.given_answer, value=i)
                     radios.pack()
 
-            elif q.type == qt.CHOICE_MULTIPLE_SELECT:  # selectable boxes or images needed (?)
+            elif q.type == qt.MULTIPLE:  # selectable boxes or images needed (?)
                 self.given_answer = len(q.answers) * [0]
                 for i in range(len(q.answers)):
                     self.given_answer[i] = tk.IntVar()
                     c = tk.Checkbutton(self, text=q.answers[i], fg="#FBF8EE", bg='#8A5C3C', variable=self.given_answer[i])
                     c.pack()
 
-            elif q.type == qt.CHOICE_DISPLAY:
+            elif q.type == qt.DISPLAY:
                 print("Display, no buttons needed.")
 
             elif q.type == qt.DROPDOWN:  # a list is needed, where multiple items can be selected
@@ -160,12 +160,12 @@ class NewPage(tk.Frame):
                 search.pack()
                 clear.pack()
 
-            elif q.type == qt.NUMBER:
+            elif q.type == qt.BUDGET:
                 minPrice, maxPrice = master.engine.get_price_range()
                 self.given_answer = tk.DoubleVar()
                 scale_entry = tk.Scale(self, variable=self.given_answer, label='Maximum budget in euros:', from_=minPrice, to=maxPrice, tickinterval=(minPrice-maxPrice), orient=tk.HORIZONTAL,length=200)
                 scale_entry.pack()
-            elif q.type == qt.STRING:
+            elif q.type == qt.NAME:
                 self.given_answer = tk.StringVar()
                 name_entry = tk.Entry(self, textvariable=self.given_answer)
                 name_entry.pack()
@@ -177,17 +177,17 @@ class NewPage(tk.Frame):
     # Sends result to inference engine and switches frame
     def _send_result(self):
         value = None
-        if self.question.type == qt.CHOICE_SINGLE_SELECT:
+        if self.question.type == qt.SINGLE:
             value = int(self.given_answer.get())
-        elif self.question.type == qt.CHOICE_MULTIPLE_SELECT:
+        elif self.question.type == qt.MULTIPLE:
             value = [int(a.get()) for a in self.given_answer]
         elif self.question.type == qt.DROPDOWN:
             value = [int(index) for index in list(self.lbox.curselection())]
-        elif self.question.type == qt.CHOICE_DISPLAY:
+        elif self.question.type == qt.DISPLAY:
             print("Display UI: no choice needed")
-        elif self.question.type == qt.NUMBER:
+        elif self.question.type == qt.BUDGET:
             value = float(self.given_answer.get())
-        elif self.question.type == qt.STRING:
+        elif self.question.type == qt.NAME:
             first_name = self.given_answer.get()
             if first_name != '':
                 (self.master.first_name).set(first_name)

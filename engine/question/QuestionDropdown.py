@@ -59,7 +59,7 @@ class QuestionDropdown(Question):
 
             for index in indices:
                 element = self.items["Tag"].iloc[index]
-                perfume_booleans = self.perfumes['Tags'].str.contains(element)
+                perfume_booleans = self.perfumes['Tag'].str.contains(element)
                 self.__set_indices(perfume_booleans)
         else:
             print("QuestionDropdown: Appropriate dropdown not found.")

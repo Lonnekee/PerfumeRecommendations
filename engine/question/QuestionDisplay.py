@@ -7,7 +7,7 @@ class QuestionDisplay(QuestionChoice):
     def __init__(self, q_id, question, engine, id_next, labels, value, perfumes, answer_options):
         super().__init__(q_id,
                          question,
-                         qt.CHOICE_DISPLAY,
+                         qt.DISPLAY,
                          engine,
                          id_next,
                          labels,
