@@ -37,17 +37,17 @@ class StartPage(tk.Frame):
         self['bg'] = '#FBF8EE'
         tk.Label(self,
                  text="Welcome to the perfume knowledge system! After you have answered the questions, the system will determine the ideal scented product for your personal use.",
-                 wraplength=750, font=('Alegreya sans', 18, "bold"), fg='#8A5C3C',bg='#FBF8EE').pack(side="top", fill="x", pady=5)
-        start_button = tk.Button(self, text="CLICK HERE TO START", font=('Alegreya sans', '12', 'italic'), fg="#FBF8EE", bg='#8A5C3C',command=lambda: master.switch_frame(NewPage))
-        start_button.place(x=325, y=250)
-        start_button.pack()
+                 wraplength=750, font=('Alegreya sans', 18), fg='#8A5C3C',bg='#FBF8EE').pack(side="top", fill="x", pady=5)
+        start_button = tk.Button(self, text="CLICK HERE TO START", font=('Alegreya sans', '12', 'italic'), width=100, fg="#FBF8EE", bg='#8A5C3C',command=lambda: master.switch_frame(NewPage))
+        #start_button.place(x=325, y=250)
+        start_button.pack(side=tk.BOTTOM, pady=100)
 
 
 class PageOne(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self['bg'] = '#FBF8EE'
-        tk.Label(self, text="What is your name?", wraplength=750, font=('Alegreya sans', 18, "bold"),fg='#8A5C3C',bg='#FBF8EE').pack(side="top",
+        tk.Label(self, text="What is your name?", wraplength=750, font=('Alegreya sans', 18),fg='#8A5C3C',bg='#FBF8EE').pack(side="top",
                                                                                                        fill="x", pady=5)
         tk.Label(self, text="Name")
         name_string = tk.StringVar()
@@ -61,8 +61,7 @@ class PageOne(tk.Frame):
                 master.title('Perfume Recommendations for %s' % first_name)
             self.master.switch_frame(NewPage)
 
-        tk.Button(self, text="Next", fg="#FBF8EE", bg='#8A5C3C', command=get_input).pack()
-
+        #tk.Button(self, text="NEXT", font=('Alegreya sans', '12', 'italic'),fg="#FBF8EE", bg='#8A5C3C', command=get_input).pack(side=tk.BOTTOM, fill="x", pady=50)
 
 class NewPage(tk.Frame):
     given_answer = None
@@ -129,7 +128,7 @@ class NewPage(tk.Frame):
                 self.given_answer = tk.StringVar()
                 self.given_answer.set(self.droplist[0])
 
-                # TODO: (autocomplete) search bar
+
                 self.search_var = tk.StringVar()
                 self.search_bar = tk.Entry(self, textvariable=self.search_var)
                 self.search_bar.pack()
@@ -171,9 +170,11 @@ class NewPage(tk.Frame):
                 name_entry.pack()
 
             # Create submit button that can send the answer to the inference engine
-            submit = tk.Button(self, text="Next question", width=10,fg="#FBF8EE", bg='#8A5C3C', command=self._send_result)
-            submit.pack()
+            submit = tk.Button(self, text="NEXT QUESTION", font=('Alegrya sans', '12', 'italic'),width=600,fg="#FBF8EE", bg='#8A5C3C', command=self._send_result)
+            submit.place(x=325, y=250)
+            submit.pack(side=tk.BOTTOM, fill="x", pady=50)
 
+    # Continuously add current selection of dropdown in list
     def add_selected(self, selection):
         if len(selection)>0:
             for item in range(len(selection)):
@@ -193,7 +194,6 @@ class NewPage(tk.Frame):
         elif self.question.type == qt.MULTIPLE:
             value = [int(a.get()) for a in self.given_answer]
         elif self.question.type == qt.DROPDOWN:
-            #value = [int(index) for index in list(self.lbox.curselection())]
             self.add_selected(self.lbox.curselection())
             value = [a for a in self.given_answer]
         elif self.question.type == qt.DISPLAY:
