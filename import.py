@@ -21,6 +21,12 @@ def load_data(file):
     data.loc[rows, ['rank']] += 1
     print(data.loc[:, ['rank']])
 
+    # Selecting perfumes of or under a certain price
+    budget = 100.0
+    indices = data[data["Price"] > budget].index
+    data.drop(labels=indices, inplace=True)
+    print(data['Price'])
+
 
 def main():
     data = load_data('filteredDatabase.csv')
