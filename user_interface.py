@@ -148,9 +148,10 @@ class NewPage(tk.Frame):
                 #        self.lbox.insert(tk.END, item)
 
             elif q.type == qt.NUMBER:
+                minPrice, maxPrice = master.engine.get_price_range()
                 self.given_answer = tk.DoubleVar()
-                number_entry = tk.Entry(self, textvariable=self.given_answer)
-                number_entry.pack()
+                scale_entry = tk.Scale(self, variable=self.given_answer, label='Maximum budget in euros:', from_=minPrice, to=maxPrice, tickinterval=(minPrice-maxPrice), orient=tk.HORIZONTAL,length=200)
+                scale_entry.pack()
             elif q.type == qt.STRING:
                 self.given_answer = tk.StringVar()
                 name_entry = tk.Entry(self, textvariable=self.given_answer)
