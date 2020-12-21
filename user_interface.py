@@ -14,7 +14,7 @@ class SampleApp(tk.Tk):
         tk.Tk.__init__(self)
         self.geometry('750x500')
         self.title('Perfume Knowledge System')
-        #self.title = tk.StringVar()
+        # self.title = tk.StringVar()
         self.engine = ie.InferenceEngine()
         self._frame = None
         self.switch_frame(StartPage)
@@ -36,7 +36,7 @@ class StartPage(tk.Frame):
         tk.Label(self,
                  text="Welcome to the perfume knowledge system! After you have answered the questions, the system will determine the ideal scented product for your personal use.",
                  wraplength=750, font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
-        tk.Button(self, text="Click here to start", command=lambda: master.switch_frame(PageOne)).pack()
+        tk.Button(self, text="Click here to start", command=lambda: master.switch_frame(NewPage)).pack()
 
 
 class PageOne(tk.Frame):
@@ -77,7 +77,8 @@ class NewPage(tk.Frame):
             self.question = q
 
             # Display the question that this frame is about
-            tk.Label(self, text="%s" % q.question,wraplengt=600, font=('Helvetica', 12)).pack(side="top", fill="x", pady=5)
+            tk.Label(self, text="%s" % q.question, wraplengt=600, font=('Helvetica', 12)).pack(side="top", fill="x",
+                                                                                               pady=5)
 
             # Add the appropriate buttons or fields for the answers
             if q.type == qt.CHOICE_SINGLE_SELECT:  # radio buttons needed
@@ -99,14 +100,14 @@ class NewPage(tk.Frame):
             elif q.type == qt.DROPDOWN:  # a list is needed, where multiple items can be selected
                 # perfumes = q.get_perfumes()  list of strings, describing perfume name and brand
                 print(q.labels)
-                if("takePerfume" in q.labels):
-                    droplist,tags = q.get_perfumes()  # lists of strings, describing perfume name and brand and their tags
-                elif("takeFamily" in q.labels):
-                    droplist,tags = q.get_families()  # lists of strings, describing olfactory families and their tags
-                elif("takeIngredient" in q.labels):
-                    droplist,tags = q.get_ingredients()  # lists of strings, describing ingredients and their tags
+                if ("takePerfume" in q.labels):
+                    droplist, tags = q.get_perfumes()  # lists of strings, describing perfume name and brand and their tags
+                elif ("takeFamily" in q.labels):
+                    droplist, tags = q.get_families()  # lists of strings, describing olfactory families and their tags
+                elif ("takeIngredient" in q.labels):
+                    droplist, tags = q.get_ingredients()  # lists of strings, describing ingredients and their tags
                 else:
-                    droplist,tags = None,None
+                    droplist, tags = None, None
                     print("Appropriate dropdown not found.")
 
                 # add scrollbar to listbox
@@ -114,17 +115,18 @@ class NewPage(tk.Frame):
                 scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
 
                 self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=10)
-                self.lbox.config(yscrollcommand = scrollbar.set)
-                scrollbar.config(command = self.lbox.yview)
+                self.lbox.config(yscrollcommand=scrollbar.set)
+                scrollbar.config(command=self.lbox.yview)
                 self.lbox.pack()
                 self.given_answer = tk.StringVar()
                 self.given_answer.set(droplist[0])
-                
+
                 # TODO: (autocomplete) search bar
                 self.search_var = tk.StringVar()
                 search_bar = tk.Entry(self, textvariable=self.search_var)
                 search_bar.pack()
-                #self.extrabox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=35, height=10)
+
+                # self.extrabox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=35, height=10)
                 def search_keyword():
                     search_term = self.search_var.get()
                     for item in droplist:
@@ -134,14 +136,12 @@ class NewPage(tk.Frame):
                 def clear_list(box):
                     box.delete(0, tk.END)
 
-
-
                 search = tk.Button(self, text="Search", width=10, command=search_keyword)
                 clear = tk.Button(self, text="clear", width=10, command=clear_list(self.lbox))
                 search.pack()
                 clear.pack()
                 self.lbox.delete(0, tk.END)
-                #for item in droplist:
+                # for item in droplist:
                 #    if search_term.lower() in item.lower():
                 #        self.lbox.insert(tk.END, item)
 
@@ -149,6 +149,10 @@ class NewPage(tk.Frame):
                 self.given_answer = tk.DoubleVar()
                 number_entry = tk.Entry(self, textvariable=self.given_answer)
                 number_entry.pack()
+            elif q.type == qt.STRING:
+                self.given_answer = tk.StringVar()
+                name_entry = tk.Entry(self, textvariable=self.given_answer)
+                name_entry.pack()
 
             # Create submit button that can send the answer to the inference engine
             submit = tk.Button(self, text="Next question", width=10, command=self._send_result)
@@ -167,6 +171,11 @@ class NewPage(tk.Frame):
             print("Display UI: no choice needed")
         elif self.question.type == qt.NUMBER:
             value = float(self.given_answer.get())
+        elif self.question.type == qt.STRING:
+            first_name = self.given_answer.get()
+            if first_name != '':
+                (self.master.first_name).set(first_name)
+                self.master.title('Perfume Recommendations for %s' % first_name)
         else:
             print("Question type's answer can not be processed yet.")
 
@@ -177,15 +186,13 @@ class NewPage(tk.Frame):
             self.master.switch_frame(NewPage)
 
 
-
 class EndPage(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         tk.Label(self, text="Hi %s, here are your scent recommendations" % master.first_name.get(),
                  font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
         tk.Button(self, text="Go back to start page", command=self._reset).pack(side="bottom")
-        
-        # TODO print nicely in GUI, not in terminal
+
         recommendations = master.engine.get_recommendations()  # Pandas dataframe
 
         for index in range(len(recommendations.index)):
@@ -194,7 +201,9 @@ class EndPage(tk.Frame):
 
     def _reset(self):
         self.master.first_name.set('')
+        self.master.engine.reset()
         self.master.switch_frame(StartPage)
+
 
 if __name__ == "__main__":
     app = SampleApp()
