@@ -219,6 +219,8 @@ class NewPage(tk.Frame):
 
 
 class EndPage(tk.Frame):
+    images = []
+
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self['bg']="#FBF8EE"
@@ -227,7 +229,6 @@ class EndPage(tk.Frame):
             .grid(row=0, columnspan=3, pady=5)
 
         recommendations = master.engine.get_recommendations()  # Pandas dataframe
-        images = []
 
         start_row = 1
         no_items = 5
@@ -239,11 +240,9 @@ class EndPage(tk.Frame):
             column = index % no_columns
 
             # Image
-            url = 'https://cdn.shopify.com/s/files/1/1323/9877/products/Parfum-d-Empire-eau-suave-50-ml-perfume-lounge_600x600_62431447-83a2-4e02-a6e5-018291b86163.jpg?v=1576943377'
-            # row['Image']
-            # raw_data = urllib.request.urlopen(url).read()
-            # im = Image.open(io.BytesIO(raw_data))
-            im = Image.open('C:/Users/lonne/Google Drive/Bachelor AI/2020-2021/Ib/Knowledge Technology Practical/PerfumeRecommendations/test_image.jpg')
+            url = row['Image']
+            raw_data = urllib.request.urlopen(url).read()
+            im = Image.open(io.BytesIO(raw_data))
 
             width, height = im.size
             factor = width / im_width
@@ -251,7 +250,7 @@ class EndPage(tk.Frame):
 
             image = ImageTk.PhotoImage(im)
             tk.Label(self, image=image).grid(row=start_row + 0, column=column)
-            images.append(image)  # Append to list of images to keep the reference. Otherwise, it might not show.
+            self.images.append(image)  # Append to list of images to keep the reference. Otherwise, it might not show.
 
             # Vendor
             tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Vendor']).grid(row=start_row + 1, column=column)
