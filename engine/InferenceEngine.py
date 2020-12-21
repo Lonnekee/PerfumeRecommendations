@@ -5,6 +5,7 @@ from engine.question.QuestionChoiceMultiple import QuestionChoiceMultiple
 from engine.question.QuestionChoiceSingle import QuestionChoiceSingle
 from engine.question.QuestionDisplay import QuestionDisplay
 from pathlib import Path
+import math
 
 # The inference engine uses forward chaining and is based on a sort of fuzzy logic.
 # Based on the answer to every questions, perfumes will be upvoted or downvoted.
@@ -204,6 +205,14 @@ class InferenceEngine:
     def get_recommendations(self):
         sorted_list = self.__perfumes.sort_values(axis=0, by="rank", ascending=False, inplace=False)
         return sorted_list.iloc[0:5, :]
+
+    # Returns the min and max price of the top 20 products that are left.
+    def get_price_range(self):
+        sorted_list = self.__perfumes.sort_values(axis=0, by="rank", ascending=False, inplace=False)
+        top20 = sorted_list.iloc[0:20, :]
+        maxPrice = math.ceil(float(top20['Price'].max()))
+        minPrice = math.ceil(float(top20['Price'].min()))
+        return minPrice, maxPrice
 
 
 if __name__ == "__main__":

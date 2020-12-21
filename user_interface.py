@@ -33,16 +33,21 @@ class StartPage(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         master.title('Perfume Knowledge System')
+        master['bg'] = '#FBF8EE'
+        self['bg'] = '#FBF8EE'
         tk.Label(self,
                  text="Welcome to the perfume knowledge system! After you have answered the questions, the system will determine the ideal scented product for your personal use.",
-                 wraplength=750, font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
-        tk.Button(self, text="Click here to start", command=lambda: master.switch_frame(NewPage)).pack()
+                 wraplength=750, font=('Alegreya sans', 18, "bold"), fg='#8A5C3C',bg='#FBF8EE').pack(side="top", fill="x", pady=5)
+        start_button = tk.Button(self, text="CLICK HERE TO START", font=('Alegreya sans', '12', 'italic'), fg="#FBF8EE", bg='#8A5C3C',command=lambda: master.switch_frame(NewPage))
+        start_button.place(x=325, y=250)
+        start_button.pack()
 
 
 class PageOne(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Label(self, text="What is your name?", wraplength=750, font=('Helvetica', 18, "bold")).pack(side="top",
+        self['bg'] = '#FBF8EE'
+        tk.Label(self, text="What is your name?", wraplength=750, font=('Alegreya sans', 18, "bold"),fg='#8A5C3C',bg='#FBF8EE').pack(side="top",
                                                                                                        fill="x", pady=5)
         tk.Label(self, text="Name")
         name_string = tk.StringVar()
@@ -56,7 +61,7 @@ class PageOne(tk.Frame):
                 master.title('Perfume Recommendations for %s' % first_name)
             self.master.switch_frame(NewPage)
 
-        tk.Button(self, text="Next", command=get_input).pack()
+        tk.Button(self, text="Next", fg="#FBF8EE", bg='#8A5C3C', command=get_input).pack()
 
 
 class NewPage(tk.Frame):
@@ -72,26 +77,27 @@ class NewPage(tk.Frame):
         else:
             # Initialise frame
             tk.Frame.__init__(self, master)
+            self['bg'] = '#FBF8EE'
 
             q = master.engine.get_next_question()
             self.question = q
 
             # Display the question that this frame is about
-            tk.Label(self, text="%s" % q.question, wraplengt=600, font=('Helvetica', 12)).pack(side="top", fill="x",
+            tk.Label(self, text="%s" % q.question, wraplengt=600, font=('Alegreya sans', 12),fg='#8A5C3C',bg='#FBF8EE').pack(side="top", fill="x",
                                                                                                pady=5)
 
             # Add the appropriate buttons or fields for the answers
             if q.type == qt.SINGLE:  # radio buttons needed
                 self.given_answer = tk.IntVar()
                 for i, answer in enumerate(q.answers):
-                    radios = tk.Radiobutton(self, text=answer, variable=self.given_answer, value=i)
+                    radios = tk.Radiobutton(self, text=answer, fg="#FBF8EE", bg='#8A5C3C', variable=self.given_answer, value=i)
                     radios.pack()
 
             elif q.type == qt.MULTIPLE:  # selectable boxes or images needed (?)
                 self.given_answer = len(q.answers) * [0]
                 for i in range(len(q.answers)):
                     self.given_answer[i] = tk.IntVar()
-                    c = tk.Checkbutton(self, text=q.answers[i], variable=self.given_answer[i])
+                    c = tk.Checkbutton(self, text=q.answers[i], fg="#FBF8EE", bg='#8A5C3C', variable=self.given_answer[i])
                     c.pack()
 
             elif q.type == qt.DISPLAY:
@@ -115,6 +121,7 @@ class NewPage(tk.Frame):
                 scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
 
                 self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=10)
+                self.lbox.insert("end", *droplist)
                 self.lbox.config(yscrollcommand = scrollbar.set)
                 scrollbar.config(command = self.lbox.yview)
 
@@ -129,6 +136,7 @@ class NewPage(tk.Frame):
 
                 def search_keyword():
                     search_term = self.search_var.get()
+                    self.lbox.delete(0, tk.END)
                     for item in droplist:
                         if search_term.lower() in item.lower():
                             self.lbox.insert(0, item)
@@ -136,28 +144,29 @@ class NewPage(tk.Frame):
                 def clear_list():
                     self.lbox.delete(0, tk.END)
                     self.search_bar.delete(0, tk.END)
-                    self.lbox.pack()
+                    self.lbox.insert("end", *droplist)
 
-                search = tk.Button(self, text="Search", width=10, command=search_keyword)
-                clear = tk.Button(self, text="Clear", width=10, command=clear_list)
+                search = tk.Button(self, text="Search", width=10, fg="#FBF8EE", bg='#8A5C3C', command=search_keyword)
+                clear = tk.Button(self, text="Clear", width=10,fg="#FBF8EE", bg='#8A5C3C', command=clear_list)
                 search.pack()
                 clear.pack()
-                self.lbox.delete(0, tk.END)
+                #self.lbox.delete(0, tk.END)
                 # for item in droplist:
                 #    if search_term.lower() in item.lower():
                 #        self.lbox.insert(tk.END, item)
 
             elif q.type == qt.BUDGET:
+                minPrice, maxPrice = master.engine.get_price_range()
                 self.given_answer = tk.DoubleVar()
-                number_entry = tk.Entry(self, textvariable=self.given_answer)
-                number_entry.pack()
+                scale_entry = tk.Scale(self, variable=self.given_answer, label='Maximum budget in euros:', from_=minPrice, to=maxPrice, tickinterval=(minPrice-maxPrice), orient=tk.HORIZONTAL,length=200)
+                scale_entry.pack()
             elif q.type == qt.NAME:
                 self.given_answer = tk.StringVar()
                 name_entry = tk.Entry(self, textvariable=self.given_answer)
                 name_entry.pack()
 
             # Create submit button that can send the answer to the inference engine
-            submit = tk.Button(self, text="Next question", width=10, command=self._send_result)
+            submit = tk.Button(self, text="Next question", width=10,fg="#FBF8EE", bg='#8A5C3C', command=self._send_result)
             submit.pack()
 
     # Sends result to inference engine and switches frame
@@ -191,15 +200,16 @@ class NewPage(tk.Frame):
 class EndPage(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+        self['bg']="#FBF8EE"
         tk.Label(self, text="Hi %s, here are your scent recommendations" % master.first_name.get(),
-                 font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
-        tk.Button(self, text="Go back to start page", command=self._reset).pack(side="bottom")
+                 font=('Alegreya sans', 18, "bold"),fg='#8A5C3C',bg='#FBF8EE').pack(side="top", fill="x", pady=5)
+        tk.Button(self, text="Go back to start page", fg="#FBF8EE", bg='#8A5C3C', command=self._reset).pack(side="bottom")
 
         recommendations = master.engine.get_recommendations()  # Pandas dataframe
 
         for index in range(len(recommendations.index)):
             text = "'" + recommendations['Title'].iloc[index] + "' by " + recommendations['Vendor'].iloc[index]
-            tk.Label(self, text=text).pack()
+            tk.Label(self,fg='#8A5C3C',bg='#FBF8EE', text=text).pack()
 
     def _reset(self):
         self.master.first_name.set('')
