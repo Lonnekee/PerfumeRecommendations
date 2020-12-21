@@ -4,6 +4,9 @@ try:
     import Tkinter as tk
 except:
     import tkinter as tk
+import io
+import urllib.request
+from PIL import Image, ImageTk
 
 import engine.InferenceEngine as ie
 from engine.question.QuestionType import QuestionType as qt
@@ -220,14 +223,55 @@ class EndPage(tk.Frame):
         tk.Frame.__init__(self, master)
         self['bg']="#FBF8EE"
         tk.Label(self, text="Hi %s, here are your scent recommendations" % master.first_name.get(),
-                 font=('Alegreya sans', 18, "bold"),fg='#8A5C3C',bg='#FBF8EE').pack(side="top", fill="x", pady=5)
-        tk.Button(self, text="Go back to start page", fg="#FBF8EE", bg='#8A5C3C', command=self._reset).pack(side="bottom")
+                 font=('Alegreya sans', 18, "bold"),fg='#8A5C3C',bg='#FBF8EE')\
+            .grid(row=0, columnspan=3, pady=5)
 
         recommendations = master.engine.get_recommendations()  # Pandas dataframe
+        images = []
+
+        start_row = 1
+        no_items = 5
+        no_columns = 3
+        im_width = 100
 
         for index in range(len(recommendations.index)):
-            text = "'" + recommendations['Title'].iloc[index] + "' by " + recommendations['Vendor'].iloc[index]
-            tk.Label(self,fg='#8A5C3C',bg='#FBF8EE', text=text).pack()
+            row = recommendations.iloc[index]
+            column = index % no_columns
+
+            # Image
+            url = 'https://cdn.shopify.com/s/files/1/1323/9877/products/Parfum-d-Empire-eau-suave-50-ml-perfume-lounge_600x600_62431447-83a2-4e02-a6e5-018291b86163.jpg?v=1576943377'
+            # row['Image']
+            # raw_data = urllib.request.urlopen(url).read()
+            # im = Image.open(io.BytesIO(raw_data))
+            im = Image.open('C:/Users/lonne/Google Drive/Bachelor AI/2020-2021/Ib/Knowledge Technology Practical/PerfumeRecommendations/test_image.jpg')
+
+            width, height = im.size
+            factor = width / im_width
+            im = im.resize((round(height / factor), round(im_width)))
+
+            image = ImageTk.PhotoImage(im)
+            tk.Label(self, image=image).grid(row=start_row + 0, column=column)
+            images.append(image)  # Append to list of images to keep the reference. Otherwise, it might not show.
+
+            # Vendor
+            tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Vendor']).grid(row=start_row + 1, column=column)
+
+            # Name of perfume
+            tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Title']).grid(row=start_row + 2, column=column)
+
+            # Type of perfume (eau de parfum, eau de toilette, etc.)
+            tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Type']).grid(row=start_row + 3, column=column)
+
+            # Price
+            price = "€" + str(row['Price'])
+            tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=price).grid(row=start_row + 4, column=column)
+
+            if column == no_columns - 1 or index == len(recommendations)-1:
+                start_row += no_items
+
+        tk.Button(self, text="Go back to start page", fg="#FBF8EE", bg='#8A5C3C', command=self._reset)\
+            .grid(row=start_row, columnspan=3)
+
 
     def _reset(self):
         self.master.first_name.set('')
