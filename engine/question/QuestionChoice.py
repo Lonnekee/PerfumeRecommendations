@@ -16,13 +16,14 @@ class QuestionChoice(Question):
 
             # Get the relevant column to search for label
             column = None
-            # if lab.startswith('Collection:'):
-            #     column = 'Collection'
-            # el
-            if lab.startswith('Tag:'):
+            if lab.startswith('Collection:'):
+                column = 'Collection'
+            elif lab.startswith('Tag:'):
                 column = 'Tag'
             elif lab.startswith('Vendor:'):
                 column = 'Vendor'
+            elif lab.startswith('Type:'):
+                column = 'Type'
             else:
                 print('  QuestionChoice: column type not recognized! (Only Tag, Vendor are known.)')
                 continue

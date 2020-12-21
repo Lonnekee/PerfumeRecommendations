@@ -7,13 +7,13 @@ from engine.question.QuestionDisplay import QuestionDisplay
 from pathlib import Path
 import math
 
-# The inference engine uses forward chaining and is based on a sort of fuzzy logic.
-# Based on the answer to every questions, perfumes will be upvoted or downvoted.
 from engine.question.QuestionBudget import QuestionBudget
 from engine.question.QuestionName import QuestionName
 from engine.question.QuestionType import QuestionType as qt
 
 
+# The inference engine uses forward chaining and is based on a sort of fuzzy logic.
+# Based on the answer to every questions, perfumes will be upvoted or downvoted.
 class InferenceEngine:
     ## Attributes
     __questions = []
@@ -25,9 +25,6 @@ class InferenceEngine:
 
     ## Constructor
     def __init__(self):
-        # Set username: the name that we will use to address the user.
-        self.username = "Sir/Madam"
-
         # Store all perfumes and their initial 'truth-values'.
         base_path = Path(__file__).parent
         # Set explicit path to filteredDatabase.csv
@@ -39,7 +36,8 @@ class InferenceEngine:
         # Save all possible questions.
         self._read_questions()
 
-    ## Methods
+    #############
+    ## Methods ##
 
     def reset(self):
         # Store all perfumes and their initial 'truth-values'.
@@ -52,7 +50,7 @@ class InferenceEngine:
         truth_values = [0.0] * len(self.__perfumes.index)
         self.__perfumes['rank'] = truth_values
 
-        # No need to reset username, __final_question_id and __questions
+        # No need to reset __final_question_id or __questions
         self.__current_question = None
         self.__next_question_id = 2
         self.__additional_info = {}
@@ -163,10 +161,8 @@ class InferenceEngine:
     def add_additional_info(self, entry_name, value):
         self.__additional_info[entry_name] = value
 
-    ## Getters and setters
-
-    def set_username(self, name):
-        self.username = name
+    #########################
+    ## Getters and setters ##
 
     # Returns the next question and removes it from the list of remaining questions.
     def get_next_question(self):
@@ -217,7 +213,6 @@ class InferenceEngine:
 
 if __name__ == "__main__":
     engine = InferenceEngine()
-    engine.set_username("Lonneke")
 
     while True:
         q = engine.get_next_question()

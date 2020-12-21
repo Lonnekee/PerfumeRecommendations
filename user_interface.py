@@ -173,7 +173,8 @@ class NewPage(tk.Frame):
             elif q.type == qt.BUDGET:
                 minPrice, maxPrice = master.engine.get_price_range()
                 self.given_answer = tk.DoubleVar()
-                scale_entry = tk.Scale(self, variable=self.given_answer, label='Maximum budget in euros:', from_=minPrice, to=maxPrice, tickinterval=(minPrice-maxPrice), orient=tk.HORIZONTAL,length=200)
+                scale_entry = tk.Scale(self, variable=self.given_answer, label='Maximum budget in euros:', from_=minPrice, to=maxPrice, tickinterval=(maxPrice-minPrice), orient=tk.HORIZONTAL,length=200)
+                scale_entry.set(int((maxPrice-minPrice)/2))
                 scale_entry.pack()
             elif q.type == qt.NAME:
                 self.given_answer = tk.StringVar()
