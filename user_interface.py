@@ -136,6 +136,7 @@ class NewPage(tk.Frame):
 
                 def search_keyword():
                     search_term = self.search_var.get()
+                    self.lbox.delete(0, tk.END)
                     for item in droplist:
                         if search_term.lower() in item.lower():
                             self.lbox.insert(0, item)
@@ -143,7 +144,7 @@ class NewPage(tk.Frame):
                 def clear_list():
                     self.lbox.delete(0, tk.END)
                     self.search_bar.delete(0, tk.END)
-                    self.lbox.pack()
+                    self.lbox.insert("end", *droplist)
 
                 search = tk.Button(self, text="Search", width=10, fg="#FBF8EE", bg='#8A5C3C', command=search_keyword)
                 clear = tk.Button(self, text="Clear", width=10,fg="#FBF8EE", bg='#8A5C3C', command=clear_list)
