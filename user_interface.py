@@ -115,30 +115,18 @@ class NewPage(tk.Frame):
                 scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
 
                 self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=10)
-<<<<<<< HEAD
                 self.lbox.config(yscrollcommand = scrollbar.set)
                 scrollbar.config(command = self.lbox.yview)
 
-=======
-                self.lbox.config(yscrollcommand=scrollbar.set)
-                scrollbar.config(command=self.lbox.yview)
->>>>>>> 69afa07a56b8048f9d3c97b7ce8cfa99f40f49e0
                 self.lbox.pack()
                 self.given_answer = tk.StringVar()
                 self.given_answer.set(droplist[0])
 
                 # TODO: (autocomplete) search bar
                 self.search_var = tk.StringVar()
-<<<<<<< HEAD
                 self.search_bar = tk.Entry(self, textvariable=self.search_var)
                 self.search_bar.pack()
 
-=======
-                search_bar = tk.Entry(self, textvariable=self.search_var)
-                search_bar.pack()
-
-                # self.extrabox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=35, height=10)
->>>>>>> 69afa07a56b8048f9d3c97b7ce8cfa99f40f49e0
                 def search_keyword():
                     search_term = self.search_var.get()
                     for item in droplist:
