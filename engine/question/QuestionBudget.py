@@ -4,7 +4,7 @@ from engine.question.QuestionType import QuestionType as qt
 
 class QuestionBudget(Question):
     def __init__(self, q_id, question, engine, id_next, perfumes):
-        super().__init__(q_id, question, qt.NUMBER, engine, id_next, [], [], perfumes)
+        super().__init__(q_id, question, qt.BUDGET, engine, id_next, [], [], perfumes)
 
     def set_answer(self, value):
         if not isinstance(value, float):

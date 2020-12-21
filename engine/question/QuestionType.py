@@ -3,9 +3,9 @@ from enum import Enum, unique, auto
 
 @unique
 class QuestionType(Enum):
-    CHOICE_SINGLE_SELECT = auto(),
-    CHOICE_MULTIPLE_SELECT = auto(),
-    CHOICE_DISPLAY = auto(),
-    NUMBER = auto(),
-    STRING = auto(),
+    SINGLE = auto(),
+    MULTIPLE = auto(),
+    DISPLAY = auto(),
+    BUDGET = auto(),
+    NAME = auto(),
     DROPDOWN = auto()
