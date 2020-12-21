@@ -7,7 +7,7 @@ class QuestionChoiceSingle(QuestionChoice):
     def __init__(self, q_id, question, engine, id_next, labels, value, perfumes, answer_options):
         super().__init__(q_id,
                          question,
-                         qt.CHOICE_SINGLE_SELECT,
+                         qt.SINGLE,
                          engine,
                          id_next,
                          labels,

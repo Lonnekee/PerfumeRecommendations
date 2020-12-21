@@ -6,11 +6,11 @@ from engine.question.QuestionChoiceSingle import QuestionChoiceSingle
 from engine.question.QuestionDisplay import QuestionDisplay
 from pathlib import Path
 
-
 # The inference engine uses forward chaining and is based on a sort of fuzzy logic.
 # Based on the answer to every questions, perfumes will be upvoted or downvoted.
 from engine.question.QuestionBudget import QuestionBudget
 from engine.question.QuestionName import QuestionName
+from engine.question.QuestionType import QuestionType as qt
 
 
 class InferenceEngine:
@@ -37,7 +37,6 @@ class InferenceEngine:
 
         # Save all possible questions.
         self._read_questions()
-        print(self.__questions)
 
     ## Methods
 
@@ -91,8 +90,6 @@ class InferenceEngine:
                 labels = line["Labels"]
                 if isinstance(labels, str):
                     labels = labels.split(';')
-                else:
-                    print("Error: Labels of Q", q_id, " not of type string")
 
                 value = line["Value"]
                 if isinstance(value, str):
@@ -188,22 +185,17 @@ class InferenceEngine:
         q.set_answer(value)
         
         # Set next question id
-        if len(q.id_next) == 1:
+        if len(q.id_next) == 1:  # Only one possible next question
             self.__next_question_id = q.id_next[0]
-        elif isinstance(value, int):
-            if value >= len(q.id_next):
-                print("Question ", q.id, " should have the same number of next IDs as answers (or only 1 next ID).")
-                exit(1)
+        elif q.type == qt.SINGLE:  # Only one possible answer, which is linked to a next question
+            # value has type int
             self.__next_question_id = q.id_next[value]
-        elif isinstance(value, list):
-            ids = [q.id_next[index] for index, x in enumerate(value) if value]
-            self.__next_question_id = min(ids)
-        elif isinstance(value, str):
-            index = q.answers.index(value)
-            self.__next_question_id = index
+        elif q.type == qt.MULTIPLE:  # Multiple answers could have been selected
+            # value has type list
+            ids = [q.id_next[index] for index, x in enumerate(value) if x == 1]
+            self.__next_question_id = min(ids)  # Selected the next question with the lowest id
         else:
-            # TODO A case I haven't considered yet.
-            assert False
+            print("Multiple possible next questions for unhandled question type: ", q.type)
             exit(1)
 
         print("\nNext up: ", self.__next_question_id)
