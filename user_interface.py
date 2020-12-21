@@ -135,6 +135,10 @@ class NewPage(tk.Frame):
                 self.search_bar.pack()
 
                 def search_keyword():
+                    selection=self.lbox.curselection()
+                    if len(selection)>0:
+                        value = self.lbox.get(selection[0])
+                        print("selection:", selection, ": '%s'" % value)
                     search_term = self.search_var.get()
                     self.lbox.delete(0, tk.END)
                     for item in droplist:
@@ -142,18 +146,19 @@ class NewPage(tk.Frame):
                             self.lbox.insert(0, item)
 
                 def clear_list():
+                    selection=self.lbox.curselection()
+                    if len(selection)>0:
+                        value = self.lbox.get(selection[0])
+                        print("selection:", selection, ": '%s'" % value)
                     self.lbox.delete(0, tk.END)
                     self.search_bar.delete(0, tk.END)
                     self.lbox.insert("end", *droplist)
+
 
                 search = tk.Button(self, text="Search", width=10, fg="#FBF8EE", bg='#8A5C3C', command=search_keyword)
                 clear = tk.Button(self, text="Clear", width=10,fg="#FBF8EE", bg='#8A5C3C', command=clear_list)
                 search.pack()
                 clear.pack()
-                #self.lbox.delete(0, tk.END)
-                # for item in droplist:
-                #    if search_term.lower() in item.lower():
-                #        self.lbox.insert(tk.END, item)
 
             elif q.type == qt.NUMBER:
                 minPrice, maxPrice = master.engine.get_price_range()
