@@ -107,13 +107,13 @@ class NewPage(tk.Frame):
                 # perfumes = q.get_perfumes()  list of strings, describing perfume name and brand
                 print(q.labels)
                 if ("takePerfume" in q.labels):
-                    droplist, tags = q.get_perfumes()  # lists of strings, describing perfume name and brand and their tags
+                    self.droplist, tags = q.get_perfumes()  # lists of strings, describing perfume name and brand and their tags
                 elif ("takeFamily" in q.labels):
-                    droplist, tags = q.get_families()  # lists of strings, describing olfactory families and their tags
+                    self.droplist, tags = q.get_families()  # lists of strings, describing olfactory families and their tags
                 elif ("takeIngredient" in q.labels):
-                    droplist, tags = q.get_ingredients()  # lists of strings, describing ingredients and their tags
+                    self.droplist, tags = q.get_ingredients()  # lists of strings, describing ingredients and their tags
                 else:
-                    droplist, tags = None, None
+                    self.droplist, tags = None, None
                     print("Appropriate dropdown not found.")
 
                 # add scrollbar to listbox
@@ -121,13 +121,13 @@ class NewPage(tk.Frame):
                 scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
 
                 self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=10)
-                self.lbox.insert("end", *droplist)
+                self.lbox.insert("end", *self.droplist)
                 self.lbox.config(yscrollcommand = scrollbar.set)
                 scrollbar.config(command = self.lbox.yview)
 
                 self.lbox.pack()
                 self.given_answer = tk.StringVar()
-                self.given_answer.set(droplist[0])
+                self.given_answer.set(self.droplist[0])
 
                 # TODO: (autocomplete) search bar
                 self.search_var = tk.StringVar()
@@ -137,34 +137,23 @@ class NewPage(tk.Frame):
                 self.value = []
                 self.product_index = []
 
-                def add_selected(selection):
-                    if len(selection)>0:
-                        for item in range(len(selection)):
-                            self.value.append(self.lbox.get(selection[item]))
-                    for product in self.value:
-                        if product in droplist:
-                            self.product_index.append(droplist.index(product))
-                    print("selection:"'%s' % self.value)
-                    self.given_answer = list(set(self.product_index))
-                    print("indexes:", self.given_answer)
-
                 def search_keyword():
                     selection=self.lbox.curselection()
-                    add_selected(selection)
+                    self.add_selected(selection)
                     search_term = self.search_var.get()
                     self.lbox.delete(0, tk.END)
-                    for item in droplist:
+                    for item in self.droplist:
                         if search_term.lower() in item.lower():
                             self.lbox.insert(0, item)
 
                 def clear_list():
                     selection=self.lbox.curselection()
-                    add_selected(selection)
+                    self.add_selected(selection)
                     self.lbox.delete(0, tk.END)
                     self.search_bar.delete(0, tk.END)
-                    self.lbox.insert("end", *droplist)
+                    self.lbox.insert("end", *self.droplist)
 
-
+                self.add_selected(self.lbox.curselection())
                 search = tk.Button(self, text="Search", width=10, fg="#FBF8EE", bg='#8A5C3C', command=search_keyword)
                 clear = tk.Button(self, text="Clear", width=10,fg="#FBF8EE", bg='#8A5C3C', command=clear_list)
                 search.pack()
@@ -185,6 +174,17 @@ class NewPage(tk.Frame):
             submit = tk.Button(self, text="Next question", width=10,fg="#FBF8EE", bg='#8A5C3C', command=self._send_result)
             submit.pack()
 
+    def add_selected(self, selection):
+        if len(selection)>0:
+            for item in range(len(selection)):
+                self.value.append(self.lbox.get(selection[item]))
+        for product in self.value:
+            if product in self.droplist:
+                self.product_index.append(self.droplist.index(product))
+        print("selection:"'%s' % self.value)
+        self.given_answer = list(set(self.product_index))
+        print("indexes:", self.given_answer)
+
     # Sends result to inference engine and switches frame
     def _send_result(self):
         value = None
@@ -194,6 +194,7 @@ class NewPage(tk.Frame):
             value = [int(a.get()) for a in self.given_answer]
         elif self.question.type == qt.DROPDOWN:
             #value = [int(index) for index in list(self.lbox.curselection())]
+            self.add_selected(self.lbox.curselection())
             value = [a for a in self.given_answer]
         elif self.question.type == qt.DISPLAY:
             print("Display UI: no choice needed")
