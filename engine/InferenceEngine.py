@@ -190,7 +190,11 @@ class InferenceEngine:
         elif q.type == qt.MULTIPLE:  # Multiple answers could have been selected
             # value has type list
             ids = [q.id_next[index] for index, x in enumerate(value) if x == 1]
-            self.__next_question_id = min(ids)  # Selected the next question with the lowest id
+            if len(ids) != 0: 
+                self.__next_question_id = min(ids)  # Selected the next question with the lowest id
+            else: 
+                ids = [q.id_next[index] for index, x in enumerate(value) if x == 0]
+                self.__next_question_id = max(ids)  # no answer was selected, skip extra questions
         else:
             print("Multiple possible next questions for unhandled question type: ", q.type)
             exit(1)
