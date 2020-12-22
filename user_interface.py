@@ -7,6 +7,7 @@ except:
 import io
 import urllib.request
 from PIL import Image, ImageTk
+import os
 
 import engine.InferenceEngine as ie
 from engine.question.QuestionType import QuestionType as qt
@@ -165,7 +166,7 @@ class NewPage(tk.Frame):
                 minPrice, maxPrice = master.engine.get_price_range()
                 self.given_answer = tk.DoubleVar()
                 scale_entry = tk.Scale(self, variable=self.given_answer, label='Maximum budget in euros:', from_=minPrice, to=maxPrice, tickinterval=(maxPrice-minPrice), orient=tk.HORIZONTAL,length=200)
-                scale_entry.set(int((maxPrice-minPrice)/2))
+                scale_entry.set(int((maxPrice-minPrice)/2+minPrice))
                 scale_entry.pack()
             elif q.type == qt.NAME:
                 self.given_answer = tk.StringVar()
@@ -221,6 +222,19 @@ class NewPage(tk.Frame):
 class EndPage(tk.Frame):
     images = []
 
+    def save_results(self, recommendations):
+        desktop = os.path.expanduser("~/Desktop/")
+        f = open(desktop + "Perfume_Recommendations.txt","w") 
+        
+        for index in range(len(recommendations.index)):
+            row = recommendations.iloc[index]
+            f.write("Recommendation #" + str(index+1) + "\n")
+            f.write(row['Title'] + " by " + row['Vendor'] + "\n")
+            f.write(row['Type'] + "\n\n")
+        
+        f.close()
+
+
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self['bg']="#FBF8EE"
@@ -268,8 +282,11 @@ class EndPage(tk.Frame):
             if column == no_columns - 1 or index == len(recommendations)-1:
                 start_row += no_items
 
-        tk.Button(self, text="Go back to start page", fg="#FBF8EE", bg='#8A5C3C', command=self._reset)\
+        tk.Button(self, text="Save the results to my Desktop", fg="#FBF8EE", bg='#8A5C3C', command=self.save_results(recommendations))\
             .grid(row=start_row, columnspan=3)
+
+        tk.Button(self, text="Go back to start page", fg="#FBF8EE", bg='#8A5C3C', command=self._reset)\
+            .grid(row=start_row+2, columnspan=3)
 
 
     def _reset(self):
