@@ -110,13 +110,13 @@ class NewPage(tk.Frame):
                 # perfumes = q.get_perfumes()  list of strings, describing perfume name and brand
                 print(q.labels)
                 if ("takePerfume" in q.labels):
-                    self.droplist, tags = q.get_perfumes()  # lists of strings, describing perfume name and brand and their tags
+                    self.droplist = q.get_perfumes()  # lists of strings, describing perfume name and brand and their tags
                 elif ("takeFamily" in q.labels):
-                    self.droplist, tags = q.get_families()  # lists of strings, describing olfactory families and their tags
+                    self.droplist = q.get_families()  # lists of strings, describing olfactory families and their tags
                 elif ("takeIngredient" in q.labels):
-                    self.droplist, tags = q.get_ingredients()  # lists of strings, describing ingredients and their tags
+                    self.droplist = q.get_ingredients()  # lists of strings, describing ingredients and their tags
                 else:
-                    self.droplist, tags = None, None
+                    self.droplist = None
                     print("Appropriate dropdown not found.")
 
                 # add scrollbar to listbox
