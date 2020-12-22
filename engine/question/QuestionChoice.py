@@ -33,6 +33,8 @@ class QuestionChoice(Question):
             # Select all perfumes that contain the relevant label
             print("  Searching for ", lab, " in ", column)
             rows = data[column].str.contains(lab)
+            print("  Found: ", rows.sum())
 
             # Add the value specified for this label
             data.loc[rows, ['rank']] += float(value)
+            print("  Updated with: ", float(value))

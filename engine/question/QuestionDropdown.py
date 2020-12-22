@@ -70,6 +70,8 @@ class QuestionDropdown(Question):
                     # Select all perfumes that contain the relevant label
                     print("  Searching for ", lab, " in Tag")
                     rows = self.perfumes['Tag'].str.contains(lab)
+                    print("  Found: ", rows.sum())
+
                     # Add the value specified for this label
                     self.perfumes.loc[rows, ['rank']] += float(self.value[0])
 
@@ -84,8 +86,11 @@ class QuestionDropdown(Question):
                     # Select all perfumes that contain the relevant label
                     print("  Searching for ", lab, " in Vendor")
                     rows = self.perfumes['Vendor'].str.contains(lab)
+                    print("  Found: ", rows.sum())
+
                     # Add the value specified for this label
                     self.perfumes.loc[rows, ['rank']] += float(self.value[0])
+                    print("  Updated with: ", float(value))
 
     # def set_answer(self, indices):
     #     print("Setting answer QuestionDropdown: ", indices)
