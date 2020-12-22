@@ -90,7 +90,13 @@ class QuestionDropdown(Question):
 
                     # Add the value specified for this label
                     self.perfumes.loc[rows, ['rank']] += float(self.value[0])
-                    print("  Updated with: ", float(value))
+                    print("  Updated with: ", float(self.value[0]))
+
+        #if the question is about the perfumes, make sure the selected products (either liked or disliked) get downvoted a lot
+        #these are either already known or disliked
+        if ("takePerfume" in self.labels):
+            print("Downvote selected perfumes")
+            self.perfumes.loc[indices, ['rank']] += -100
 
     # def set_answer(self, indices):
     #     print("Setting answer QuestionDropdown: ", indices)
