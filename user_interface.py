@@ -107,17 +107,7 @@ class NewPage(tk.Frame):
                 print("Display, no buttons needed.")
 
             elif q.type == qt.DROPDOWN:  # a list is needed, where multiple items can be selected
-                # perfumes = q.get_perfumes()  list of strings, describing perfume name and brand
-                print(q.labels)
-                if ("takePerfume" in q.labels):
-                    self.droplist = q.get_perfumes()  # lists of strings, describing perfume name and brand and their tags
-                elif ("takeFamily" in q.labels):
-                    self.droplist = q.get_families()  # lists of strings, describing olfactory families and their tags
-                elif ("takeIngredient" in q.labels):
-                    self.droplist = q.get_ingredients()  # lists of strings, describing ingredients and their tags
-                else:
-                    self.droplist = None
-                    print("Appropriate dropdown not found.")
+                self.droplist = q.get_list()
 
                 # add scrollbar to listbox
                 scrollbar = tk.Scrollbar(self)
@@ -168,6 +158,7 @@ class NewPage(tk.Frame):
                 scale_entry = tk.Scale(self, variable=self.given_answer, label='Maximum budget in euros:', from_=minPrice, to=maxPrice, tickinterval=(maxPrice-minPrice), orient=tk.HORIZONTAL,length=200)
                 scale_entry.set(int((maxPrice-minPrice)/2+minPrice))
                 scale_entry.pack()
+
             elif q.type == qt.NAME:
                 self.given_answer = tk.StringVar()
                 name_entry = tk.Entry(self, textvariable=self.given_answer)
@@ -193,22 +184,29 @@ class NewPage(tk.Frame):
     # Sends result to inference engine and switches frame
     def _send_result(self):
         value = None
+
         if self.question.type == qt.SINGLE:
             value = int(self.given_answer.get())
+
         elif self.question.type == qt.MULTIPLE:
             value = [int(a.get()) for a in self.given_answer]
+
         elif self.question.type == qt.DROPDOWN:
             self.add_selected(self.lbox.curselection())
             value = [a for a in self.given_answer]
+
         elif self.question.type == qt.DISPLAY:
             print("Display UI: no choice needed")
+
         elif self.question.type == qt.BUDGET:
             value = float(self.given_answer.get())
+
         elif self.question.type == qt.NAME:
             first_name = self.given_answer.get()
             if first_name != '':
-                (self.master.first_name).set(first_name)
+                self.master.first_name.set(first_name)
                 self.master.title('Perfume Recommendations for %s' % first_name)
+
         else:
             print("Question type's answer can not be processed yet.")
 

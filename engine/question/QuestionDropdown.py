@@ -16,12 +16,23 @@ class QuestionDropdown(Question):
                          perfumes)
         self.tags = None
         self.vendor = None
-    
-    def get_perfumes(self):
+
+    def get_list(self):
+        if "takePerfume" in self.labels:
+            return self.__get_perfumes()  # lists of strings, describing perfume name and brand and their tags
+        elif "takeFamily" in self.labels:
+            return self.__get_families()  # lists of strings, describing olfactory families and their tags
+        elif "takeIngredient" in self.labels:
+            return self.__get_ingredients()  # lists of strings, describing ingredients and their tags
+        else:
+            print("Appropriate dropdown not found.")
+            return None
+
+    def __get_perfumes(self):
         base_path = Path(__file__).parent
-        print(base_path)
         perfumes_path = (base_path / "../../filteredDatabase.csv").resolve()
         perfumes = pd.read_csv(open(perfumes_path), encoding="utf-8")
+
         df = perfumes[["Title", "Vendor"]]
         products = len(df.index) * [""]
         for index, item in df.iterrows():
@@ -42,24 +53,24 @@ class QuestionDropdown(Question):
         self.vendor = perfumes["Vendor"].tolist()
         return products  # send all products in a list
 
-    def get_families(self):
+    def __get_families(self):
         base_path = Path(__file__).parent
         families_path = (base_path / "../question/data/olfactory_families.csv").resolve()
         families = pd.read_csv(open(families_path), encoding="utf-8")
         self.tags = families["Tag"].tolist() 
-        return families["Family"].tolist()#send all families in a list
+        return families["Family"].tolist()  # send all families in a list
 
-    def get_ingredients(self):
+    def __get_ingredients(self):
         base_path = Path(__file__).parent
         ingredients_path = (base_path / "../question/data/ingredients.csv").resolve()
         ingredients = pd.read_csv(open(ingredients_path), encoding="utf-8")
         self.tags = ingredients["Tag"].tolist()
-        return ingredients["Ingredient"].tolist() #send all ingredients  in a list
+        return ingredients["Ingredient"].tolist()  # send all ingredients  in a list
 
     def set_answer(self, indices):
         print("Setting answer QuestionDropdown: ", indices)
 
-        #for all indices, upvote products with specific tag
+        # For all indices, upvote products with specific tag
         if self.tags is not None:
             for index in indices:
                 labels = self.tags[index].split('+')
@@ -72,10 +83,10 @@ class QuestionDropdown(Question):
                     rows = self.perfumes['Tag'].str.contains(lab)
                     print("  Found: ", rows.sum())
 
-                    # Add the value specified for this label
+                    # Add the value linked to this question
                     self.perfumes.loc[rows, ['rank']] += float(self.value[0])
 
-        #for all indices, upvote products with specific vendor
+        # For all indices, upvote products with specific vendor
         if self.vendor is not None:
             for index in indices:
                 labels = self.vendor[index].split('+')
@@ -92,41 +103,11 @@ class QuestionDropdown(Question):
                     self.perfumes.loc[rows, ['rank']] += float(self.value[0])
                     print("  Updated with: ", float(self.value[0]))
 
-        #if the question is about the perfumes, make sure the selected products (either liked or disliked) get downvoted a lot
-        #these are either already known or disliked
-        if ("takePerfume" in self.labels):
+        # if the question is about the perfumes, make sure the selected products (either liked or disliked) get
+        # downvoted a lot these are either already known or disliked
+        if "takePerfume" in self.labels:
             print("Downvote selected perfumes")
             self.perfumes.loc[indices, ['rank']] += -100
-
-    # def set_answer(self, indices):
-    #     print("Setting answer QuestionDropdown: ", indices)
-    #     if "takePerfume" in self.labels:
-    #         self.__set_indices(indices)
-    #     elif "takeFamily" in self.labels or "takeIngredient" in self.labels:
-    #         if self.items is None:
-    #             if "takeFamily" in self.labels:
-    #                 base_path = Path(__file__).parent
-    #                 families_path = (base_path / "../question/data/olfactory_families.csv").resolve()
-    #                 families = pd.read_csv(open(families_path), encoding="utf-8")
-    #                 self.items = families
-    #             else:
-    #                 base_path = Path(__file__).parent
-    #                 ingredients_path = (base_path / "../question/data/ingredients.csv").resolve()
-    #                 ingredients = pd.read_csv(open(ingredients_path), encoding="utf-8")
-    #                 self.items = ingredients
-
-    #         for index in indices:
-    #             element = self.items["Tag"].iloc[index]
-    #             perfume_booleans = self.perfumes['Tag'].str.contains(element)
-    #             self.__set_indices(perfume_booleans)
-    #     else:
-    #         print("QuestionDropdown: Appropriate dropdown not found.")
-
-    # def __set_indices(self, perfume_indices):
-    #     print(self.perfumes.loc[perfume_indices, ["rank"]])
-    #     self.perfumes.loc[perfume_indices, ["rank"]] += self.value
-    #     print("becomes")
-    #     print(self.perfumes.loc[perfume_indices, ["rank"]])
 
 
 if __name__ == "__main__":
