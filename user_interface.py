@@ -41,13 +41,17 @@ class StartPage(tk.Frame):
         master.title('Perfume Knowledge System')
         master['bg'] = '#FBF8EE'
         self['bg'] = '#FBF8EE'
+
+        def switch_and_clear():
+            start_button.destroy()
+            master.switch_frame(NewPage)
+
         start_label = tk.Label(self,
                  text="Welcome to the perfume knowledge system! After you have answered the questions, the system will determine the ideal scented product for your personal use.",
                  wraplength=700, font=('Alegreya sans', 18), fg='#8A5C3C',bg='#FBF8EE')
         start_label.pack()
-        start_button = tk.Button(self, text="CLICK HERE TO START", font=('Alegreya sans', '12', 'italic'), fg="#FBF8EE", bg='#8A5C3C', activebackground="#5a371e", activeforeground="#FBF8EE",width=750, command=lambda: master.switch_frame(NewPage))
+        start_button = tk.Button(text="CLICK HERE TO START", font=('Alegreya sans', '12', 'italic'), fg="#FBF8EE", bg='#8A5C3C', activebackground="#5a371e", activeforeground="#FBF8EE",width=750, command=switch_and_clear)
         start_button.pack(side=tk.BOTTOM, pady=50)
-
         base_path = Path(__file__).parent
         im_path = (base_path / "../PerfumeRecommendations/Logo-PL-liggend.png").resolve()
         self.img = Image.open(im_path)
@@ -88,7 +92,6 @@ class NewPage(tk.Frame):
 
     def __init__(self, master):
         self.master = master
-
         # Recursive call: make new page for each question until you reach the last
         if master.engine.has_reached_goal():
             master.switch_frame(EndPage)
@@ -183,9 +186,9 @@ class NewPage(tk.Frame):
                 name_entry.pack()
 
             # Create submit button that can send the answer to the inference engine
-            submit = tk.Button(self, text="NEXT QUESTION", font=('Alegrya sans', '12', 'italic'),width=600,fg="#FBF8EE", bg='#8A5C3C', activebackground="#5a371e", activeforeground="#FBF8EE",command=self._send_result)
-            #submit.place(x=325, rely=400, anchor=tk.S)
+            submit = tk.Button(text="NEXT QUESTION", font=('Alegrya sans', '12', 'italic'),width=600,fg="#FBF8EE", bg='#8A5C3C', activebackground="#5a371e", activeforeground="#FBF8EE",command=self._send_result)
             submit.pack(side=tk.BOTTOM, pady=50)
+            self.button = submit
 
     # Continuously add current selection of dropdown in list
     def add_selected(self, selection):
@@ -231,8 +234,10 @@ class NewPage(tk.Frame):
         self.master.engine.set_answer(value)
         if self.master.engine.has_reached_goal():
             self.master.switch_frame(EndPage)
+            self.button.destroy()
         else:
             self.master.switch_frame(NewPage)
+            self.button.destroy()
 
 
 class EndPage(tk.Frame):
