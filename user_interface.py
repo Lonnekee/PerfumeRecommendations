@@ -8,6 +8,7 @@ import io
 import urllib.request
 from PIL import Image, ImageTk
 import os
+from pathlib import Path
 
 import engine.InferenceEngine as ie
 from engine.question.QuestionType import QuestionType as qt
@@ -36,20 +37,34 @@ class SampleApp(tk.Tk):
 class StartPage(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+        self.geometry = "750x700"
         master.title('Perfume Knowledge System')
         master['bg'] = '#FBF8EE'
         self['bg'] = '#FBF8EE'
-        tk.Label(self,
+        start_label = tk.Label(self,
                  text="Welcome to the perfume knowledge system! After you have answered the questions, the system will determine the ideal scented product for your personal use.",
-                 wraplength=750, font=('Alegreya sans', 18), fg='#8A5C3C',bg='#FBF8EE').pack(side="top", fill="x", pady=5)
-        start_button = tk.Button(self, text="CLICK HERE TO START", font=('Alegreya sans', '12', 'italic'), width=100, fg="#FBF8EE", bg='#8A5C3C',command=lambda: master.switch_frame(NewPage))
-        #start_button.place(x=325, y=250)
-        start_button.pack(side=tk.BOTTOM, pady=100)
+                 wraplength=700, font=('Alegreya sans', 18), fg='#8A5C3C',bg='#FBF8EE')
+        start_label.pack()
+        start_button = tk.Button(self, text="CLICK HERE TO START", font=('Alegreya sans', '12', 'italic'), fg="#FBF8EE", bg='#8A5C3C', activebackground="#5a371e", activeforeground="#FBF8EE",width=750, command=lambda: master.switch_frame(NewPage))
+        start_button.pack(side=tk.BOTTOM, pady=50)
 
+        base_path = Path(__file__).parent
+        im_path = (base_path / "../PerfumeRecommendations/Logo-PL-liggend.png").resolve()
+        self.img = Image.open(im_path)
+        img_width, img_height = self.img.size
+        img_width = int(img_width/4)
+        img_height = int(img_height/4)
+        self.img = self.img.resize((img_width,img_height), Image.ANTIALIAS)
+        self.img = ImageTk.PhotoImage(self.img)
+        canvas = tk.Canvas(self,height=img_height, width=img_width, bg='#FBF8EE')
+        canvas.pack()
+
+        canvas.create_image(img_width/2+1, img_height/2, image=self.img, anchor=tk.CENTER)
 
 class PageOne(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+        self.geometry = "750x500"
         self['bg'] = '#FBF8EE'
         tk.Label(self, text="What is your name?", wraplength=750, font=('Alegreya sans', 18),fg='#8A5C3C',bg='#FBF8EE').pack(side="top",
                                                                                                        fill="x", pady=5)
@@ -80,6 +95,7 @@ class NewPage(tk.Frame):
         else:
             # Initialise frame
             tk.Frame.__init__(self, master)
+            self.geometry = "750x500"
             self['bg'] = '#FBF8EE'
 
             q = master.engine.get_next_question()
@@ -93,14 +109,16 @@ class NewPage(tk.Frame):
             if q.type == qt.SINGLE:  # radio buttons needed
                 self.given_answer = tk.IntVar()
                 for i, answer in enumerate(q.answers):
-                    radios = tk.Radiobutton(self, text=answer, fg="#FBF8EE", bg='#8A5C3C', variable=self.given_answer, value=i)
+                    radios = tk.Radiobutton(self, text=answer, activebackground="#FBF8EE", background="#FBF8EE", activeforeground="black",
+                        foreground="black",selectcolor="#8A5C3C",width=50,indicatoron=0,offrelief=tk.FLAT,bd=3,pady=8,variable=self.given_answer, value=i)
                     radios.pack()
 
             elif q.type == qt.MULTIPLE:  # selectable boxes or images needed (?)
                 self.given_answer = len(q.answers) * [0]
                 for i in range(len(q.answers)):
                     self.given_answer[i] = tk.IntVar()
-                    c = tk.Checkbutton(self, text=q.answers[i], fg="#FBF8EE", bg='#8A5C3C', variable=self.given_answer[i])
+                    c = tk.Checkbutton(self, text=q.answers[i], bg="#FBF8EE", fg='#5a371e', activebackground="#5a371e", 
+                        activeforeground="#FBF8EE",selectcolor="#FBF8EE",width=50,indicatoron=1, pady=8, bd=3,variable=self.given_answer[i])
                     c.pack()
 
             elif q.type == qt.DISPLAY:
@@ -113,7 +131,7 @@ class NewPage(tk.Frame):
                 scrollbar = tk.Scrollbar(self)
                 scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
 
-                self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=10)
+                self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=10, selectbackground="#8A5C3C", selectforeground="#FBF8EE")
                 self.lbox.insert("end", *self.droplist)
                 self.lbox.config(yscrollcommand = scrollbar.set)
                 scrollbar.config(command = self.lbox.yview)
@@ -165,9 +183,9 @@ class NewPage(tk.Frame):
                 name_entry.pack()
 
             # Create submit button that can send the answer to the inference engine
-            submit = tk.Button(self, text="NEXT QUESTION", font=('Alegrya sans', '12', 'italic'),width=600,fg="#FBF8EE", bg='#8A5C3C', command=self._send_result)
-            submit.place(x=325, y=250)
-            submit.pack(side=tk.BOTTOM, fill="x", pady=50)
+            submit = tk.Button(self, text="NEXT QUESTION", font=('Alegrya sans', '12', 'italic'),width=600,fg="#FBF8EE", bg='#8A5C3C', activebackground="#5a371e", activeforeground="#FBF8EE",command=self._send_result)
+            #submit.place(x=325, rely=400, anchor=tk.S)
+            submit.pack(side=tk.BOTTOM, pady=50)
 
     # Continuously add current selection of dropdown in list
     def add_selected(self, selection):
