@@ -1,6 +1,6 @@
 ID,IDnext,Question,Type,Answers,Labels,Value
 1,2,What is your name?,Text,,,
-2,3;23,What kind of product are you looking for?,Single,For on my skin;For in my house,Type:geurkaars+Type:geurolie+Type:geurstokjes+Type:geurzakjes+Type:room spray+Type:scented beads+Type:scented stones+Type:wierook;Type:eau de cologne+Type:eau de parfum+Type:eau de toilette+Type:eau fraiche+Type:extrait de parfum+Type:parfum,-100;-100
+2,3;23,What kind of product are you looking for?,Single,For on my skin;For in my house,Type:scented candle+Type:scented oil+Type:scented sticks+Type:scented sachets+Type:room spray+Type:scented beads+Type:scented stones+Type:incense;Type:eau de cologne+Type:eau de parfum+Type:eau de toilette+Type:eau fraiche+Type:extrait de parfum+Type:parfum,-100;-100
 3,4;6,Are you already familiar with the Perfume Lounge's collection?,Single,Yes;No,,
 4,5,"Which products, if any, do you like?",Drag,productList;I do not know,takePerfume,+0.5
 5,6,"Which products, if any do you dislike?",Drag,productList;I do not know,takePerfume,-0.5
@@ -26,7 +26,7 @@ ID,IDnext,Question,Type,Answers,Labels,Value
 25,28,"Tip: For medium-sized rooms we recommend using one or more scented sticks or candles, but a room spray and incense also work well in a larger space.",Display,,,
 26,28,"Tip: For medium-sized rooms we recommend using one or more scented sticks or candles, but a room spray and incense also work well in a larger space.",Display,,,
 27,28,"Tip: For large spaces we recommend placing multiple scented products. For example, two to three fragrance sticks several candles or incense.",Display,,,
-28,29;30;31;32,What do you wish to achieve with the scented room?,Single,To create an ambience;To create a constant scent experience;To get direct effect on demand;I do not have a preference,Type:geurkaars;Type:geurstokjes+Type:geurzakjes;Type:room spray+Type:wierook;,+0.4;+0.4;+0.4;+0.4;
+28,29;30;31;32,What do you wish to achieve with the scented room?,Single,To create an ambience;To create a constant scent experience;To get direct effect on demand;I do not have a preference,Type:scented candle;Type:scented sticks+Type:scented sachets;Type:room spray+Type:incense;,+0.4;+0.4;+0.4;+0.4;
 29,32,Tip: Scented candles are ideal for creating an atmosphere and spreading a beautiful scent at the same time.,Display,,,
 30,32,Tip: Fragrance sticks or sachets are perfect for constantly scenting a room in a subtle way. Easy and evenly distributed without having to worry about anything.,Display,,,
 31,32,Tip: Room sprays and incense are a practical and effective way to instantly refresh a room. You can also use a room spray on color-true fabrics such as a curtain rug and even the car mat to make a fragrance linger longer. Always test this first on a piece of fabric out of sight.,Display,,,
