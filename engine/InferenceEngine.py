@@ -18,8 +18,10 @@ class InferenceEngine:
     ## Attributes
     __questions = []
     __current_question = None
+    __previous_question = None
     __next_question_id = 1
     __final_question_id = 0
+    __question_direction = 1
     __perfumes = []
     __additional_info = {}
 
@@ -186,14 +188,24 @@ class InferenceEngine:
     #########################
     ## Getters and setters ##
 
+   
+    # Value 0 being backwards, 1 being forwards
+    def set_question_direction(self, value):
+        self.__question_direction = value
+
+    def get_question_direction(self):
+        return self.__question_direction
+
+    # Returns the most recent previous question the user answered.
     def get_previous_question(self):
         if not self.__next_question_id == 1:
-            self.__current_question = self.__questions[(self.__next_question_id - 3)]
-            if self.__current_question is None:
-                print("NOTE: question with ID ", self.__next_question_id, " does not exist (yet).")
+            self.__current_question = self.__questions[self.__next_question_id - 1]
+            self.__previous_question = self.__questions[self.__current_question.id - 1]
+            #print("previous question ID:", self.__previous_question.id)
+            if self.__previous_question is None:
+                print("NOTE: previous question with ID ", self.__current_question, " does not exist (yet).")
                 exit(1)
-            print(self.__current_question.question)
-            #self.__next_question_id = None
+            print("previous:", self.__previous_question.question, self.__previous_question.id,"current:", self.__current_question.question, self.__current_question.id)
             return self.__current_question
         return None
 
