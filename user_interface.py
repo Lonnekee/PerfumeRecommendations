@@ -50,7 +50,7 @@ class StartPage(tk.Frame):
                  text="Welcome to the perfume knowledge system! After you have answered the questions, the system will determine the ideal scented product for your personal use.",
                  wraplength=700, font=('Alegreya sans', 18), fg='#8A5C3C',bg='#FBF8EE')
         start_label.pack()
-        start_button = tk.Button(text="CLICK HERE TO START", font=('Alegreya sans', '12', 'italic'), fg="#FBF8EE", bg='#8A5C3C', activebackground="#5a371e", activeforeground="#FBF8EE",width=750, command=switch_and_clear)
+        start_button = tk.Button(text="CLICK HERE TO START", font=('Alegreya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",width=750, command=switch_and_clear)
         start_button.pack(side=tk.BOTTOM, pady=50)
         base_path = Path(__file__).parent
         im_path = (base_path / "../PerfumeRecommendations/Logo-PL-liggend.png").resolve()
@@ -168,8 +168,8 @@ class NewPage(tk.Frame):
                     self.lbox.insert("end", *self.droplist)
 
                 self.add_selected(self.lbox.curselection())
-                search = tk.Button(self, text="Search", width=10, fg="#FBF8EE", bg='#8A5C3C', command=search_keyword)
-                clear = tk.Button(self, text="Clear", width=10,fg="#FBF8EE", bg='#8A5C3C', command=clear_list)
+                search = tk.Button(self, text="Search", width=10, fg='#8A5C3C', bg="#FBF8EE", command=search_keyword)
+                clear = tk.Button(self, text="Clear", width=10,fg='#8A5C3C', bg="#FBF8EE", command=clear_list)
                 search.pack()
                 clear.pack()
 
@@ -186,7 +186,7 @@ class NewPage(tk.Frame):
                 name_entry.pack()
 
             # Create submit button that can send the answer to the inference engine
-            submit = tk.Button(text="NEXT QUESTION", font=('Alegrya sans', '12', 'italic'),width=600,fg="#FBF8EE", bg='#8A5C3C', activebackground="#5a371e", activeforeground="#FBF8EE",command=self._send_result)
+            submit = tk.Button(text="NEXT QUESTION", font=('Alegrya sans', '12', 'italic'),width=600,fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=self._send_result)
             submit.pack(side=tk.BOTTOM, pady=50)
             self.button = submit
 
@@ -303,10 +303,10 @@ class EndPage(tk.Frame):
             if column == no_columns - 1 or index == len(recommendations)-1:
                 start_row += no_items
 
-        tk.Button(self, text="Save the results to my Desktop", fg="#FBF8EE", bg='#8A5C3C', command=self.save_results(recommendations))\
+        tk.Button(self, text="Save the results to my Desktop", fg='#8A5C3C', bg="#FBF8EE", command=self.save_results(recommendations))\
             .grid(row=start_row, columnspan=3)
 
-        tk.Button(self, text="Go back to start page", fg="#FBF8EE", bg='#8A5C3C', command=self._reset)\
+        tk.Button(self, text="Go back to start page", fg='#8A5C3C', bg="#FBF8EE", command=self._reset)\
             .grid(row=start_row+2, columnspan=3)
 
 
