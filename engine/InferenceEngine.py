@@ -29,7 +29,7 @@ class InferenceEngine:
 
         # 1a. Set explicit path to filteredDatabase.csv
         base_path = Path(__file__).parent
-        database_path = (base_path / "../filteredDatabase.csv").resolve()
+        database_path = (base_path / "../data/filteredDatabase.csv").resolve()
         self.__perfumes = pd.read_csv(open(database_path, encoding="utf-8"))
 
         # 1b. Add the two ways based on which we recommend perfumes, ranks and inclusion/exclusion.
@@ -73,7 +73,7 @@ class InferenceEngine:
     def _read_questions(self):
         base_path = Path(__file__).parent
         # Set explicit path to question_answer_pairs.csv
-        questionanswer_path = (base_path / "question/data/question_answer_pairs.csv").resolve()
+        questionanswer_path = (base_path / "../data/question_answer_pairs.csv").resolve()
         questions = pd.read_csv(open(questionanswer_path), encoding="utf-8")
         no_questions = len(questions.index)
         max_question_id = questions["ID"].iloc[no_questions - 1]

@@ -30,7 +30,7 @@ class QuestionDropdown(Question):
 
     def __get_perfumes(self):
         base_path = Path(__file__).parent
-        perfumes_path = (base_path / "../../filteredDatabase.csv").resolve()
+        perfumes_path = (base_path / "../../data/filteredDatabase.csv").resolve()
         perfumes = pd.read_csv(open(perfumes_path), encoding="utf-8")
 
         df = perfumes[["Title", "Vendor"]]
@@ -55,14 +55,14 @@ class QuestionDropdown(Question):
 
     def __get_families(self):
         base_path = Path(__file__).parent
-        families_path = (base_path / "../question/data/olfactory_families.csv").resolve()
+        families_path = (base_path / "../../data/olfactory_families.csv").resolve()
         families = pd.read_csv(open(families_path), encoding="utf-8")
         self.tags = families["Tag"].tolist() 
         return families["Family"].tolist()  # send all families in a list
 
     def __get_ingredients(self):
         base_path = Path(__file__).parent
-        ingredients_path = (base_path / "../question/data/ingredients.csv").resolve()
+        ingredients_path = (base_path / "../../data/ingredients.csv").resolve()
         ingredients = pd.read_csv(open(ingredients_path), encoding="utf-8")
         self.tags = ingredients["Tag"].tolist()
         return ingredients["Ingredient"].tolist()  # send all ingredients  in a list
@@ -115,7 +115,7 @@ if __name__ == "__main__":
     base_path = Path(__file__).parent
     # print(base_path)
     # Set explicit path to filteredDatabase.csv
-    database_path = (base_path / "../../filteredDatabase.csv").resolve()
+    database_path = (base_path / "../../data/filteredDatabase.csv").resolve()
     # print(database_path)
     perfumes = pd.read_csv(open(database_path, encoding="utf-8"))
     truth_values = [0] * len(perfumes.index)

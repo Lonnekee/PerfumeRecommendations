@@ -53,7 +53,7 @@ class StartPage(tk.Frame):
         start_button = tk.Button(text="CLICK HERE TO START", font=('Alegreya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",width=750, command=switch_and_clear)
         start_button.pack(side=tk.BOTTOM, pady=50)
         base_path = Path(__file__).parent
-        im_path = (base_path / "Logo-PL-liggend.png").resolve()
+        im_path = (base_path / "data/Logo-PL-liggend.png").resolve()
         self.img = Image.open(im_path)
         img_width, img_height = self.img.size
         img_width = int(img_width/4)
@@ -328,6 +328,6 @@ class EndPage(tk.Frame):
         self.master.switch_frame(StartPage)
 
 
-if __name__ == "__main__":
+def run():
     app = SampleApp()
     app.mainloop()
