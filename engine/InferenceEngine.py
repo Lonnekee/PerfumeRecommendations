@@ -59,7 +59,7 @@ class InferenceEngine:
     def _read_questions(self):
         base_path = Path(__file__).parent
         # Set explicit path to question_answer_pairs.csv
-        questionanswer_path = (base_path / "../engine/question/data/question_answer_pairs.csv").resolve()
+        questionanswer_path = (base_path / "question/data/question_answer_pairs.csv").resolve()
         questions = pd.read_csv(open(questionanswer_path), encoding="utf-8")
         no_questions = len(questions.index)
         max_question_id = questions["ID"].iloc[no_questions - 1]

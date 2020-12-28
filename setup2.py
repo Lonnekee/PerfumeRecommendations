@@ -1,6 +1,7 @@
 from cx_Freeze import setup, Executable
  
 includefiles = [] # include any files here that you wish
+includes = []
 excludes = []
 packages = []
  

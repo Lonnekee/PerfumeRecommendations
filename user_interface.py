@@ -53,7 +53,7 @@ class StartPage(tk.Frame):
         start_button = tk.Button(text="CLICK HERE TO START", font=('Alegreya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",width=750, command=switch_and_clear)
         start_button.pack(side=tk.BOTTOM, pady=50)
         base_path = Path(__file__).parent
-        im_path = (base_path / "../PerfumeRecommendations/Logo-PL-liggend.png").resolve()
+        im_path = (base_path / "Logo-PL-liggend.png").resolve()
         self.img = Image.open(im_path)
         img_width, img_height = self.img.size
         img_width = int(img_width/4)
@@ -134,7 +134,7 @@ class NewPage(tk.Frame):
                 scrollbar = tk.Scrollbar(self)
                 scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
 
-                self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=10, selectbackground="#8A5C3C", selectforeground="#FBF8EE")
+                self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=15, selectbackground="#8A5C3C", selectforeground="#FBF8EE")
                 self.lbox.insert("end", *self.droplist)
                 self.lbox.config(yscrollcommand = scrollbar.set)
                 scrollbar.config(command = self.lbox.yview)
