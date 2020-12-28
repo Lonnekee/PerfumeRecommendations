@@ -41,6 +41,10 @@ class InferenceEngine:
         included = [True] * len(self.__perfumes.index)
         self.__perfumes['included'] = included
 
+        # 1c. Add column where we can explain _why_ it has a certain truth value.
+        facts = [''] * len(self.__perfumes.index)
+        self.__perfumes['facts'] = facts
+
         # 2. Save all possible questions.
         self._read_questions()
 
@@ -63,6 +67,10 @@ class InferenceEngine:
         # Include all perfumes
         included = [True] * len(self.__perfumes.index)
         self.__perfumes['included'] = included
+
+        # Reset facts, the reasons for recommendations
+        facts = [''] * len(self.__perfumes.index)
+        self.__perfumes['facts'] = facts
 
         # No need to reset __final_question_id or __questions
         self.__current_question = None

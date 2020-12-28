@@ -22,6 +22,6 @@ class QuestionChoiceSingle(QuestionChoice):
         if isinstance(self.value, list) and index < len(self.value) and \
                 isinstance(self.labels, list) and index < len(self.labels):
             print("Updating rankings.")
-            self._update_ranks(self.labels[index], self.value[index])
+            self._update_ranks(self.labels[index], self.value[index], index)
         else:
             print("Not updating rankings.")
