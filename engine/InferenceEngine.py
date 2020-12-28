@@ -164,6 +164,18 @@ class InferenceEngine:
     #########################
     ## Getters and setters ##
 
+    def get_previous_question(self):
+        if not self.__next_question_id == 1:
+            self.__current_question = self.__questions[(self.__next_question_id - 3)]
+            if self.__current_question is None:
+                print("NOTE: question with ID ", self.__next_question_id, " does not exist (yet).")
+                exit(1)
+            print(self.__current_question.question)
+            #self.__next_question_id = None
+            return self.__current_question
+        return None
+
+
     # Returns the next question and removes it from the list of remaining questions.
     def get_next_question(self):
         if not self.has_reached_goal():
@@ -172,7 +184,7 @@ class InferenceEngine:
                 print("NOTE: question with ID ", self.__next_question_id, " does not exist (yet).")
                 exit(1)
             print(self.__current_question.question)
-            self.__next_question_id = None
+            #self.__next_question_id = None
             return self.__current_question
         return None
 
