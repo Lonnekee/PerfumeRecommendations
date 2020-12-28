@@ -86,6 +86,9 @@ class QuestionDropdown(Question):
                     # Add the value linked to this question
                     self.perfumes.loc[rows, ['rank']] += float(self.value[0])
 
+                    # Add reason for upvoting/downvoting
+                    self.perfumes.loc[rows, ['facts']] += self.tags[index] + " "
+
         # For all indices, upvote products with specific vendor
         if self.vendor is not None:
             for index in indices:
@@ -102,6 +105,9 @@ class QuestionDropdown(Question):
                     # Add the value specified for this label
                     self.perfumes.loc[rows, ['rank']] += float(self.value[0])
                     print("  Updated with: ", float(self.value[0]))
+
+                    # Add reason for upvoting/downvoting
+                    self.perfumes.loc[rows, ['facts']] += self.vendor[index] + " "
 
         # if the question is about the perfumes, make sure the selected products (either liked or disliked) get
         # downvoted a lot these are either already known or disliked

@@ -9,6 +9,7 @@ import urllib.request
 from PIL import Image, ImageTk
 import os
 from pathlib import Path
+import pandas as pd
 
 import engine.InferenceEngine as ie
 from engine.question.QuestionType import QuestionType as qt
@@ -276,6 +277,9 @@ class EndPage(tk.Frame):
             .grid(row=0, columnspan=3, pady=5)
 
         recommendations = master.engine.get_recommendations()  # Pandas dataframe
+
+        pd.pandas.set_option('display.max_columns', None)
+        print(recommendations)
 
         start_row = 1
         no_items = 5

@@ -24,4 +24,4 @@ class QuestionChoiceMultiple(QuestionChoice):
 
         for index, a in enumerate(answer_list):
             if a == 1:
-                self._update_ranks(self.labels[index], self.value[index])
+                self._update_ranks(self.labels[index], self.value[index], index)

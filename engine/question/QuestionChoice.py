@@ -6,7 +6,7 @@ class QuestionChoice(Question):
         super().__init__(q_id, question, q_type, engine, id_next, labels, value, perfumes)
         self.answers = answer_options
 
-    def _update_ranks(self, labels, value):
+    def _update_ranks(self, labels, value, answer_index):
         data = self.perfumes
         labels = labels.split('+')
 
@@ -38,3 +38,6 @@ class QuestionChoice(Question):
             # Add the value specified for this label
             data.loc[rows, ['rank']] += float(value)
             print("  Updated with: ", float(value))
+
+            # Store the reason why we updated these perfumes
+            data.loc[rows, ['facts']] += self.answers[answer_index]
