@@ -25,15 +25,23 @@ class InferenceEngine:
 
     ## Constructor
     def __init__(self):
-        # Store all perfumes and their initial 'truth-values'.
+        # 1. Store all perfumes and their initial 'truth-values'.
+
+        # 1a. Set explicit path to filteredDatabase.csv
         base_path = Path(__file__).parent
-        # Set explicit path to filteredDatabase.csv
         database_path = (base_path / "../filteredDatabase.csv").resolve()
         self.__perfumes = pd.read_csv(open(database_path, encoding="utf-8"))
+
+        # 1b. Add the two ways based on which we recommend perfumes, ranks and inclusion/exclusion.
+        #  - Add truth-values, also known as ranks.
         truth_values = [0.0] * len(self.__perfumes.index)
         self.__perfumes['rank'] = truth_values
 
-        # Save all possible questions.
+        #  - Add column with booleans, representing if the perfume can be included in the recommendations.
+        included = [True] * len(self.__perfumes.index)
+        self.__perfumes['included'] = included
+
+        # 2. Save all possible questions.
         self._read_questions()
 
     #############
@@ -41,18 +49,24 @@ class InferenceEngine:
 
     def reset(self):
         # Store all perfumes and their initial 'truth-values'.
-        base_path = Path(__file__).parent
+        # base_path = Path(__file__).parent
 
         # Set explicit path to filteredDatabase.csv
-        database_path = (base_path / "../filteredDatabase.csv").resolve()
+        # database_path = (base_path / "../filteredDatabase.csv").resolve()
 
-        self.__perfumes = pd.read_csv(open(database_path, encoding="utf-8"))
+        # self.__perfumes = pd.read_csv(open(database_path, encoding="utf-8"))
+
+        # Reset ranks
         truth_values = [0.0] * len(self.__perfumes.index)
         self.__perfumes['rank'] = truth_values
 
+        # Include all perfumes
+        included = [True] * len(self.__perfumes.index)
+        self.__perfumes['included'] = included
+
         # No need to reset __final_question_id or __questions
         self.__current_question = None
-        self.__next_question_id = 2
+        self.__next_question_id = 2  # Skip the name question, with question ID 1.
         self.__additional_info = {}
 
 
@@ -164,6 +178,18 @@ class InferenceEngine:
     #########################
     ## Getters and setters ##
 
+    def get_previous_question(self):
+        if not self.__next_question_id == 1:
+            self.__current_question = self.__questions[(self.__next_question_id - 3)]
+            if self.__current_question is None:
+                print("NOTE: question with ID ", self.__next_question_id, " does not exist (yet).")
+                exit(1)
+            print(self.__current_question.question)
+            #self.__next_question_id = None
+            return self.__current_question
+        return None
+
+
     # Returns the next question and removes it from the list of remaining questions.
     def get_next_question(self):
         if not self.has_reached_goal():
@@ -172,7 +198,7 @@ class InferenceEngine:
                 print("NOTE: question with ID ", self.__next_question_id, " does not exist (yet).")
                 exit(1)
             print(self.__current_question.question)
-            self.__next_question_id = None
+            #self.__next_question_id = None
             return self.__current_question
         return None
 
@@ -203,7 +229,8 @@ class InferenceEngine:
 
     # Returns a number of recommended perfumes based on the current state of the knowledge base.
     def get_recommendations(self):
-        sorted_list = self.__perfumes.sort_values(axis=0, by="rank", ascending=False, inplace=False)
+        possibilities = self.__perfumes[self.__perfumes['included'] == True]
+        sorted_list = possibilities.sort_values(axis=0, by="rank", ascending=False, inplace=False)
         return sorted_list.iloc[0:5, :]
 
     # Returns the min and max price of the top 20 products that are left.

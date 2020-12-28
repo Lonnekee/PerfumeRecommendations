@@ -92,6 +92,7 @@ class NewPage(tk.Frame):
 
     def __init__(self, master):
         self.master = master
+        self.buttons = []
         # Recursive call: make new page for each question until you reach the last
         if master.engine.has_reached_goal():
             master.switch_frame(EndPage)
@@ -168,10 +169,12 @@ class NewPage(tk.Frame):
                     self.lbox.insert("end", *self.droplist)
 
                 self.add_selected(self.lbox.curselection())
-                search = tk.Button(self, text="Search", width=10, fg='#8A5C3C', bg="#FBF8EE", command=search_keyword)
-                clear = tk.Button(self, text="Clear", width=10,fg='#8A5C3C', bg="#FBF8EE", command=clear_list)
-                search.pack()
-                clear.pack()
+                search = tk.Button(text="Search", width=10, fg='#8A5C3C', bg="#FBF8EE", command=search_keyword)
+                clear = tk.Button(text="Clear", width=10,fg='#8A5C3C', bg="#FBF8EE", command=clear_list)
+                search.pack(side=tk.BOTTOM)
+                clear.pack(side=tk.BOTTOM)
+                self.buttons.append(search)
+                self.buttons.append(clear)
 
             elif q.type == qt.BUDGET:
                 minPrice, maxPrice = master.engine.get_price_range()
@@ -188,7 +191,16 @@ class NewPage(tk.Frame):
             # Create submit button that can send the answer to the inference engine
             submit = tk.Button(text="NEXT QUESTION", font=('Alegrya sans', '12', 'italic'),width=600,fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=self._send_result)
             submit.pack(side=tk.BOTTOM, pady=50)
-            self.button = submit
+            previous = tk.Button(text="PREVIOUS QUESTION", font=('Alegrya sans', '12', 'italic'),width=600,fg="#FBF8EE", bg='#8A5C3C', activebackground="#5a371e", activeforeground="#FBF8EE",command=self._revert_answers)
+            previous.pack(side=tk.BOTTOM, pady=50)
+            self.buttons.append(submit)
+            self.buttons.append(previous)
+
+    def _revert_answers(self):
+        #TODO: revert answers given in the previous answer
+        q = self.master.engine.get_previous_question()
+        print("previous Question_id:", q)
+
 
     # Continuously add current selection of dropdown in list
     def add_selected(self, selection):
@@ -234,11 +246,11 @@ class NewPage(tk.Frame):
         self.master.engine.set_answer(value)
         if self.master.engine.has_reached_goal():
             self.master.switch_frame(EndPage)
-            self.button.destroy()
         else:
             self.master.switch_frame(NewPage)
-            self.button.destroy()
-
+        for button in self.buttons:
+            button.destroy()
+            self.buttons = []
 
 class EndPage(tk.Frame):
     images = []

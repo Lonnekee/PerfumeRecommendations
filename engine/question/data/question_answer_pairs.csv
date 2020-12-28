@@ -19,8 +19,8 @@ ID,IDnext,Question,Type,Answers,Labels,Value
 18,19;35,"Would you consider yourself a parfumista? If yes, you will continue with more expert questions regarding for example sillage and longevity.",Single,Yes;No,,
 19,20,How much sillage do you prefer?,Single,A small sillage;A large sillage;I do not have a preference,Tag:sillage-klein;Tag:sillage-groot;,+0.4;+0.4;
 20,21,What is the longevity you are looking for?,Multiple,1-4 hours;5-8 hours;More than 8 hours,Tag:longevity-kort;Tag:longevity-middel;Tag:longevity-lang,+0.4;+0.4;+0.4
-21,22,Do you plan to use your perfume as standalone or for layering?,Single,As standalone;For layering,;Collection:layering-live-stream-mei-2020+Collection:geuren-om-mee-te-layeren+Collection:layering-collection;,+0.4;
-22,35,Do you prefer a perfume where matching body care is also available?,Single,Yes;No,Tag:bodycare-available;,+0.5;
+21,22,Do you plan to use your perfume as standalone or for layering?,Single,As standalone;For layering,;Collection:layering-live-stream-mei-2020+Collection:geuren-om-mee-te-layeren+Collection:layering-collection,0.0;+0.4
+22,35,Do you prefer a perfume for which matching body care is also available?,Single,Yes;No,Tag:bodycare-available;,+0.5;0.0
 23,24;25;26;27,How large is the room you wish to scent?,Single,5-10 m2;11-40 m2;26-40 m2;Larger than 40 m2,Tag:room-5-10;Tag:room-5-10+Tag:room-40-plus;Tag:room-5-10+Tag:room-40-plus;Tag:room-40-plus,+0.3;-0.3;-0.3;+0.3
 24,28,Tip: For small spaces you can use scented sticks or a scented candle to create a pleasant atmosphere. Also consider a room spray for direct air freshening.,Display,,,
 25,28,"Tip: For medium-sized rooms we recommend using one or more scented sticks or candles, but a room spray and incense also work well in a larger space.",Display,,,

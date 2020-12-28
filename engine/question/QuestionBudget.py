@@ -13,4 +13,6 @@ class QuestionBudget(Question):
 
         print("Filtering perfumes... only perfumes costing less than %.2lf remain." % value)
         indices = self.perfumes[self.perfumes["Price"] > value].index
-        self.perfumes.drop(index=indices, inplace=True)
+
+        self.perfumes.loc[indices, ['included']] = False
+        # self.perfumes.drop(index=indices, inplace=True)
