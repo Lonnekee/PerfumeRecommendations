@@ -19,6 +19,8 @@ class InferenceEngine:
     __questions = []
     __current_question = None
     __previous_question = None
+    __traversed_path = []
+    __previous_question_id = 0
     __next_question_id = 1
     __final_question_id = 0
     __question_direction = 1
@@ -207,19 +209,18 @@ class InferenceEngine:
 
     # Returns the most recent previous question the user answered.
     def get_previous_question(self):
-        if not self.__next_question_id == 1:
-            #self.__current_question = self.__questions[self.__next_question_id - 1]
-            self.__previous_question = self.__questions[self.__current_question.id - 1]
-            #print("previous question ID:", self.__previous_question.id)
-            if self.__current_question is None:
-                print("NOTE: previous question with ID ", self.__current_question, " does not exist (yet).")
+        if not self.__previous_question_id == 0:
+            print("previous:", self.__previous_question_id, "next:", self.__next_question_id)
+            self.__previous_question = self.__questions[self.__traversed_path.pop()]
+            if self.__previous_question is None:
+                print("NOTE: previous question with ID ", self.__previous_question_id, " does not exist (yet).")
                 exit(1)
             print("previous:", self.__previous_question.question, self.__previous_question.id,"current:", self.__current_question.question, self.__current_question.id)
+            print(self.__traversed_path)
         return self.__previous_question
-        #return None
 
 
-    # Returns the next question and removes it from the list of remaining questions.
+    # Returns the next question from the list.
     def get_next_question(self):
         if not self.has_reached_goal():
             self.__current_question = self.__questions[self.__next_question_id]
@@ -227,7 +228,6 @@ class InferenceEngine:
                 print("NOTE: question with ID ", self.__next_question_id, " does not exist (yet).")
                 exit(1)
             print(self.__current_question.question)
-            #self.__next_question_id = None
             return self.__current_question
         return None
 
@@ -235,6 +235,7 @@ class InferenceEngine:
         # Set answer inside relevant question
         q = self.__current_question
         q.set_answer(value)
+        self.__previous_question_id = q.id
         
         # Set next question id
         if len(q.id_next) == 1:  # Only one possible next question
@@ -253,7 +254,9 @@ class InferenceEngine:
         else:
             print("Multiple possible next questions for unhandled question type: ", q.type)
             exit(1)
-
+        # Add questionID that was just answered to the path of questions
+        self.__traversed_path.append(q.id)
+        print(self.__traversed_path)
         print("\nNext up: ", self.__next_question_id)
 
     # Returns a number of recommended perfumes based on the current state of the knowledge base.

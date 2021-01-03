@@ -216,10 +216,11 @@ class NewPage(tk.Frame):
             self.buttons = []
         
         self.label.destroy()
-
         self.master.switch_frame(NewPage)
 
         #TODO: revert voting by answers given in the previous question
+        
+
 
     # Continuously add current selection of dropdown in list
     def add_selected(self, selection):
