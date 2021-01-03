@@ -20,7 +20,6 @@ class SampleApp(tk.Tk):
         tk.Tk.__init__(self)
         self.geometry('750x500')
         self.title('Perfume Knowledge System')
-        # self.title = tk.StringVar()
         self.engine = ie.InferenceEngine()
         self._frame = None
         self.switch_frame(StartPage)
@@ -94,6 +93,7 @@ class NewPage(tk.Frame):
     def __init__(self, master):
         self.master = master
         self.buttons = []
+        self.label = tk.Label()
         # Recursive call: make new page for each question until you reach the last
         if master.engine.has_reached_goal():
             master.switch_frame(EndPage)
@@ -107,11 +107,13 @@ class NewPage(tk.Frame):
                 q = master.engine.get_next_question()
             else:
                 q = master.engine.get_previous_question()
+                self.master.engine.set_current_question(q)
+
             self.question = q
 
             # Display the question that this frame is about
-            tk.Label(self, text="%s" % q.question, wraplengt=600, font=('Alegreya sans', 12),fg='#8A5C3C',bg='#FBF8EE').pack(side="top", fill="x",
-                                                                                               pady=5)
+            self.label = tk.Label(text="%s" % q.question, wraplength=600,font=('Alegreya sans', 12),fg='#8A5C3C',bg='#FBF8EE')
+            self.label.pack(side=tk.TOP)
 
             # Add the appropriate buttons or fields for the answers
             if q.type == qt.SINGLE:  # radio buttons needed
@@ -197,23 +199,25 @@ class NewPage(tk.Frame):
             submit.pack(side=tk.RIGHT)
 
             # Create button that goes to previous page and reverts answers given
-            previous = tk.Button(text="PREVIOUS QUESTION", font=('Alegrya sans', '12', 'italic'),fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=self._revert_answers)
-            previous.pack(side=tk.LEFT)
+            if self.master.engine.get_current_question().id != 1:
+                previous = tk.Button(text="PREVIOUS QUESTION", font=('Alegrya sans', '12', 'italic'),fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=self._revert_answers)
+                previous.pack(side=tk.LEFT)
+                self.buttons.append(previous)
 
             self.buttons.append(submit)
-            self.buttons.append(previous)
 
 
     # Changes the frame to the previous question and reverts answers
     def _revert_answers(self):
-        q = self.master.engine.get_previous_question()
-        print("previous Question_id:", q.id, "question:", q.question)
         self.master.engine.set_question_direction(0)
-        self.master.switch_frame(NewPage)
 
         for button in self.buttons:
             button.destroy()
             self.buttons = []
+        
+        self.label.destroy()
+
+        self.master.switch_frame(NewPage)
 
         #TODO: revert voting by answers given in the previous question
 
@@ -267,6 +271,7 @@ class NewPage(tk.Frame):
         for button in self.buttons:
             button.destroy()
             self.buttons = []
+        self.label.destroy()
 
 class EndPage(tk.Frame):
     images = []

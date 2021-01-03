@@ -196,18 +196,27 @@ class InferenceEngine:
     def get_question_direction(self):
         return self.__question_direction
 
+    def get_current_question(self):
+        return self.__current_question
+
+    def set_current_question(self, value):
+        self.__current_question = value
+
+    def get_next_question_id(self):
+        return self.__next_question_id
+
     # Returns the most recent previous question the user answered.
     def get_previous_question(self):
         if not self.__next_question_id == 1:
-            self.__current_question = self.__questions[self.__next_question_id - 1]
+            #self.__current_question = self.__questions[self.__next_question_id - 1]
             self.__previous_question = self.__questions[self.__current_question.id - 1]
             #print("previous question ID:", self.__previous_question.id)
-            if self.__previous_question is None:
+            if self.__current_question is None:
                 print("NOTE: previous question with ID ", self.__current_question, " does not exist (yet).")
                 exit(1)
             print("previous:", self.__previous_question.question, self.__previous_question.id,"current:", self.__current_question.question, self.__current_question.id)
-            return self.__current_question
-        return None
+        return self.__previous_question
+        #return None
 
 
     # Returns the next question and removes it from the list of remaining questions.
