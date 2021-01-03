@@ -197,8 +197,9 @@ class NewPage(tk.Frame):
             # Create submit button that can send the answer to the inference engine
             submit = tk.Button(text="NEXT QUESTION", font=('Alegrya sans', '12', 'italic'),fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=self._send_result)
             submit.pack(side=tk.RIGHT)
+            submit_ttp = CreateToolTip(submit, "go to next question with this button")
 
-            # Create button that goes to previous page and reverts answers given
+            # Create button that goes to previous page and reverts answers given, only appears after the first question
             if self.master.engine.get_current_question().id != 1:
                 previous = tk.Button(text="PREVIOUS QUESTION", font=('Alegrya sans', '12', 'italic'),fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=self._revert_answers)
                 previous.pack(side=tk.LEFT)
@@ -300,7 +301,7 @@ class EndPage(tk.Frame):
         recommendations = master.engine.get_recommendations()  # Pandas dataframe
 
         pd.pandas.set_option('display.max_columns', None)
-        print(recommendations)
+        print(recommendations.facts)
 
         start_row = 1
         no_items = 5
@@ -321,7 +322,9 @@ class EndPage(tk.Frame):
             im = im.resize((round(height / factor), round(im_width)))
 
             image = ImageTk.PhotoImage(im)
-            tk.Label(self, image=image).grid(row=start_row + 0, column=column)
+            label = tk.Label(self, image=image)
+            label.grid(row=start_row + 0, column=column)
+            label_ttp = CreateToolTip(label, text=row['facts'])
             self.images.append(image)  # Append to list of images to keep the reference. Otherwise, it might not show.
 
             # Vendor
@@ -351,6 +354,63 @@ class EndPage(tk.Frame):
         self.master.first_name.set('')
         self.master.engine.reset()
         self.master.switch_frame(StartPage)
+
+
+# This class creates a tooltip: a box of text that appears when hovering over a widget. 
+# TODO: copied code, modify where needed!
+class CreateToolTip(object):
+    """
+    create a tooltip for a given widget
+    """
+    def __init__(self, widget, text='widget info'):
+        self.waittime = 500     #miliseconds
+        self.wraplength = 180   #pixels
+        self.widget = widget
+        self.text = text
+        self.widget.bind("<Enter>", self.enter)
+        self.widget.bind("<Leave>", self.leave)
+        #self.widget.bind("<ButtonPress>", self.leave)
+        self.id = None
+        self.tw = None
+
+    def enter(self, event=None):
+        self.schedule()
+
+    def leave(self, event=None):
+        self.unschedule()
+        self.hidetip()
+
+    def schedule(self):
+        self.unschedule()
+        self.id = self.widget.after(self.waittime, self.showtip)
+
+    def unschedule(self):
+        id = self.id
+        self.id = None
+        if id:
+            self.widget.after_cancel(id)
+
+    def showtip(self, event=None):
+        x = y = 0
+        x, y, cx, cy = self.widget.bbox("insert")
+        x += self.widget.winfo_rootx() + 25
+        y += self.widget.winfo_rooty() + 20
+        # creates a toplevel window
+        self.tw = tk.Toplevel(self.widget)
+        # Leaves only the label and removes the app window
+        self.tw.wm_overrideredirect(True)
+        self.tw.wm_geometry("+%d+%d" % (x, y))
+        label = tk.Label(self.tw, text=self.text, justify='left',
+                       background="#ffffff", relief='solid', borderwidth=1,
+                       wraplength = self.wraplength)
+        label.pack(ipadx=1)
+
+    def hidetip(self):
+        tw = self.tw
+        self.tw= None
+        if tw:
+            tw.destroy()
+
 
 
 def run():

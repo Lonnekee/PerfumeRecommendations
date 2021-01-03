@@ -209,14 +209,13 @@ class InferenceEngine:
 
     # Returns the most recent previous question the user answered.
     def get_previous_question(self):
+        # The name question is the first, so we can't go back
         if not self.__previous_question_id == 0:
-            print("previous:", self.__previous_question_id, "next:", self.__next_question_id)
+            # Get most recent answered question
             self.__previous_question = self.__questions[self.__traversed_path.pop()]
             if self.__previous_question is None:
                 print("NOTE: previous question with ID ", self.__previous_question_id, " does not exist (yet).")
                 exit(1)
-            print("previous:", self.__previous_question.question, self.__previous_question.id,"current:", self.__current_question.question, self.__current_question.id)
-            print(self.__traversed_path)
         return self.__previous_question
 
 
@@ -254,6 +253,7 @@ class InferenceEngine:
         else:
             print("Multiple possible next questions for unhandled question type: ", q.type)
             exit(1)
+            
         # Add questionID that was just answered to the path of questions
         self.__traversed_path.append(q.id)
         print(self.__traversed_path)
