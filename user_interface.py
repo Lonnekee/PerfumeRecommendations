@@ -312,9 +312,12 @@ class EndPage(tk.Frame):
 
         pd.pandas.set_option('display.max_columns', None)
         pd.pandas.set_option('display.max_rows', None)
-        pd.set_option('display.max_colwidth', -1)
+        pd.set_option('display.max_colwidth', None)
         print(recommendations.facts)
         print(recommendations.rel_q)
+
+        all = master.engine.get_all()
+        print(all)
 
         start_row = 1
         no_items = 5
@@ -390,6 +393,7 @@ class ProductPage(tk.Frame):
         back_to_recs_button.pack()
 
 
+#TODO: GEBRUIKEN WE DIT?
 # This class creates a tooltip: a box of text that appears when hovering over a widget. 
 # TODO: copied code, modify where needed!
 class CreateToolTip(object):

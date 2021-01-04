@@ -40,6 +40,8 @@ class QuestionChoice(Question):
             data.loc[rows, ['rank']] += float(value)
             print("  Updated with: ", float(value))
 
+            # Store what tag was updated and how
+            data.loc[rows, ['facts']] += "Q number" + "+" + lab + "+" + str(value) + ", "
+
             # Store the reason why we updated these perfumes
-            data.loc[rows, ['facts']] += self.answers[answer_index] + ", "
             data.loc[rows, ['rel_q']] += self.question + " " + self.answers[answer_index] + "\n"

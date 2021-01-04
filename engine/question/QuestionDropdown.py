@@ -86,9 +86,11 @@ class QuestionDropdown(Question):
                     # Add the value linked to this question
                     self.perfumes.loc[rows, ['rank']] += float(self.value[0])
 
+                    # Store what tag was updated and how
+                    self.perfumes.loc[rows, ['facts']] += "Q number" + "+" + lab + "+" + str(self.value[0]) + ", "
+
                     # Add reason for upvoting/downvoting
                     self.perfumes.loc[rows, ['rel_q']] += self.question + " " + self.tags[index] + "\n"
-                    self.perfumes.loc[rows, ['facts']] += self.tags[index] + ", "
 
         # For all indices, upvote products with specific vendor
         if self.vendor is not None:

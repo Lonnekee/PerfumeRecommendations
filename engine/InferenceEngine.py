@@ -281,6 +281,10 @@ class InferenceEngine:
         minPrice = math.ceil(float(top20['Price'].min()))
         return minPrice, maxPrice
 
+    #TODO DELETE LATER, FOR DEBUGGING
+    def get_all(self):
+        return self.__perfumes.facts
+
 
 if __name__ == "__main__":
     engine = InferenceEngine()
