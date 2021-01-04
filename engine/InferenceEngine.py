@@ -84,6 +84,7 @@ class InferenceEngine:
         self.__current_question = None
         self.__next_question_id = 2  # Skip the name question, with question ID 1.
         self.__additional_info = {}
+        self.__traversed_path = []
 
 
     def _read_questions(self):
@@ -210,6 +211,9 @@ class InferenceEngine:
 
     def get_next_question_id(self):
         return self.__next_question_id
+
+    def get_traversed_path(self):
+        return self.__traversed_path
 
     # Returns the most recent previous question the user answered.
     def get_previous_question(self):

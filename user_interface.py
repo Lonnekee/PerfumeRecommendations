@@ -199,10 +199,9 @@ class NewPage(tk.Frame):
             # Create submit button that can send the answer to the inference engine
             submit = tk.Button(text="NEXT QUESTION", font=('Alegrya sans', '12', 'italic'),fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=self._send_result)
             submit.pack(side=tk.RIGHT)
-            submit_ttp = CreateToolTip(submit, "go to next question with this button")
 
-            # Create button that goes to previous page and reverts answers given, only appears after the first question
-            if self.master.engine.get_current_question().id != 1:
+            # Create button that goes to previous page and reverts answers given, only appears after the first answered question
+            if len(self.master.engine.get_traversed_path()) > 0:
                 previous = tk.Button(text="PREVIOUS QUESTION", font=('Alegrya sans', '12', 'italic'),fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=self._revert_answers)
                 previous.pack(side=tk.LEFT)
                 self.buttons.append(previous)
@@ -302,8 +301,10 @@ class EndPage(tk.Frame):
 
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+        self.master.relevant_questions = []
+        self.master.relevant_answers = []
         self['bg']="#FBF8EE"
-        tk.Label(self, text="Hi %s, here are your scent recommendations" % master.first_name.get(),
+        tk.Label(self, text="Hi %s, here are your scent recommendations" % self.master.first_name.get(),
                  font=('Alegreya sans', 18, "bold"),fg='#8A5C3C',bg='#FBF8EE')\
             .grid(row=0, columnspan=3, pady=5)
 
@@ -321,6 +322,12 @@ class EndPage(tk.Frame):
             row = recommendations.iloc[index]
             column = index % no_columns
 
+
+            #print("Facts:",index, row['facts'])
+            self.master.relevant_questions.append(row['rel_q'])
+            self.master.relevant_answers.append(row['facts'])
+            self.master.relevant_index = index
+
             # Image
             url = row['Image']
             raw_data = urllib.request.urlopen(url).read()
@@ -336,9 +343,7 @@ class EndPage(tk.Frame):
             image_button = tk.Button(self, image=image, command=lambda:self.master.switch_frame(ProductPage))
             image_button.grid(row=start_row + 0, column=column)
             image_button_ttp = CreateToolTip(image_button, text="Click to see why this product was recommended...")
-            #label = tk.Label(self, image=image)
-            #label.grid(row=start_row + 0, column=column)
-            #label_ttp = CreateToolTip(label, text=row['facts'])
+
             self.images.append(image)  # Append to list of images to keep the reference. Otherwise, it might not show.
 
             # Vendor
@@ -374,25 +379,26 @@ class ProductPage(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self['bg']="#FBF8EE"
+
+        # Not displaying the correct questions/answers yet
         tk.Label(self,fg='#8A5C3C', bg='#FBF8EE', text="This scent is recommended to you because of the following questions:").pack()
-        back_to_recs_button = tk.Button(self, text="Back to scent recommendations",fg='#8A5C3C', bg="#FBF8EE", command=lambda:self.master.switch_frame(EndPage))
+        tk.Label(self, text=self.master.relevant_questions[self.master.relevant_index], wraplength=600).pack()
+        tk.Label(self, text="Answer: %s"%self.master.relevant_answers[self.master.relevant_index],wraplength=600).pack()
+        back_to_recs_button = tk.Button(self, text="Back to overview",fg='#8A5C3C', bg="#FBF8EE", command=lambda:self.master.switch_frame(EndPage))
         back_to_recs_button.pack()
 
 
 # This class creates a tooltip: a box of text that appears when hovering over a widget. 
 # TODO: copied code, modify where needed!
 class CreateToolTip(object):
-    """
-    create a tooltip for a given widget
-    """
     def __init__(self, widget, text='widget info'):
-        self.waittime = 1000     #miliseconds
-        self.wraplength = 360   #pixels
+        self.waittime = 200     #miliseconds
+        self.wraplength = 180   #pixels
         self.widget = widget
         self.text = text
         self.widget.bind("<Enter>", self.enter)
         self.widget.bind("<Leave>", self.leave)
-        #self.widget.bind("<ButtonPress>", self.leave)
+        self.widget.bind("<ButtonPress>", self.leave)
         self.id = None
         self.tw = None
 
@@ -416,8 +422,8 @@ class CreateToolTip(object):
     def showtip(self, event=None):
         x = y = 0
         x, y, cx, cy = self.widget.bbox("insert")
-        x += self.widget.winfo_rootx() + 25
-        y += self.widget.winfo_rooty() + 20
+        x += self.widget.winfo_rootx() + 100
+        y += self.widget.winfo_rooty() + 50
         # creates a toplevel window
         self.tw = tk.Toplevel(self.widget)
         # Leaves only the label and removes the app window
