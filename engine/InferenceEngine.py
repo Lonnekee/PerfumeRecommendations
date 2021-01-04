@@ -18,8 +18,12 @@ class InferenceEngine:
     ## Attributes
     __questions = []
     __current_question = None
+    __previous_question = None
+    __traversed_path = []
+    __previous_question_id = 0
     __next_question_id = 1
     __final_question_id = 0
+    __question_direction = 1
     __perfumes = []
     __additional_info = {}
 
@@ -44,6 +48,10 @@ class InferenceEngine:
         # 1c. Add column where we can explain _why_ it has a certain truth value.
         facts = [''] * len(self.__perfumes.index)
         self.__perfumes['facts'] = facts
+
+        # 1d. Add column in which we store the relevant questions that we base the recommendation on.
+        rel_q = [''] * len(self.__perfumes.index)
+        self.__perfumes['rel_q'] = rel_q
 
         # 2. Save all possible questions.
         self._read_questions()
@@ -76,6 +84,7 @@ class InferenceEngine:
         self.__current_question = None
         self.__next_question_id = 2  # Skip the name question, with question ID 1.
         self.__additional_info = {}
+        self.__traversed_path = []
 
 
     def _read_questions(self):
@@ -186,19 +195,39 @@ class InferenceEngine:
     #########################
     ## Getters and setters ##
 
+   
+    # Value 0 being backwards, 1 being forwards
+    def set_question_direction(self, value):
+        self.__question_direction = value
+
+    def get_question_direction(self):
+        return self.__question_direction
+
+    def get_current_question(self):
+        return self.__current_question
+
+    def set_current_question(self, value):
+        self.__current_question = value
+
+    def get_next_question_id(self):
+        return self.__next_question_id
+
+    def get_traversed_path(self):
+        return self.__traversed_path
+
+    # Returns the most recent previous question the user answered.
     def get_previous_question(self):
-        if not self.__next_question_id == 1:
-            self.__current_question = self.__questions[(self.__next_question_id - 3)]
-            if self.__current_question is None:
-                print("NOTE: question with ID ", self.__next_question_id, " does not exist (yet).")
+        # The name question is the first, so we can't go back
+        if not self.__previous_question_id == 0:
+            # Get most recent answered question
+            self.__previous_question = self.__questions[self.__traversed_path.pop()]
+            if self.__previous_question is None:
+                print("NOTE: previous question with ID ", self.__previous_question_id, " does not exist (yet).")
                 exit(1)
-            print(self.__current_question.question)
-            #self.__next_question_id = None
-            return self.__current_question
-        return None
+        return self.__previous_question
 
 
-    # Returns the next question and removes it from the list of remaining questions.
+    # Returns the next question from the list.
     def get_next_question(self):
         if not self.has_reached_goal():
             self.__current_question = self.__questions[self.__next_question_id]
@@ -206,7 +235,6 @@ class InferenceEngine:
                 print("NOTE: question with ID ", self.__next_question_id, " does not exist (yet).")
                 exit(1)
             print(self.__current_question.question)
-            #self.__next_question_id = None
             return self.__current_question
         return None
 
@@ -214,6 +242,7 @@ class InferenceEngine:
         # Set answer inside relevant question
         q = self.__current_question
         q.set_answer(value)
+        self.__previous_question_id = q.id
         
         # Set next question id
         if len(q.id_next) == 1:  # Only one possible next question
@@ -233,6 +262,9 @@ class InferenceEngine:
             print("Multiple possible next questions for unhandled question type: ", q.type)
             exit(1)
 
+        # Add questionID that was just answered to the path of questions
+        self.__traversed_path.append(q.id)
+        print(self.__traversed_path)
         print("\nNext up: ", self.__next_question_id)
 
     # Returns a number of recommended perfumes based on the current state of the knowledge base.
