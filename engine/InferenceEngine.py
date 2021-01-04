@@ -1,11 +1,12 @@
 import pandas as pd
+import re
+import math
+from pathlib import Path
 
 from engine.question.QuestionDropdown import QuestionDropdown
 from engine.question.QuestionChoiceMultiple import QuestionChoiceMultiple
 from engine.question.QuestionChoiceSingle import QuestionChoiceSingle
 from engine.question.QuestionDisplay import QuestionDisplay
-from pathlib import Path
-import math
 
 from engine.question.QuestionBudget import QuestionBudget
 from engine.question.QuestionName import QuestionName
@@ -192,9 +193,41 @@ class InferenceEngine:
     def add_additional_info(self, entry_name, value):
         self.__additional_info[entry_name] = value
 
+    def reverseAnswer(self, q_id):
+        print("Reversing question " +str(q_id))
+
+        facts = self.__perfumes.facts
+        print(facts)
+        trueRows = self.__perfumes.facts.str.contains("Q"+str(q_id))
+        if(trueRows.any()):
+            print("  Found to reverse: ", trueRows.sum())
+        else:
+            print("  Nothing found to reverse.")
+
+        # for all rows that have been changed by the previous question
+        for row in trueRows.index:
+            if(trueRows.iloc[row]):
+                #find the correct label
+                for lab in facts.iloc[row].split(','):
+                    if(lab.startswith("Q"+str(q_id))):
+                        # extract value
+                        singleLabel = lab.split('+')
+                        value = -float(singleLabel[2])
+                        # reverse value 
+                        self.__perfumes.at[row, 'rank'] += value
+                    else:
+                        continue
+                # remove reasoning tags
+                print("Removed tags and reversed value from " + facts.loc[row], end ="")
+                #This gives a warning that it's making a copy, but that should be fine
+                facts.loc[row] = facts.loc[row].split("Q"+str(q_id),1)[0]
+                print("now left: " + facts.loc[row])
+            else:
+                continue
+
+
     #########################
     ## Getters and setters ##
-
    
     # Value 0 being backwards, 1 being forwards
     def set_question_direction(self, value):
@@ -225,7 +258,6 @@ class InferenceEngine:
                 print("NOTE: previous question with ID ", self.__previous_question_id, " does not exist (yet).")
                 exit(1)
         return self.__previous_question
-
 
     # Returns the next question from the list.
     def get_next_question(self):

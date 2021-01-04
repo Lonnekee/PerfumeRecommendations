@@ -16,6 +16,7 @@ class QuestionDropdown(Question):
                          perfumes)
         self.tags = None
         self.vendor = None
+        self.q_id = q_id
 
     def get_list(self):
         if "takePerfume" in self.labels:
@@ -87,7 +88,7 @@ class QuestionDropdown(Question):
                     self.perfumes.loc[rows, ['rank']] += float(self.value[0])
 
                     # Store what tag was updated and how
-                    self.perfumes.loc[rows, ['facts']] += "Q number" + "+" + lab + "+" + str(self.value[0]) + ", "
+                    self.perfumes.loc[rows, ['facts']] += "Q" + str(self.q_id) + "+" + lab + "+" + str(self.value[0]) + ","
 
                     # Add reason for upvoting/downvoting
                     self.perfumes.loc[rows, ['rel_q']] += self.question + " " + self.tags[index] + "\n"
@@ -109,8 +110,11 @@ class QuestionDropdown(Question):
                     self.perfumes.loc[rows, ['rank']] += float(self.value[0])
                     print("  Updated with: ", float(self.value[0]))
 
+                    # Store what tag was updated and how
+                    self.perfumes.loc[rows, ['facts']] += "Q" + str(self.q_id) + "+" + self.vendor[index] + "+" + str(self.value[0]) + ","
+
                     # Add reason for upvoting/downvoting
-                    self.perfumes.loc[rows, ['facts']] += self.vendor[index] + " "
+                    self.perfumes.loc[rows, ['rel_q']] += self.question + " " + self.vendor[index] + "\n"
 
         # if the question is about the perfumes, make sure the selected products (either liked or disliked) get
         # downvoted a lot these are either already known or disliked

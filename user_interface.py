@@ -240,9 +240,16 @@ class NewPage(tk.Frame):
             widget.destroy()
             self.widgets = []
 
+        #undo the voting
+        traversed = self.master.engine.get_traversed_path()
+        print(traversed)
+        if traversed:
+            prev_id = traversed[-1]
+            print(prev_id)
+            self.master.engine.reverseAnswer(prev_id)
+
         self.master.switch_frame(NewPage)
 
-        # TODO: revert voting by answers given in the previous question
 
     # Continuously add current selection of dropdown in list
     def add_selected(self, selection):
