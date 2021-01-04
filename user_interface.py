@@ -74,7 +74,7 @@ class PageOne(tk.Frame):
                                                                                                        fill="x", pady=5)
         tk.Label(self, text="Name")
         name_string = tk.StringVar()
-        name_entry = tk.Entry(self, textvariable=name_string)
+        name_entry = tk.Entry(textvariable=name_string)
         name_entry.pack()
 
         def get_input():
@@ -84,7 +84,6 @@ class PageOne(tk.Frame):
                 master.title('Perfume Recommendations for %s' % first_name)
             self.master.switch_frame(NewPage)
 
-        #tk.Button(self, text="NEXT", font=('Alegreya sans', '12', 'italic'),fg="#FBF8EE", bg='#8A5C3C', command=get_input).pack(side=tk.BOTTOM, fill="x", pady=50)
 
 class NewPage(tk.Frame):
     given_answer = None
@@ -93,7 +92,8 @@ class NewPage(tk.Frame):
     def __init__(self, master):
         self.master = master
         self.buttons = []
-        self.label = tk.Label()
+        self.widgets = []
+
         # Recursive call: make new page for each question until you reach the last
         if master.engine.has_reached_goal():
             master.switch_frame(EndPage)
@@ -112,8 +112,9 @@ class NewPage(tk.Frame):
             self.question = q
 
             # Display the question that this frame is about
-            self.label = tk.Label(text="%s" % q.question, wraplength=600,font=('Alegreya sans', 12),fg='#8A5C3C',bg='#FBF8EE')
-            self.label.pack(side=tk.TOP)
+            label = tk.Label(text="%s" % q.question, wraplength=600,font=('Alegreya sans', 12),fg='#8A5C3C',bg='#FBF8EE')
+            label.pack(side=tk.TOP)
+            self.widgets.append(label)
 
             # Add the appropriate buttons or fields for the answers
             if q.type == qt.SINGLE:  # radio buttons needed
@@ -191,8 +192,9 @@ class NewPage(tk.Frame):
 
             elif q.type == qt.NAME:
                 self.given_answer = tk.StringVar()
-                name_entry = tk.Entry(self, textvariable=self.given_answer)
+                name_entry = tk.Entry(master, textvariable=self.given_answer)
                 name_entry.pack()
+                self.widgets.append(name_entry)
 
             # Create submit button that can send the answer to the inference engine
             submit = tk.Button(text="NEXT QUESTION", font=('Alegrya sans', '12', 'italic'),fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=self._send_result)
@@ -216,7 +218,10 @@ class NewPage(tk.Frame):
             button.destroy()
             self.buttons = []
         
-        self.label.destroy()
+        for widget in self.widgets:
+            widget.destroy()
+            self.widgets = []
+
         self.master.switch_frame(NewPage)
 
         #TODO: revert voting by answers given in the previous question
@@ -273,7 +278,9 @@ class NewPage(tk.Frame):
         for button in self.buttons:
             button.destroy()
             self.buttons = []
-        self.label.destroy()
+        for widget in self.widgets:
+            widget.destroy()
+            self.widgets = []
 
 class EndPage(tk.Frame):
     images = []
@@ -287,6 +294,8 @@ class EndPage(tk.Frame):
             f.write("Recommendation #" + str(index+1) + "\n")
             f.write(row['Title'] + " by " + row['Vendor'] + "\n")
             f.write(row['Type'] + "\n\n")
+            f.write("Relevant questions:" + row['rel_q'] + "\n")
+            f.write("Your answers:" + row['facts'] + "\n")
         
         f.close()
 
@@ -301,7 +310,7 @@ class EndPage(tk.Frame):
         recommendations = master.engine.get_recommendations()  # Pandas dataframe
 
         pd.pandas.set_option('display.max_columns', None)
-        print(recommendations.facts)
+        print(recommendations.facts, recommendations.rel_q)
 
         start_row = 1
         no_items = 5
@@ -322,9 +331,14 @@ class EndPage(tk.Frame):
             im = im.resize((round(height / factor), round(im_width)))
 
             image = ImageTk.PhotoImage(im)
-            label = tk.Label(self, image=image)
-            label.grid(row=start_row + 0, column=column)
-            label_ttp = CreateToolTip(label, text=row['facts'])
+
+            # Create an image button that takes you to the product page
+            image_button = tk.Button(self, image=image, command=lambda:self.master.switch_frame(ProductPage))
+            image_button.grid(row=start_row + 0, column=column)
+            image_button_ttp = CreateToolTip(image_button, text="Click to see why this product was recommended...")
+            #label = tk.Label(self, image=image)
+            #label.grid(row=start_row + 0, column=column)
+            #label_ttp = CreateToolTip(label, text=row['facts'])
             self.images.append(image)  # Append to list of images to keep the reference. Otherwise, it might not show.
 
             # Vendor
@@ -355,6 +369,15 @@ class EndPage(tk.Frame):
         self.master.engine.reset()
         self.master.switch_frame(StartPage)
 
+# Frame class containing a single recommended product with description/motivation for it
+class ProductPage(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        self['bg']="#FBF8EE"
+        tk.Label(self,fg='#8A5C3C', bg='#FBF8EE', text="This scent is recommended to you because of the following questions:").pack()
+        back_to_recs_button = tk.Button(self, text="Back to scent recommendations",fg='#8A5C3C', bg="#FBF8EE", command=lambda:self.master.switch_frame(EndPage))
+        back_to_recs_button.pack()
+
 
 # This class creates a tooltip: a box of text that appears when hovering over a widget. 
 # TODO: copied code, modify where needed!
@@ -363,8 +386,8 @@ class CreateToolTip(object):
     create a tooltip for a given widget
     """
     def __init__(self, widget, text='widget info'):
-        self.waittime = 500     #miliseconds
-        self.wraplength = 180   #pixels
+        self.waittime = 1000     #miliseconds
+        self.wraplength = 360   #pixels
         self.widget = widget
         self.text = text
         self.widget.bind("<Enter>", self.enter)

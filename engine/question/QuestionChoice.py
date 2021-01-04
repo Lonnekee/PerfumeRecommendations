@@ -5,6 +5,7 @@ class QuestionChoice(Question):
     def __init__(self, q_id, question, q_type, engine, id_next, labels, value, perfumes, answer_options):
         super().__init__(q_id, question, q_type, engine, id_next, labels, value, perfumes)
         self.answers = answer_options
+        self.relevant_questions = []
 
     def _update_ranks(self, labels, value, answer_index):
         data = self.perfumes
@@ -41,3 +42,4 @@ class QuestionChoice(Question):
 
             # Store the reason why we updated these perfumes
             data.loc[rows, ['facts']] += self.answers[answer_index]
+            data.loc[rows, ['rel_q']] += self.question

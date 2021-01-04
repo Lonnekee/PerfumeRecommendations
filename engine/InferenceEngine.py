@@ -49,6 +49,10 @@ class InferenceEngine:
         facts = [''] * len(self.__perfumes.index)
         self.__perfumes['facts'] = facts
 
+        # 1d. Add column in which we store the relevant questions that we base the recommendation on.
+        rel_q = [''] * len(self.__perfumes.index)
+        self.__perfumes['rel_q'] = rel_q
+
         # 2. Save all possible questions.
         self._read_questions()
 
@@ -253,7 +257,7 @@ class InferenceEngine:
         else:
             print("Multiple possible next questions for unhandled question type: ", q.type)
             exit(1)
-            
+
         # Add questionID that was just answered to the path of questions
         self.__traversed_path.append(q.id)
         print(self.__traversed_path)
