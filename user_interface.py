@@ -311,7 +311,10 @@ class EndPage(tk.Frame):
         recommendations = master.engine.get_recommendations()  # Pandas dataframe
 
         pd.pandas.set_option('display.max_columns', None)
-        print(recommendations.facts, recommendations.rel_q)
+        pd.pandas.set_option('display.max_rows', None)
+        pd.set_option('display.max_colwidth', -1)
+        print(recommendations.facts)
+        print(recommendations.rel_q)
 
         start_row = 1
         no_items = 5
@@ -383,7 +386,6 @@ class ProductPage(tk.Frame):
         # Not displaying the correct questions/answers yet
         tk.Label(self,fg='#8A5C3C', bg='#FBF8EE', text="This scent is recommended to you because of the following questions:").pack()
         tk.Label(self, text=self.master.relevant_questions[self.master.relevant_index], wraplength=600).pack()
-        tk.Label(self, text="Answer: %s"%self.master.relevant_answers[self.master.relevant_index],wraplength=600).pack()
         back_to_recs_button = tk.Button(self, text="Back to overview",fg='#8A5C3C', bg="#FBF8EE", command=lambda:self.master.switch_frame(EndPage))
         back_to_recs_button.pack()
 

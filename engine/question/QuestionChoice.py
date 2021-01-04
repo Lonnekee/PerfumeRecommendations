@@ -41,5 +41,5 @@ class QuestionChoice(Question):
             print("  Updated with: ", float(value))
 
             # Store the reason why we updated these perfumes
-            data.loc[rows, ['facts']] += self.answers[answer_index]
-            data.loc[rows, ['rel_q']] += self.question
+            data.loc[rows, ['facts']] += self.answers[answer_index] + ", "
+            data.loc[rows, ['rel_q']] += self.question + " " + self.answers[answer_index] + "\n"
