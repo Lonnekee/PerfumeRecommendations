@@ -47,31 +47,42 @@ class StartPage(tk.Frame):
             master.switch_frame(NewPage)
 
         start_label = tk.Label(self,
-                 text="Welcome to the perfume knowledge system! After you have answered the questions, the system will determine the ideal scented product for your personal use.",
-                 wraplength=700, font=('Alegreya sans', 18), fg='#8A5C3C',bg='#FBF8EE')
+                               text="Welcome to the perfume knowledge system! After you have answered the questions, the system will determine the ideal scented product for your personal use.",
+                               wraplength=700, font=('Alegreya sans', 18), fg='#8A5C3C', bg='#FBF8EE')
         start_label.pack()
-        start_button = tk.Button(text="CLICK HERE TO START", font=('Alegreya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",width=750, command=switch_and_clear)
+        start_button = tk.Button(text="CLICK HERE TO START", font=('Alegreya sans', '12', 'italic'), fg='#8A5C3C',
+                                 bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE", width=750,
+                                 command=switch_and_clear)
         start_button.pack(side=tk.BOTTOM, pady=50)
         base_path = Path(__file__).parent
-        im_path = (base_path / "data/Logo-PL-liggend.png").resolve()
+        if (base_path / "data/").resolve().exists():
+            # The code is probably run from the source files
+            im_path = (base_path / "data/Logo-PL-liggend.png").resolve()
+        else:
+            # The executable is running, I'm assuming.
+            base_path = base_path.parent.parent
+            im_path = (base_path / "data/Logo-PL-liggend.png").resolve()
+
         self.img = Image.open(im_path)
         img_width, img_height = self.img.size
-        img_width = int(img_width/4)
-        img_height = int(img_height/4)
-        self.img = self.img.resize((img_width,img_height), Image.ANTIALIAS)
+        img_width = int(img_width / 4)
+        img_height = int(img_height / 4)
+        self.img = self.img.resize((img_width, img_height), Image.ANTIALIAS)
         self.img = ImageTk.PhotoImage(self.img)
-        canvas = tk.Canvas(self,height=img_height, width=img_width, bg='#FBF8EE')
+        canvas = tk.Canvas(self, height=img_height, width=img_width, bg='#FBF8EE')
         canvas.pack()
 
-        canvas.create_image(img_width/2+1, img_height/2, image=self.img, anchor=tk.CENTER)
+        canvas.create_image(img_width / 2 + 1, img_height / 2, image=self.img, anchor=tk.CENTER)
+
 
 class PageOne(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self.geometry = "750x500"
         self['bg'] = '#FBF8EE'
-        tk.Label(self, text="What is your name?", wraplength=750, font=('Alegreya sans', 18),fg='#8A5C3C',bg='#FBF8EE').pack(side="top",
-                                                                                                       fill="x", pady=5)
+        tk.Label(self, text="What is your name?", wraplength=750, font=('Alegreya sans', 18), fg='#8A5C3C',
+                 bg='#FBF8EE').pack(side="top",
+                                    fill="x", pady=5)
         tk.Label(self, text="Name")
         name_string = tk.StringVar()
         name_entry = tk.Entry(textvariable=name_string)
@@ -112,7 +123,8 @@ class NewPage(tk.Frame):
             self.question = q
 
             # Display the question that this frame is about
-            label = tk.Label(text="%s" % q.question, wraplength=600,font=('Alegreya sans', 12),fg='#8A5C3C',bg='#FBF8EE')
+            label = tk.Label(text="%s" % q.question, wraplength=600, font=('Alegreya sans', 12), fg='#8A5C3C',
+                             bg='#FBF8EE')
             label.pack(side=tk.TOP)
             self.widgets.append(label)
 
@@ -120,16 +132,19 @@ class NewPage(tk.Frame):
             if q.type == qt.SINGLE:  # radio buttons needed
                 self.given_answer = tk.IntVar()
                 for i, answer in enumerate(q.answers):
-                    radios = tk.Radiobutton(self, text=answer, activebackground="#FBF8EE", background="#FBF8EE", activeforeground="black",
-                        foreground="black",selectcolor="#8A5C3C",width=50,indicatoron=0,offrelief=tk.FLAT,bd=3,pady=8,variable=self.given_answer, value=i)
+                    radios = tk.Radiobutton(self, text=answer, activebackground="#FBF8EE", background="#FBF8EE",
+                                            activeforeground="black",
+                                            foreground="black", selectcolor="#8A5C3C", width=50, indicatoron=0,
+                                            offrelief=tk.FLAT, bd=3, pady=8, variable=self.given_answer, value=i)
                     radios.pack()
 
             elif q.type == qt.MULTIPLE:  # selectable boxes or images needed (?)
                 self.given_answer = len(q.answers) * [0]
                 for i in range(len(q.answers)):
                     self.given_answer[i] = tk.IntVar()
-                    c = tk.Checkbutton(self, text=q.answers[i], bg="#FBF8EE", fg='#5a371e', activebackground="#5a371e", 
-                        activeforeground="#FBF8EE",selectcolor="#FBF8EE",width=50,indicatoron=1, pady=8, bd=3,variable=self.given_answer[i])
+                    c = tk.Checkbutton(self, text=q.answers[i], bg="#FBF8EE", fg='#5a371e', activebackground="#5a371e",
+                                       activeforeground="#FBF8EE", selectcolor="#FBF8EE", width=50, indicatoron=1,
+                                       pady=8, bd=3, variable=self.given_answer[i])
                     c.pack()
 
             elif q.type == qt.DISPLAY:
@@ -142,15 +157,15 @@ class NewPage(tk.Frame):
                 scrollbar = tk.Scrollbar(self)
                 scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
 
-                self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=15, selectbackground="#8A5C3C", selectforeground="#FBF8EE")
+                self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=75, height=15, selectbackground="#8A5C3C",
+                                       selectforeground="#FBF8EE")
                 self.lbox.insert("end", *self.droplist)
-                self.lbox.config(yscrollcommand = scrollbar.set)
-                scrollbar.config(command = self.lbox.yview)
+                self.lbox.config(yscrollcommand=scrollbar.set)
+                scrollbar.config(command=self.lbox.yview)
 
                 self.lbox.pack()
                 self.given_answer = tk.StringVar()
                 self.given_answer.set(self.droplist[0])
-
 
                 self.search_var = tk.StringVar()
                 self.search_bar = tk.Entry(self, textvariable=self.search_var)
@@ -160,7 +175,7 @@ class NewPage(tk.Frame):
                 self.product_index = []
 
                 def search_keyword():
-                    selection=self.lbox.curselection()
+                    selection = self.lbox.curselection()
                     self.add_selected(selection)
                     search_term = self.search_var.get()
                     self.lbox.delete(0, tk.END)
@@ -169,7 +184,7 @@ class NewPage(tk.Frame):
                             self.lbox.insert(0, item)
 
                 def clear_list():
-                    selection=self.lbox.curselection()
+                    selection = self.lbox.curselection()
                     self.add_selected(selection)
                     self.lbox.delete(0, tk.END)
                     self.search_bar.delete(0, tk.END)
@@ -177,7 +192,7 @@ class NewPage(tk.Frame):
 
                 self.add_selected(self.lbox.curselection())
                 search = tk.Button(text="Search", width=10, fg='#8A5C3C', bg="#FBF8EE", command=search_keyword)
-                clear = tk.Button(text="Clear", width=10,fg='#8A5C3C', bg="#FBF8EE", command=clear_list)
+                clear = tk.Button(text="Clear", width=10, fg='#8A5C3C', bg="#FBF8EE", command=clear_list)
                 search.pack(side=tk.BOTTOM)
                 clear.pack(side=tk.BOTTOM)
                 self.buttons.append(search)
@@ -186,8 +201,10 @@ class NewPage(tk.Frame):
             elif q.type == qt.BUDGET:
                 minPrice, maxPrice = master.engine.get_price_range()
                 self.given_answer = tk.DoubleVar()
-                scale_entry = tk.Scale(self, variable=self.given_answer, label='Maximum budget in euros:', from_=minPrice, to=maxPrice, tickinterval=(maxPrice-minPrice), orient=tk.HORIZONTAL,length=200)
-                scale_entry.set(int((maxPrice-minPrice)/2+minPrice))
+                scale_entry = tk.Scale(self, variable=self.given_answer, label='Maximum budget in euros:',
+                                       from_=minPrice, to=maxPrice, tickinterval=(maxPrice - minPrice),
+                                       orient=tk.HORIZONTAL, length=200)
+                scale_entry.set(int((maxPrice - minPrice) / 2 + minPrice))
                 scale_entry.pack()
 
             elif q.type == qt.NAME:
@@ -197,17 +214,19 @@ class NewPage(tk.Frame):
                 self.widgets.append(name_entry)
 
             # Create submit button that can send the answer to the inference engine
-            submit = tk.Button(text="NEXT QUESTION", font=('Alegrya sans', '12', 'italic'),fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=self._send_result)
+            submit = tk.Button(text="NEXT QUESTION", font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
+                               activebackground="#5a371e", activeforeground="#FBF8EE", command=self._send_result)
             submit.pack(side=tk.RIGHT)
 
             # Create button that goes to previous page and reverts answers given, only appears after the first answered question
             if len(self.master.engine.get_traversed_path()) > 0:
-                previous = tk.Button(text="PREVIOUS QUESTION", font=('Alegrya sans', '12', 'italic'),fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=self._revert_answers)
+                previous = tk.Button(text="PREVIOUS QUESTION", font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C',
+                                     bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",
+                                     command=self._revert_answers)
                 previous.pack(side=tk.LEFT)
                 self.buttons.append(previous)
 
             self.buttons.append(submit)
-
 
     # Changes the frame to the previous question and reverts answers
     def _revert_answers(self):
@@ -216,20 +235,18 @@ class NewPage(tk.Frame):
         for button in self.buttons:
             button.destroy()
             self.buttons = []
-        
+
         for widget in self.widgets:
             widget.destroy()
             self.widgets = []
 
         self.master.switch_frame(NewPage)
 
-        #TODO: revert voting by answers given in the previous question
-        
-
+        # TODO: revert voting by answers given in the previous question
 
     # Continuously add current selection of dropdown in list
     def add_selected(self, selection):
-        if len(selection)>0:
+        if len(selection) > 0:
             for item in range(len(selection)):
                 self.value.append(self.lbox.get(selection[item]))
         for product in self.value:
@@ -281,31 +298,31 @@ class NewPage(tk.Frame):
             widget.destroy()
             self.widgets = []
 
+
 class EndPage(tk.Frame):
     images = []
 
     def save_results(self, recommendations):
         desktop = os.path.expanduser("~/Desktop/")
-        f = open(desktop + "Perfume_Recommendations.txt","w") 
-        
+        f = open(desktop + "Perfume_Recommendations.txt", "w")
+
         for index in range(len(recommendations.index)):
             row = recommendations.iloc[index]
-            f.write("Recommendation #" + str(index+1) + "\n")
+            f.write("Recommendation #" + str(index + 1) + "\n")
             f.write(row['Title'] + " by " + row['Vendor'] + "\n")
             f.write(row['Type'] + "\n\n")
             f.write("Relevant questions:" + row['rel_q'] + "\n")
             f.write("Your answers:" + row['facts'] + "\n")
-        
-        f.close()
 
+        f.close()
 
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self.master.relevant_questions = []
         self.master.relevant_answers = []
-        self['bg']="#FBF8EE"
+        self['bg'] = "#FBF8EE"
         tk.Label(self, text="Hi %s, here are your scent recommendations" % self.master.first_name.get(),
-                 font=('Alegreya sans', 18, "bold"),fg='#8A5C3C',bg='#FBF8EE')\
+                 font=('Alegreya sans', 18, "bold"), fg='#8A5C3C', bg='#FBF8EE') \
             .grid(row=0, columnspan=3, pady=5)
 
         recommendations = master.engine.get_recommendations()  # Pandas dataframe
@@ -325,8 +342,7 @@ class EndPage(tk.Frame):
             row = recommendations.iloc[index]
             column = index % no_columns
 
-
-            #print("Facts:",index, row['facts'])
+            #  print("Facts:",index, row['facts'])
             self.master.relevant_questions.append(row['rel_q'])
             self.master.relevant_answers.append(row['facts'])
             self.master.relevant_index = index
@@ -343,7 +359,7 @@ class EndPage(tk.Frame):
             image = ImageTk.PhotoImage(im)
 
             # Create an image button that takes you to the product page
-            image_button = tk.Button(self, image=image, command=lambda:self.master.switch_frame(ProductPage))
+            image_button = tk.Button(self, image=image, command=lambda: self.master.switch_frame(ProductPage))
             image_button.grid(row=start_row + 0, column=column)
             image_button_ttp = CreateToolTip(image_button, text="Click to see why this product was recommended...")
 
@@ -362,29 +378,31 @@ class EndPage(tk.Frame):
             price = "€" + str(row['Price'])
             tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=price).grid(row=start_row + 4, column=column)
 
-            if column == no_columns - 1 or index == len(recommendations)-1:
+            if column == no_columns - 1 or index == len(recommendations) - 1:
                 start_row += no_items
 
-        tk.Button(self, text="Save the results to my Desktop", fg='#8A5C3C', bg="#FBF8EE", command=self.save_results(recommendations))\
+        tk.Button(self, text="Save the results to my Desktop", fg='#8A5C3C', bg="#FBF8EE",
+                  command=self.save_results(recommendations)) \
             .grid(row=start_row, columnspan=3)
 
-        tk.Button(self, text="Go back to start page", fg='#8A5C3C', bg="#FBF8EE", command=self._reset)\
-            .grid(row=start_row+2, columnspan=3)
-
+        tk.Button(self, text="Go back to start page", fg='#8A5C3C', bg="#FBF8EE", command=self._reset) \
+            .grid(row=start_row + 2, columnspan=3)
 
     def _reset(self):
         self.master.first_name.set('')
         self.master.engine.reset()
         self.master.switch_frame(StartPage)
 
+
 # Frame class containing a single recommended product with description/motivation for it
 class ProductPage(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        self['bg']="#FBF8EE"
+        self['bg'] = "#FBF8EE"
 
         # Not displaying the correct questions/answers yet
-        tk.Label(self,fg='#8A5C3C', bg='#FBF8EE', text="This scent is recommended to you because of the following questions:").pack()
+        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',
+                 text="This scent is recommended to you because of the following questions:").pack()
         tk.Label(self, text=self.master.relevant_questions[self.master.relevant_index], wraplength=600).pack()
         back_to_recs_button = tk.Button(self, text="Back to overview",fg='#8A5C3C', bg="#FBF8EE", command=lambda:self.master.switch_frame(EndPage))
         back_to_recs_button.pack()
@@ -394,8 +412,8 @@ class ProductPage(tk.Frame):
 # TODO: copied code, modify where needed!
 class CreateToolTip(object):
     def __init__(self, widget, text='widget info'):
-        self.waittime = 200     #miliseconds
-        self.wraplength = 180   #pixels
+        self.waittime = 200  # miliseconds
+        self.wraplength = 180  # pixels
         self.widget = widget
         self.text = text
         self.widget.bind("<Enter>", self.enter)
@@ -432,16 +450,15 @@ class CreateToolTip(object):
         self.tw.wm_overrideredirect(True)
         self.tw.wm_geometry("+%d+%d" % (x, y))
         label = tk.Label(self.tw, text=self.text, justify='left',
-                       background="#ffffff", relief='solid', borderwidth=1,
-                       wraplength = self.wraplength)
+                         background="#ffffff", relief='solid', borderwidth=1,
+                         wraplength=self.wraplength)
         label.pack(ipadx=1)
 
     def hidetip(self):
         tw = self.tw
-        self.tw= None
+        self.tw = None
         if tw:
             tw.destroy()
-
 
 
 def run():
