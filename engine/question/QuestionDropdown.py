@@ -17,13 +17,19 @@ class QuestionDropdown(Question):
         self.tags = None
         self.vendor = None
         self.q_id = q_id
+        #self.types = []
+        #self.count = 0
+        #self.current_type = None
 
     def get_list(self):
         if "takePerfume" in self.labels:
+            #self.current_type = "perfumes"
             return self.__get_perfumes()  # lists of strings, describing perfume name and brand and their tags
         elif "takeFamily" in self.labels:
+            #self.current_type = "families"
             return self.__get_families()  # lists of strings, describing olfactory families and their tags
         elif "takeIngredient" in self.labels:
+            #self.current_type = "ingredients"
             return self.__get_ingredients()  # lists of strings, describing ingredients and their tags
         else:
             print("Appropriate dropdown not found.")
@@ -52,7 +58,7 @@ class QuestionDropdown(Question):
         
         self.tags = families
         self.vendor = perfumes["Vendor"].tolist()
-        return products  # send all products in a list
+        return products # send all products in a list
 
     def __get_families(self):
         base_path = Path(__file__).parent
@@ -66,7 +72,7 @@ class QuestionDropdown(Question):
         ingredients_path = (base_path / "../../data/ingredients.csv").resolve()
         ingredients = pd.read_csv(open(ingredients_path), encoding="utf-8")
         self.tags = ingredients["Tag"].tolist()
-        return ingredients["Ingredient"].tolist()  # send all ingredients  in a list
+        return ingredients["Ingredient"].tolist() # send all ingredients  in a list
 
     def set_answer(self, indices):
         print("Setting answer QuestionDropdown: ", indices)
