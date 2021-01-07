@@ -2,8 +2,10 @@ from engine.question.Question import Question
 
 try:
     import Tkinter as tk
+    import Tkinter.messagebox
 except:
     import tkinter as tk
+    import tkinter.messagebox
 import io
 import urllib.request
 from PIL import Image, ImageTk
@@ -215,6 +217,12 @@ class NewPage(tk.Frame):
                 name_entry.pack()
                 self.widgets.append(name_entry)
 
+            # Create button that can stop the program prematurely
+            stop_text = "Show my recommendations"
+            stop = tk.Button(text=stop_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
+                               activebackground="#5a371e", activeforeground="#FBF8EE", command=self._premature_recommendations)
+            stop.pack(side=tk.TOP, anchor=tk.NE)
+
             # Create submit button that can send the answer to the inference engine
             next_text = ["Next", "\u1405"]
             submit = tk.Button(text=next_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
@@ -231,6 +239,24 @@ class NewPage(tk.Frame):
                 self.buttons.append(previous)
 
             self.buttons.append(submit)
+            self.buttons.append(stop)
+
+    # show recommendations before the end of the program
+    # TODO: SOMS GEEFT HIJ RARE ERROR, SOMS NIET
+    def _premature_recommendations(self):
+        ans = tk.messagebox.askquestion('Stop recommending','You have now answered all the questions yet. Are you sure you want to see your recommendations already?')
+
+        if ans == 'yes':
+            # show current best recommendations
+            self.master.switch_frame(EndPage)
+            for button in self.buttons:
+                button.destroy()
+                self.buttons = []
+            for widget in self.widgets:
+                widget.destroy()
+                self.widgets = []
+        else:
+            print("Continuing with questions")
 
     # Changes the frame to the previous question and reverts answers
     def _revert_answers(self):
