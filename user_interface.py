@@ -12,6 +12,7 @@ from PIL import Image, ImageTk
 import os
 from pathlib import Path
 import pandas as pd
+from functools import partial
 
 import engine.InferenceEngine as ie
 from engine.question.QuestionType import QuestionType as qt
@@ -20,7 +21,7 @@ from engine.question.QuestionType import QuestionType as qt
 class SampleApp(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
-        self.geometry('900x500')
+        self.geometry('900x550')
         self.title('Perfume Knowledge System')
         self.engine = ie.InferenceEngine()
         self._frame = None
@@ -29,6 +30,7 @@ class SampleApp(tk.Tk):
         self.outcome = tk.StringVar()
         self.widgets = []
         self.chosen_products = []
+        #self.relevant_index = 0
 
     def switch_frame(self, frame_class):
         new_frame = frame_class(self)
@@ -174,7 +176,7 @@ class NewPage(tk.Frame):
 
                 self.search_var = tk.StringVar()
                 self.search_bar = tk.Entry(textvariable=self.search_var)
-                self.search_bar.place(x=270, rely=0.93, relwidth=0.2)
+                self.search_bar.place(x=270, rely=0.835, relwidth=0.2, height=31)
                 self.widgets.append(self.search_bar)
 
 
@@ -197,8 +199,8 @@ class NewPage(tk.Frame):
                 self.add_selected(self.lbox.curselection())
                 search = tk.Button(text="Search", width=10, fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=search_keyword)
                 clear = tk.Button(text="Clear", width=10, fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=clear_list)
-                search.place(x=450, rely=0.93, relwidth=0.1)
-                clear.place(x=540, rely=0.93, relwidth=0.1)
+                search.place(x=450, rely=0.835, relwidth=0.1, height=31)
+                clear.place(x=540, rely=0.835, relwidth=0.1, height=31)
                 self.buttons.append(search)
                 self.buttons.append(clear)
 
@@ -221,7 +223,7 @@ class NewPage(tk.Frame):
             stop_text = "Show my recommendations"
             stop = tk.Button(text=stop_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
                                activebackground="#5a371e", activeforeground="#FBF8EE", command=self._premature_recommendations)
-            stop.pack(side=tk.TOP, anchor=tk.NE)
+            stop.pack(side=tk.BOTTOM)#, anchor=tk.NE)
 
             # Create submit button that can send the answer to the inference engine
             next_text = ["Next", "\u1405"]
@@ -358,6 +360,9 @@ class EndPage(tk.Frame):
         tk.Frame.__init__(self, master)
         self.master.relevant_questions = []
         self.master.relevant_answers = []
+        self.master.relevant_index = 0
+        #self.master.image_buttons = []
+        self.master.button_identities = []
         self['bg'] = "#FBF8EE"
         tk.Label(self, text="Hi %s, here are your scent recommendations" % self.master.first_name.get(),
                  font=('Alegreya sans', 18, "bold"), fg='#8A5C3C', bg='#FBF8EE') \
@@ -372,21 +377,34 @@ class EndPage(tk.Frame):
         print(recommendations.rel_q)
 
         all = master.engine.get_all()
-        print(all)
+        #print(all)
 
         start_row = 1
         no_items = 5
         no_columns = 3
         im_width = 100
-
+        #print("len:",len(recommendations.index))
         for index in range(len(recommendations.index)):
+            #print(index)
             row = recommendations.iloc[index]
             column = index % no_columns
 
-            #  print("Facts:",index, row['facts'])
+            #print("Facts:",index, row['facts'])
             self.master.relevant_questions.append(row['rel_q'])
             self.master.relevant_answers.append(row['facts'])
-            self.master.relevant_index = index
+            #self.master.relevant_index.append(index)
+            
+            def switch_to_end(button_id):
+                #print("index:", self.master.relevant_index)
+                self.master.relevant_index = index
+                bname = list(str(self.master.button_identities[button_id]))
+                bname = bname[len(bname)-1]
+                if bname == "n":
+                    self.master.relevant_index = 0
+                else:
+                    self.master.relevant_index = int(bname) - 1
+                print("bname:",bname)
+                self.master.switch_frame(ProductPage)
 
             # Image
             url = row['Image']
@@ -400,10 +418,12 @@ class EndPage(tk.Frame):
             image = ImageTk.PhotoImage(im)
 
             # Create an image button that takes you to the product page
-            image_button = tk.Button(self, image=image, command=lambda: self.master.switch_frame(ProductPage))
+            image_button = tk.Button(self, image=image, command=partial(switch_to_end, index))
+            self.master.button_identities.append(image_button)
             image_button.grid(row=start_row + 0, column=column)
             image_button_ttp = CreateToolTip(image_button, text="Click to see why this product was recommended...")
 
+            #self.image_buttons.append(image_button)
             self.images.append(image)  # Append to list of images to keep the reference. Otherwise, it might not show.
 
             # Vendor
@@ -429,6 +449,10 @@ class EndPage(tk.Frame):
         tk.Button(self, text="Go back to start page", fg='#8A5C3C', bg="#FBF8EE",activebackground="#5a371e", activeforeground="#FBF8EE", command=self._reset) \
             .grid(row=start_row + 2, columnspan=3)
 
+        for x in range(len(self.master.relevant_questions)):
+            print("questions:",self.master.relevant_questions[x])
+        print("buttons:", self.master.button_identities)
+
     def _reset(self):
         self.master.first_name.set('')
         self.master.engine.reset()
@@ -445,6 +469,7 @@ class ProductPage(tk.Frame):
 
         tk.Frame.__init__(self, master)
         self['bg'] = "#FBF8EE"
+
 
         # Not displaying the correct questions/answers yet
         tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',font=('Alegreya sans', 18, "bold"),wraplength=800,
