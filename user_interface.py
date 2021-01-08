@@ -209,7 +209,7 @@ class NewPage(tk.Frame):
                 self.given_answer = tk.DoubleVar()
                 scale_entry = tk.Scale(self, variable=self.given_answer, label='Maximum budget in euros:',
                                        from_=minPrice, to=maxPrice, tickinterval=(maxPrice - minPrice),
-                                       orient=tk.HORIZONTAL, length=200)
+                                       orient=tk.HORIZONTAL, length=200,fg='#8A5C3C', bg="#FBF8EE", activebackground="#FBF8EE", troughcolor="#5a371e")
                 scale_entry.set(int((maxPrice - minPrice) / 2 + minPrice))
                 scale_entry.pack()
 
@@ -470,6 +470,7 @@ class ProductPage(tk.Frame):
         tk.Frame.__init__(self, master)
         self['bg'] = "#FBF8EE"
 
+        # Remove duplicate motivation lines
         display_text = self.master.relevant_questions[self.master.relevant_index]
         display_text = set(display_text.split("\n"))
         display_text.discard('')
@@ -477,7 +478,6 @@ class ProductPage(tk.Frame):
         display_text = '\n'.join(display_text)
         print("split:", display_text)
 
-        # Not displaying the correct questions/answers yet
         tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',font=('Alegreya sans', 18, "bold"),wraplength=800,
                  text="This scent is recommended to you because of the following questions:").pack()
         #tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',text=self.master.relevant_questions[self.master.relevant_index], wraplength=600).pack()
