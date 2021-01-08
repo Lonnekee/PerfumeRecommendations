@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import pandas as pd
 from functools import partial
+import webbrowser
 
 import engine.InferenceEngine as ie
 from engine.question.QuestionType import QuestionType as qt
@@ -363,6 +364,12 @@ class EndPage(tk.Frame):
         self.master.relevant_index = 0
         #self.master.image_buttons = []
         self.master.button_identities = []
+        self.master.extra_information = []
+        self.master.vendors = []
+        self.master.titles = []
+        self.master.types = []
+        self.master.prices = []
+        self.master.handles = []
         self['bg'] = "#FBF8EE"
         tk.Label(self, text="Hi %s, here are your scent recommendations" % self.master.first_name.get(),
                  font=('Alegreya sans', 18, "bold"), fg='#8A5C3C', bg='#FBF8EE') \
@@ -427,17 +434,27 @@ class EndPage(tk.Frame):
             self.images.append(image)  # Append to list of images to keep the reference. Otherwise, it might not show.
 
             # Vendor
-            tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Vendor']).grid(row=start_row + 1, column=column)
+            vendor = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Vendor']).grid(row=start_row + 1, column=column)
+            self.master.vendors.append(row['Vendor'])
 
             # Name of perfume
-            tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Title']).grid(row=start_row + 2, column=column)
+            title = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Title']).grid(row=start_row + 2, column=column)
+            self.master.titles.append(row['Title'])
 
             # Type of perfume (eau de parfum, eau de toilette, etc.)
-            tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Type']).grid(row=start_row + 3, column=column)
+            perfume_type = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Type']).grid(row=start_row + 3, column=column)
+            self.master.types.append(row['Type'])
 
             # Price
             price = "€" + str(row['Price'])
-            tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=price).grid(row=start_row + 4, column=column)
+            price = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=price).grid(row=start_row + 4, column=column)
+            self.master.prices.append(price)
+
+            # Save tags for display in product page
+            self.master.extra_information.append(row['Tag'])
+
+            # Save handle for url in product page
+            self.master.handles.append(row['Handle'])
 
             if column == no_columns - 1 or index == len(recommendations) - 1:
                 start_row += no_items
@@ -461,10 +478,12 @@ class EndPage(tk.Frame):
 
 # Frame class containing a single recommended product with description/motivation for it
 class ProductPage(tk.Frame):
+    
     def __init__(self, master):
 
         def switch_back_to_recs():
             back_to_recs_button.destroy()
+            PL_button.destroy()
             self.master.switch_frame(EndPage)
 
         tk.Frame.__init__(self, master)
@@ -478,15 +497,36 @@ class ProductPage(tk.Frame):
         display_text = '\n'.join(display_text)
         print("split:", display_text)
 
+        # Display the motivation for recommending this product
         tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',font=('Alegreya sans', 18, "bold"),wraplength=800,
                  text="This scent is recommended to you because of the following questions:").pack()
         #tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',text=self.master.relevant_questions[self.master.relevant_index], wraplength=600).pack()
         tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',text=display_text, wraplength=600).pack()
 
+        # TODO: Display a more detailed description of the product
+        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',font=('Alegreya sans', 14, "bold"),wraplength=800,
+                 text="More information about this product:").pack()
+        tk.Label(self,fg='#8A5C3C', bg='#FBF8EE',text=self.master.vendors[self.master.relevant_index], wraplength=600).pack()
+        tk.Label(self,fg='#8A5C3C', bg='#FBF8EE',text=self.master.titles[self.master.relevant_index], wraplength=600).pack()
+        tk.Label(self,fg='#8A5C3C', bg='#FBF8EE',text=self.master.types[self.master.relevant_index], wraplength=600).pack()
+        tk.Label(self,fg='#8A5C3C', bg='#FBF8EE',text=self.master.prices[self.master.relevant_index], wraplength=600).pack()
+        tk.Label(self,fg='#8A5C3C', bg='#FBF8EE',text=self.master.extra_information[self.master.relevant_index], wraplength=600).pack()
+
+
+        # Create button that takes the user back to the overview of recommended products
         back_to_recs_button = tk.Button(text="Back to overview",fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",
                                         command=switch_back_to_recs)
         back_to_recs_button.pack(side=tk.BOTTOM, pady=50)
 
+
+        # Create button that takes the user to the product page on the PL website
+        PL_link = "https://www.perfumelounge.nl/products/" + str(self.master.handles[self.master.relevant_index])
+
+        def callback(url):
+            webbrowser.open_new(url)
+        PL_button = tk.Button(text="Read more on the Perfume Lounge website",fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",
+                                        command=lambda:callback(PL_link))
+        PL_button.pack(side=tk.BOTTOM)
 
 #TODO: GEBRUIKEN WE DIT?
 # This class creates a tooltip: a box of text that appears when hovering over a widget. 
