@@ -389,7 +389,7 @@ class EndPage(tk.Frame):
             row = recommendations.iloc[index]
             column = index % no_columns
 
-            #print("Facts:",index, row['facts'])
+            print("Facts:",index, row['rel_q'])
             self.master.relevant_questions.append(row['rel_q'])
             self.master.relevant_answers.append(row['facts'])
             #self.master.relevant_index.append(index)
@@ -449,9 +449,9 @@ class EndPage(tk.Frame):
         tk.Button(self, text="Go back to start page", fg='#8A5C3C', bg="#FBF8EE",activebackground="#5a371e", activeforeground="#FBF8EE", command=self._reset) \
             .grid(row=start_row + 2, columnspan=3)
 
-        for x in range(len(self.master.relevant_questions)):
-            print("questions:",self.master.relevant_questions[x])
-        print("buttons:", self.master.button_identities)
+        #for x in range(len(self.master.relevant_questions)):
+        #    print("questions:",self.master.relevant_questions[x])
+        #print("buttons:", self.master.button_identities)
 
     def _reset(self):
         self.master.first_name.set('')
@@ -470,11 +470,19 @@ class ProductPage(tk.Frame):
         tk.Frame.__init__(self, master)
         self['bg'] = "#FBF8EE"
 
+        display_text = self.master.relevant_questions[self.master.relevant_index]
+        display_text = set(display_text.split("\n"))
+        display_text.discard('')
+        display_text = sorted(list(display_text))
+        display_text = '\n'.join(display_text)
+        print("split:", display_text)
 
         # Not displaying the correct questions/answers yet
         tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',font=('Alegreya sans', 18, "bold"),wraplength=800,
                  text="This scent is recommended to you because of the following questions:").pack()
-        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',text=self.master.relevant_questions[self.master.relevant_index], wraplength=600).pack()
+        #tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',text=self.master.relevant_questions[self.master.relevant_index], wraplength=600).pack()
+        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',text=display_text, wraplength=600).pack()
+
         back_to_recs_button = tk.Button(text="Back to overview",fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",
                                         command=switch_back_to_recs)
         back_to_recs_button.pack(side=tk.BOTTOM, pady=50)

@@ -81,6 +81,10 @@ class InferenceEngine:
         facts = [''] * len(self.__perfumes.index)
         self.__perfumes['facts'] = facts
 
+        # Reset rel_q, the relevant questions and their answers
+        rel_q = [''] * len(self.__perfumes.index)
+        self.__perfumes['rel_q'] = rel_q
+
         # No need to reset __final_question_id or __questions
         self.__current_question = None
         self.__next_question_id = 2  # Skip the name question, with question ID 1.
