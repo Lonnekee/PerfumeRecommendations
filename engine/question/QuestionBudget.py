@@ -18,6 +18,6 @@ class QuestionBudget(Question):
         self.perfumes.loc[exclude, ['included']] = False
 
         # Store the reason why we updated these perfumes
-        self.perfumes.loc[include, ['rel_q']] += self.question + " €" + str(value) + "\n"
+        self.perfumes.loc[include, ['rel_q']] += self.question + " €{:0.2f}".format(value) + "\n"
 
         # self.perfumes.drop(index=indices, inplace=True)

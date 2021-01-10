@@ -246,7 +246,7 @@ class NewPage(tk.Frame):
     # show recommendations before the end of the program
     # TODO: SOMS GEEFT HIJ RARE ERROR, SOMS NIET
     def _premature_recommendations(self):
-        ans = tk.messagebox.askquestion('Stop recommending','You have now answered all the questions yet. Are you sure you want to see your recommendations already?')
+        ans = tk.messagebox.askquestion('Stop recommending','You have not answered all the questions yet. Are you sure you want to see your recommendations already?')
 
         if ans == 'yes':
             # show current best recommendations
@@ -352,7 +352,6 @@ class EndPage(tk.Frame):
             f.write(row['Title'] + " by " + row['Vendor'] + "\n")
             f.write(row['Type'] + "\n\n")
             f.write("Relevant questions:" + row['rel_q'] + "\n")
-            f.write("Your answers:" + row['facts'] + "\n")
 
         f.close()
 
@@ -436,7 +435,7 @@ class EndPage(tk.Frame):
             tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Type']).grid(row=start_row + 3, column=column)
 
             # Price
-            price = "€" + str(row['Price'])
+            price = "€{:0.2f}".format(row['Price'])
             tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=price).grid(row=start_row + 4, column=column)
 
             if column == no_columns - 1 or index == len(recommendations) - 1:

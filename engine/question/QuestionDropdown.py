@@ -94,6 +94,7 @@ class QuestionDropdown(Question):
                     self.perfumes.loc[rows, ['rel_q']] += self.question + " " + self.tags[index] + "\n"
 
         # For all indices, upvote products with specific vendor
+        # Vendor update only slightly
         if self.vendor is not None:
             for index in indices:
                 labels = self.vendor[index].split('+')
@@ -107,8 +108,8 @@ class QuestionDropdown(Question):
                     print("  Found: ", rows.sum())
 
                     # Add the value specified for this label
-                    self.perfumes.loc[rows, ['rank']] += float(self.value[0])
-                    print("  Updated with: ", float(self.value[0]))
+                    self.perfumes.loc[rows, ['rank']] += float(self.value[0])/4
+                    print("  Updated with: ", float(self.value[0]/4))
 
                     # Store what tag was updated and how
                     self.perfumes.loc[rows, ['facts']] += "Q" + str(self.q_id) + "+" + self.vendor[index] + "+" + str(self.value[0]) + ","

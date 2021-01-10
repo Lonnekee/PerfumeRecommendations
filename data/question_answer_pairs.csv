@@ -4,10 +4,10 @@ ID,IDnext,Question,Type,Answers,Labels,Value
 3,4;6,Are you already familiar with the Perfume Lounge's collection?,Single,Yes;No,,
 4,5,"Which products, if any, do you like?",Drag,productList;I do not know,takePerfume,+0.5
 5,6,"Which products, if any do you dislike?",Drag,productList;I do not know,takePerfume,-0.5
-6,7,"Which olfactive, families if any do you like?",Drag,familyList;I do not know,takeFamily,+0.25
-7,8,"Which olfactive, families if any do you dislike?",Drag,familyList;I do not know,takeFamily,-0.25
-8,9,"Which ingredients, if any do you like?",Drag,ingredientList;I do not know,takeIngredient,+0.25
-9,10,"Which ingredients, if any do you dislike?",Drag,ingredientList;I do not know,takeIngredient,-0.25
+6,7,"Which olfactive families, if any, do you like?",Drag,familyList;I do not know,takeFamily,+0.25
+7,8,"Which olfactive families, if any, do you dislike?",Drag,familyList;I do not know,takeFamily,-0.25
+8,9,"Which ingredients, if any, do you like?",Drag,ingredientList;I do not know,takeIngredient,+0.25
+9,10,"Which ingredients, if any, do you dislike?",Drag,ingredientList;I do not know,takeIngredient,-0.25
 10,11,Do you prefer perfumes for a specific gender?,Single,Yes I prefer feminine perfumes;Yes I prefer masculine perfumes;No I do not have a preference,Collection:voor-de-man;Collection:op-en-top-vrouwelijk,-1.0;-1.0
 11,13;12,Do you prefer bold perfumes?,Single,Yes;No,Collection:top 10-avant-garde-parfums+Collection:skanky-lekker-viezig;,+0.5;+0
 12,13,What is your age?,Single,Below 25;Between 26 and 45;Above 45,Collection:bestsellers-jong;Collection:bestsellers-mid;Collection:bestsellers-X,+0.2;+0.2;+0.2
