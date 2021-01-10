@@ -467,10 +467,6 @@ class EndPage(tk.Frame):
             self.master.types.append(row['Type'])
 
             # Price
-<<<<<<< HEAD
-            price = "€{:0.2f}".format(row['Price'])
-            tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=price).grid(row=start_row + 4, column=column)
-=======
             price = "From €" + "{:.2f}".format(row['Price'])
             price = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=price, font=("Courier", 12)) \
                 .grid(row=start_row + 4, column=column)
@@ -481,7 +477,6 @@ class EndPage(tk.Frame):
 
             # Save handle for url in product page
             self.master.handles.append(row['Handle'])
->>>>>>> f44bf7a93b7e7ab1dab74afa8a4a72c0a8f763dc
 
             if column == no_columns - 1 or index == len(recommendations) - 1:
                 self.master.grid_rowconfigure(start_row + no_items, minsize=100)
