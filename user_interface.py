@@ -1,5 +1,3 @@
-from engine.question.Question import Question
-
 try:
     import Tkinter as tk
     import Tkinter.messagebox
@@ -14,15 +12,27 @@ from pathlib import Path
 import pandas as pd
 from functools import partial
 import webbrowser
+from pyglet import font
 
 import engine.InferenceEngine as ie
 from engine.question.QuestionType import QuestionType as qt
 
+PATH = Path(__file__).parent
+if not (PATH / "data/").resolve().exists():
+    # The executable is running, not the source files.
+    PATH = PATH.parent.parent
 
+# Add fonts
+fonts_path = (PATH / "fonts").resolve()
+for f in fonts_path.glob("**/*.ttf"):
+    font.add_file((fonts_path / f).resolve())
+
+
+# Create the application's frame
 class SampleApp(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
-        self.geometry('900x550')
+        self.geometry('900x600')
         self.title('Perfume Knowledge System')
         self.engine = ie.InferenceEngine()
         self._frame = None
@@ -31,7 +41,7 @@ class SampleApp(tk.Tk):
         self.outcome = tk.StringVar()
         self.widgets = []
         self.chosen_products = []
-        #self.relevant_index = 0
+        # self.relevant_index = 0
 
     def switch_frame(self, frame_class):
         new_frame = frame_class(self)
@@ -44,7 +54,7 @@ class SampleApp(tk.Tk):
 class StartPage(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        #self.geometry = "750x700"
+        # self.geometry = "750x700"
         master.title('Perfume Knowledge System')
         master['bg'] = '#FBF8EE'
         self['bg'] = '#FBF8EE'
@@ -55,20 +65,13 @@ class StartPage(tk.Frame):
 
         start_label = tk.Label(self,
                                text="Welcome to the perfume knowledge system! After you have answered the questions, the system will determine the ideal scented product for your personal use.",
-                               wraplength=700, font=('Alegreya sans', 18), fg='#8A5C3C', bg='#FBF8EE')
+                               wraplength=700, font=('Alegreya Sans Regular', 18), fg='#8A5C3C', bg='#FBF8EE')
         start_label.pack()
-        start_button = tk.Button(text="Click here to start", font=('Alegreya sans', '12', 'italic'), fg='#8A5C3C',
+        start_button = tk.Button(text="Click here to start", font=('Alegreya Sans', '12', 'italic'), fg='#8A5C3C',
                                  bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE", width=750,
                                  command=switch_and_clear)
         start_button.pack(side=tk.BOTTOM, pady=50)
-        base_path = Path(__file__).parent
-        if (base_path / "data/").resolve().exists():
-            # The code is probably run from the source files
-            im_path = (base_path / "data/Logo-PL-liggend.png").resolve()
-        else:
-            # The executable is running, I'm assuming.
-            base_path = base_path.parent.parent
-            im_path = (base_path / "data/Logo-PL-liggend.png").resolve()
+        im_path = (PATH / "data/Logo-PL-liggend.png").resolve()
 
         self.img = Image.open(im_path)
         img_width, img_height = self.img.size
@@ -81,6 +84,7 @@ class StartPage(tk.Frame):
 
         canvas.create_image(img_width / 2 + 1, img_height / 2, image=self.img, anchor=tk.CENTER)
 
+
 class NewPage(tk.Frame):
     given_answer = None
     question = None
@@ -91,7 +95,7 @@ class NewPage(tk.Frame):
         self.widgets = []
         self.count = 0
         self.value = []
-        self.product_index = []    
+        self.product_index = []
 
         # Recursive call: make new page for each question until you reach the last
         if master.engine.has_reached_goal():
@@ -99,7 +103,7 @@ class NewPage(tk.Frame):
         else:
             # Initialise frame
             tk.Frame.__init__(self, master)
-            #self.geometry = "900x500"
+            # self.geometry = "900x500"
             self['bg'] = '#FBF8EE'
 
             if master.engine.get_question_direction() == 1:
@@ -111,7 +115,7 @@ class NewPage(tk.Frame):
             self.question = q
 
             # Display the question that this frame is about
-            label = tk.Label(text="%s" % q.question, wraplength=600, font=('Alegreya sans', 12), fg='#8A5C3C',
+            label = tk.Label(text="%s" % q.question, wraplength=600, font=('Alegreya Sans', 12), fg='#8A5C3C',
                              bg='#FBF8EE')
             label.pack(side=tk.TOP)
             self.widgets.append(label)
@@ -152,7 +156,7 @@ class NewPage(tk.Frame):
 
                 self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=65, height=24, selectbackground="#8A5C3C",
                                        selectforeground="#FBF8EE")
-                
+
                 if self.master.chosen_products != []:
                     # Remove options the user can dislike, if they have previously indicated they like these options.
                     for item in self.master.chosen_products:
@@ -160,7 +164,7 @@ class NewPage(tk.Frame):
                             self.droplist.remove(item)
                     self.lbox.insert("end", *self.droplist)
                     self.master.chosen_products = []
-                else:  
+                else:
                     self.lbox.insert("end", *self.droplist)
 
                 if len(self.droplist) > 24:
@@ -170,7 +174,6 @@ class NewPage(tk.Frame):
                     self.lbox.config(yscrollcommand=scrollbar.set)
                     scrollbar.config(command=self.lbox.yview)
 
-
                 self.lbox.grid(row=0, column=0)
                 self.given_answer = tk.StringVar()
                 self.given_answer.set(self.droplist[0])
@@ -179,7 +182,6 @@ class NewPage(tk.Frame):
                 self.search_bar = tk.Entry(textvariable=self.search_var)
                 self.search_bar.place(x=270, rely=0.835, relwidth=0.2, height=31)
                 self.widgets.append(self.search_bar)
-
 
                 def search_keyword():
                     selection = self.lbox.curselection()
@@ -198,8 +200,10 @@ class NewPage(tk.Frame):
                     self.lbox.insert("end", *self.droplist)
 
                 self.add_selected(self.lbox.curselection())
-                search = tk.Button(text="Search", width=10, fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=search_keyword)
-                clear = tk.Button(text="Clear", width=10, fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",command=clear_list)
+                search = tk.Button(text="Search", width=10, fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
+                                   activeforeground="#FBF8EE", command=search_keyword)
+                clear = tk.Button(text="Clear", width=10, fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
+                                  activeforeground="#FBF8EE", command=clear_list)
                 search.place(x=450, rely=0.835, relwidth=0.1, height=31)
                 clear.place(x=540, rely=0.835, relwidth=0.1, height=31)
                 self.buttons.append(search)
@@ -210,7 +214,8 @@ class NewPage(tk.Frame):
                 self.given_answer = tk.DoubleVar()
                 scale_entry = tk.Scale(self, variable=self.given_answer, label='Maximum budget in euros:',
                                        from_=minPrice, to=maxPrice, tickinterval=(maxPrice - minPrice),
-                                       orient=tk.HORIZONTAL, length=200,fg='#8A5C3C', bg="#FBF8EE", activebackground="#FBF8EE", troughcolor="#5a371e")
+                                       orient=tk.HORIZONTAL, length=200, fg='#8A5C3C', bg="#FBF8EE",
+                                       activebackground="#FBF8EE", troughcolor="#5a371e")
                 scale_entry.set(int((maxPrice - minPrice) / 2 + minPrice))
                 scale_entry.pack()
 
@@ -223,8 +228,9 @@ class NewPage(tk.Frame):
             # Create button that can stop the program prematurely
             stop_text = "Show my recommendations"
             stop = tk.Button(text=stop_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
-                               activebackground="#5a371e", activeforeground="#FBF8EE", command=self._premature_recommendations)
-            stop.pack(side=tk.BOTTOM)#, anchor=tk.NE)
+                             activebackground="#5a371e", activeforeground="#FBF8EE",
+                             command=self._premature_recommendations)
+            stop.pack(side=tk.BOTTOM)  # , anchor=tk.NE)
 
             # Create submit button that can send the answer to the inference engine
             next_text = ["Next", "\u1405"]
@@ -247,7 +253,8 @@ class NewPage(tk.Frame):
     # show recommendations before the end of the program
     # TODO: SOMS GEEFT HIJ RARE ERROR, SOMS NIET
     def _premature_recommendations(self):
-        ans = tk.messagebox.askquestion('Stop recommending','You have now answered all the questions yet. Are you sure you want to see your recommendations already?')
+        ans = tk.messagebox.askquestion('Stop recommending',
+                                        'You have now answered all the questions yet. Are you sure you want to see your recommendations already?')
 
         if ans == 'yes':
             # show current best recommendations
@@ -273,7 +280,7 @@ class NewPage(tk.Frame):
             widget.destroy()
             self.widgets = []
 
-        #undo the voting
+        # undo the voting
         traversed = self.master.engine.get_traversed_path()
         print(traversed)
         if traversed:
@@ -282,7 +289,6 @@ class NewPage(tk.Frame):
             self.master.engine.reverseAnswer(prev_id)
 
         self.master.switch_frame(NewPage)
-
 
     # Continuously add current selection of dropdown in list
     def add_selected(self, selection):
@@ -362,7 +368,7 @@ class EndPage(tk.Frame):
         self.master.relevant_questions = []
         self.master.relevant_answers = []
         self.master.relevant_index = 0
-        #self.master.image_buttons = []
+        # self.master.image_buttons = []
         self.master.button_identities = []
         self.master.extra_information = []
         self.master.vendors = []
@@ -372,7 +378,7 @@ class EndPage(tk.Frame):
         self.master.handles = []
         self['bg'] = "#FBF8EE"
         tk.Label(self, text="Hi %s, here are your scent recommendations" % self.master.first_name.get(),
-                 font=('Alegreya sans', 18, "bold"), fg='#8A5C3C', bg='#FBF8EE') \
+                 font=('Alegreya Sans', 18, "bold"), fg='#8A5C3C', bg='#FBF8EE') \
             .grid(row=0, columnspan=3, pady=5)
 
         recommendations = master.engine.get_recommendations()  # Pandas dataframe
@@ -384,33 +390,36 @@ class EndPage(tk.Frame):
         print(recommendations.rel_q)
 
         all = master.engine.get_all()
-        #print(all)
+        # print(all)
 
         start_row = 1
         no_items = 5
         no_columns = 3
         im_width = 100
-        #print("len:",len(recommendations.index))
+        wraplength = 200
+
+        # print("len:",len(recommendations.index))
         for index in range(len(recommendations.index)):
-            #print(index)
+            # print(index)
             row = recommendations.iloc[index]
             column = index % no_columns
 
-            print("Facts:",index, row['rel_q'])
+            print("Facts:", index, row['rel_q'])
             self.master.relevant_questions.append(row['rel_q'])
             self.master.relevant_answers.append(row['facts'])
-            #self.master.relevant_index.append(index)
-            
+
+            # self.master.relevant_index.append(index)
+
             def switch_to_end(button_id):
-                #print("index:", self.master.relevant_index)
+                # print("index:", self.master.relevant_index)
                 self.master.relevant_index = index
                 bname = list(str(self.master.button_identities[button_id]))
-                bname = bname[len(bname)-1]
+                bname = bname[len(bname) - 1]
                 if bname == "n":
                     self.master.relevant_index = 0
                 else:
                     self.master.relevant_index = int(bname) - 1
-                print("bname:",bname)
+                print("bname:", bname)
                 self.master.switch_frame(ProductPage)
 
             # Image
@@ -427,27 +436,41 @@ class EndPage(tk.Frame):
             # Create an image button that takes you to the product page
             image_button = tk.Button(self, image=image, command=partial(switch_to_end, index))
             self.master.button_identities.append(image_button)
-            image_button.grid(row=start_row + 0, column=column)
+            image_button.grid(row=start_row + 0, column=column, pady=(20, 0))
             image_button_ttp = CreateToolTip(image_button, text="Click to see why this product was recommended...")
 
-            #self.image_buttons.append(image_button)
+            # self.image_buttons.append(image_button)
             self.images.append(image)  # Append to list of images to keep the reference. Otherwise, it might not show.
 
             # Vendor
-            vendor = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Vendor']).grid(row=start_row + 1, column=column)
+            vendor = tk.Label(self,
+                              fg='#323232',
+                              bg='#FBF8EE',
+                              text=row['Vendor'].upper(),
+                              font=("Courier", 12),
+                              wraplength=wraplength)\
+                .grid(row=start_row + 1, column=column)
             self.master.vendors.append(row['Vendor'])
 
             # Name of perfume
-            title = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Title']).grid(row=start_row + 2, column=column)
+            title = tk.Label(self,
+                             fg='#323232',
+                             bg='#FBF8EE',
+                             text=row['Title'],
+                             font=("Marcellus", 14),
+                             wraplength=wraplength) \
+                .grid(row=start_row + 2, column=column)
             self.master.titles.append(row['Title'])
 
             # Type of perfume (eau de parfum, eau de toilette, etc.)
-            perfume_type = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Type']).grid(row=start_row + 3, column=column)
+            perfume_type = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Type'].upper(),
+                                    font=("Courier", 12)).grid(row=start_row + 3, column=column)
             self.master.types.append(row['Type'])
 
             # Price
-            price = "€" + str(row['Price'])
-            price = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=price).grid(row=start_row + 4, column=column)
+            price = "From €" + "{:.2f}".format(row['Price'])
+            price = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=price, font=("Courier", 12)) \
+                .grid(row=start_row + 4, column=column)
             self.master.prices.append(price)
 
             # Save tags for display in product page
@@ -457,18 +480,21 @@ class EndPage(tk.Frame):
             self.master.handles.append(row['Handle'])
 
             if column == no_columns - 1 or index == len(recommendations) - 1:
-                start_row += no_items
+                self.master.grid_rowconfigure(start_row + no_items, minsize=100)
+                start_row += no_items + 1
 
-        tk.Button(self, text="Save the results to my Desktop", fg='#8A5C3C', bg="#FBF8EE",activebackground="#5a371e", activeforeground="#FBF8EE",
+        tk.Button(self, text="Save the results to my Desktop", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
+                  activeforeground="#FBF8EE",
                   command=self.save_results(recommendations)) \
             .grid(row=start_row, columnspan=3)
 
-        tk.Button(self, text="Go back to start page", fg='#8A5C3C', bg="#FBF8EE",activebackground="#5a371e", activeforeground="#FBF8EE", command=self._reset) \
+        tk.Button(self, text="Go back to start page", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
+                  activeforeground="#FBF8EE", command=self._reset) \
             .grid(row=start_row + 2, columnspan=3)
 
-        #for x in range(len(self.master.relevant_questions)):
+        # for x in range(len(self.master.relevant_questions)):
         #    print("questions:",self.master.relevant_questions[x])
-        #print("buttons:", self.master.button_identities)
+        # print("buttons:", self.master.button_identities)
 
     def _reset(self):
         self.master.first_name.set('')
@@ -478,9 +504,8 @@ class EndPage(tk.Frame):
 
 # Frame class containing a single recommended product with description/motivation for it
 class ProductPage(tk.Frame):
-    
-    def __init__(self, master):
 
+    def __init__(self, master):
         def switch_back_to_recs():
             back_to_recs_button.destroy()
             PL_button.destroy()
@@ -498,37 +523,49 @@ class ProductPage(tk.Frame):
         print("split:", display_text)
 
         # Display the motivation for recommending this product
-        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',font=('Alegreya sans', 18, "bold"),wraplength=800,
+        tk.Label(self,
+                 fg='#8A5C3C',
+                 bg='#FBF8EE',
+                 font=('Alegreya Sans', 18, "bold"),
+                 wraplength=800,
+                 pady=(10, 0),
                  text="This scent is recommended to you because of the following questions:").pack()
-        #tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',text=self.master.relevant_questions[self.master.relevant_index], wraplength=600).pack()
-        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',text=display_text, wraplength=600).pack()
+        # tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',text=self.master.relevant_questions[self.master.relevant_index], wraplength=600).pack()
+        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=display_text, wraplength=600).pack()
 
         # TODO: Display a more detailed description of the product
-        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',font=('Alegreya sans', 14, "bold"),wraplength=800,
+        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', font=('Alegreya Sans', 14, "bold"), wraplength=800,
                  text="More information about this product:").pack()
-        tk.Label(self,fg='#8A5C3C', bg='#FBF8EE',text=self.master.vendors[self.master.relevant_index], wraplength=600).pack()
-        tk.Label(self,fg='#8A5C3C', bg='#FBF8EE',text=self.master.titles[self.master.relevant_index], wraplength=600).pack()
-        tk.Label(self,fg='#8A5C3C', bg='#FBF8EE',text=self.master.types[self.master.relevant_index], wraplength=600).pack()
-        tk.Label(self,fg='#8A5C3C', bg='#FBF8EE',text=self.master.prices[self.master.relevant_index], wraplength=600).pack()
-        tk.Label(self,fg='#8A5C3C', bg='#FBF8EE',text=self.master.extra_information[self.master.relevant_index], wraplength=600).pack()
-
+        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=self.master.vendors[self.master.relevant_index],
+                 wraplength=600).pack()
+        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=self.master.titles[self.master.relevant_index],
+                 wraplength=600).pack()
+        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=self.master.types[self.master.relevant_index],
+                 wraplength=600).pack()
+        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=self.master.prices[self.master.relevant_index],
+                 wraplength=600).pack()
+        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=self.master.extra_information[self.master.relevant_index],
+                 wraplength=600).pack()
 
         # Create button that takes the user back to the overview of recommended products
-        back_to_recs_button = tk.Button(text="Back to overview",fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",
+        back_to_recs_button = tk.Button(text="Back to overview", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
+                                        activeforeground="#FBF8EE",
                                         command=switch_back_to_recs)
         back_to_recs_button.pack(side=tk.BOTTOM, pady=50)
-
 
         # Create button that takes the user to the product page on the PL website
         PL_link = "https://www.perfumelounge.nl/products/" + str(self.master.handles[self.master.relevant_index])
 
         def callback(url):
             webbrowser.open_new(url)
-        PL_button = tk.Button(text="Read more on the Perfume Lounge website",fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",
-                                        command=lambda:callback(PL_link))
+
+        PL_button = tk.Button(text="Read more on the Perfume Lounge website", fg='#8A5C3C', bg="#FBF8EE",
+                              activebackground="#5a371e", activeforeground="#FBF8EE",
+                              command=lambda: callback(PL_link))
         PL_button.pack(side=tk.BOTTOM)
 
-#TODO: GEBRUIKEN WE DIT?
+
+# TODO: GEBRUIKEN WE DIT?
 # This class creates a tooltip: a box of text that appears when hovering over a widget. 
 # TODO: copied code, modify where needed!
 class CreateToolTip(object):
