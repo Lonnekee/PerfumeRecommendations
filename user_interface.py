@@ -158,15 +158,17 @@ class NewPage(tk.Frame):
                 self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=65, height=24, selectbackground="#8A5C3C",
                                        selectforeground="#FBF8EE")
 
+                self.sorted_droplist = sorted(self.droplist)
+
                 if self.master.chosen_products != []:
                     # Remove options the user can dislike, if they have previously indicated they like these options.
                     for item in self.master.chosen_products:
                         if item in self.droplist:
                             self.droplist.remove(item)
-                    self.lbox.insert("end", *self.droplist)
+                    self.lbox.insert("end", *self.sorted_droplist)
                     self.master.chosen_products = []
                 else:
-                    self.lbox.insert("end", *self.droplist)
+                    self.lbox.insert("end", *self.sorted_droplist)
 
                 if len(self.droplist) > 24:
                     # add scrollbar to listbox if needed
@@ -437,7 +439,7 @@ class EndPage(tk.Frame):
             # Create an image button that takes you to the product page
             image_button = tk.Button(self, image=image, command=partial(switch_to_end, index))
             self.master.button_identities.append(image_button)
-            image_button.grid(row=start_row + 0, column=column, pady=(20, 0))
+            image_button.grid(row=start_row + 0, column=column, pady=10)
             image_button_ttp = CreateToolTip(image_button, text="Click to see why this product was recommended...")
 
             # self.image_buttons.append(image_button)
@@ -556,7 +558,7 @@ class ProductPage(tk.Frame):
                  bg='#FBF8EE',
                  font=('Alegreya Sans', 18, "bold"),
                  wraplength=800,
-                 pady=(10, 0),
+                 pady=10,
                  text="This scent is recommended to you because of the following questions:").pack()
         # tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',text=self.master.relevant_questions[self.master.relevant_index], wraplength=600).pack()
         tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=display_text, wraplength=600).pack()
