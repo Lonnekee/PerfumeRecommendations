@@ -34,7 +34,9 @@ class QuestionDropdown(Question):
         perfumes_path = (base_path / "../../data/filteredDatabase.csv").resolve()
         perfumes = pd.read_csv(open(perfumes_path), encoding="utf-8")
 
-        df = perfumes[["Title", "Vendor"]]
+        relevant = perfumes.loc[(perfumes['Type'] == "eau de parfum") | (perfumes['Type'] == "eau de toilette") | (perfumes['Type'] == "parfum") | (perfumes['Type'] == "eau de cologne")].reset_index()
+        print(relevant)
+        df = relevant[["Title", "Vendor"]]
         products = len(df.index) * [""]
         for index, item in df.iterrows():
             name = item["Title"] + " (" + item["Vendor"] + ")"

@@ -122,7 +122,7 @@ class NewPage(tk.Frame):
             self.question = q
 
             # Display the question that this frame is about
-            label = tk.Label(text="%s" % q.question, wraplength=800, font=('Alegreya Sans', 12), fg='#8A5C3C',
+            label = tk.Label(text="%s" % q.question, wraplength=800, font=('Alegreya Sans', 15), fg='#8A5C3C',
                              bg='#FBF8EE')
             label.place(anchor=tk.N, relx=0.5, rely=0.01)
             self.widgets.append(label)
@@ -219,7 +219,7 @@ class NewPage(tk.Frame):
                     self.add_selected(selection)
                     self.lbox.delete(0, tk.END)
                     self.search_bar.delete(0, tk.END)
-                    self.lbox.insert("end", *self.droplist)
+                    self.lbox.insert("end", *self.sorted_droplist)
 
                 self.add_selected(self.lbox.curselection())
                 search = tk.Button(text="Search", width=10, fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
