@@ -90,6 +90,7 @@ class NewPage(tk.Frame):
     question = None
 
     def __init__(self, master):
+        super(NewPage, self).__init__()
         self.master = master
         self.buttons = []
         self.widgets = []
@@ -363,6 +364,7 @@ class EndPage(tk.Frame):
         f.close()
 
     def __init__(self, master):
+        super(EndPage, self).__init__()
         tk.Frame.__init__(self, master)
         self.master.relevant_questions = []
         self.master.relevant_answers = []
@@ -482,10 +484,14 @@ class EndPage(tk.Frame):
                 self.master.grid_rowconfigure(start_row + no_items, minsize=100)
                 start_row += no_items + 1
 
+        tk.Button(self, text="Modify price range", fg='#8A5C3C', bg="#FBF8EE",activebackground="#5a371e", activeforeground="#FBF8EE",
+                  command=self._modify_price) \
+            .grid(row=start_row, columnspan=3)
+
         tk.Button(self, text="Save the results to my Desktop", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
                   activeforeground="#FBF8EE",
                   command=self.save_results(recommendations)) \
-            .grid(row=start_row, columnspan=3)
+            .grid(row=start_row + 1, columnspan=3)
 
         tk.Button(self, text="Go back to start page", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
                   activeforeground="#FBF8EE", command=self._reset) \
@@ -500,11 +506,34 @@ class EndPage(tk.Frame):
         self.master.engine.reset()
         self.master.switch_frame(StartPage)
 
+    def _modify_price(self):
+        #undo the voting
+        traversed = self.master.engine.get_traversed_path()
+        #self.master.engine.add_budget_to_path()
+        print("traversed path:", traversed)
+
+        if traversed.count(35) > 0:
+            print("CONTAINS BUDGET QUESTION")
+            prev_id = traversed[-1]
+            print("prev_id:",prev_id)
+            self.master.engine.get_latest_path_value()
+            self.master.engine.reverseAnswer(prev_id)
+        else:
+            print("add")
+            self.master.engine.add_budget_to_path()
+        #print("print facts:",self.master.facts)
+
+        # Go back to the previous page
+        #self.master.engine.get_latest_path_value()
+        self.master.engine.set_question_direction(0)
+        self.master.switch_frame(NewPage)
+
 
 # Frame class containing a single recommended product with description/motivation for it
 class ProductPage(tk.Frame):
 
     def __init__(self, master):
+        super(ProductPage, self).__init__()
         def switch_back_to_recs():
             back_to_recs_button.destroy()
             PL_button.destroy()

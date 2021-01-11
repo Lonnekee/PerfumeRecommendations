@@ -12,12 +12,25 @@ class QuestionBudget(Question):
             return
 
         print("Filtering perfumes... only perfumes costing less than %.2lf remain." % value)
-        exclude = self.perfumes[self.perfumes["Price"] > value].index
-        include = self.perfumes[self.perfumes["Price"] <= value].index
+        self.exclude = self.perfumes[self.perfumes["Price"] > value].index
+        self.include = self.perfumes[self.perfumes["Price"] <= value].index
 
-        self.perfumes.loc[exclude, ['included']] = False
+        self.perfumes.loc[self.exclude, ['included']] = False
 
         # Store the reason why we updated these perfumes
-        self.perfumes.loc[include, ['rel_q']] += self.question + " €{:0.2f}".format(value) + "\n"
+        self.perfumes.loc[self.include, ['rel_q']] += self.question + " €{:0.2f}".format(value) + "\n"
 
         # self.perfumes.drop(index=indices, inplace=True)
+
+    def reset_budget(self):
+            self.perfumes.loc[self.exclude, ['included']] = True
+            print("print rel_q",self.perfumes.loc[self.include, ['rel_q']])
+            for question in self.perfumes.loc[self.include, ['rel_q']]:
+                if str(self.value) in question:
+                    self.perfumes.loc[self.include, ['rel_q']][question] = ""
+                else:
+                    print("value not found")
+            #self.perfumes.loc[self.include, ['rel_q']] = ""
+            self.value = None
+            self.exclude = None
+            self.include = None

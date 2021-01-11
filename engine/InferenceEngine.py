@@ -188,10 +188,13 @@ class InferenceEngine:
 
     # Check if we need to/can ask another question.
     def has_reached_goal(self):
-        if self.__next_question_id == -1 or self.__next_question_id > self.__final_question_id \
-                or not self.__next_question_id:
+        if (self.__next_question_id == -1 or self.__next_question_id > self.__final_question_id \
+                or not self.__next_question_id) and self.__question_direction == 1:
             return True
-        return False
+        elif self.__question_direction == 0:
+            return False
+        else:
+            return False
         # TODO Maybe we should add an option st the user is able to stop earlier?
 
     def add_additional_info(self, entry_name, value):
@@ -202,32 +205,37 @@ class InferenceEngine:
 
         facts = self.__perfumes.facts
         print(facts)
-        trueRows = self.__perfumes.facts.str.contains("Q"+str(q_id))
-        if(trueRows.any()):
-            print("  Found to reverse: ", trueRows.sum())
+        print("match type:", self.__questions[q_id])
+        if "QuestionBudget" in str(self.__questions[q_id]):
+            print("budget")
+            self.__questions[q_id].reset_budget()
         else:
-            print("  Nothing found to reverse.")
-
-        # for all rows that have been changed by the previous question
-        for row in trueRows.index:
-            if(trueRows.iloc[row]):
-                #find the correct label
-                for lab in facts.iloc[row].split(','):
-                    if(lab.startswith("Q"+str(q_id))):
-                        # extract value
-                        singleLabel = lab.split('+')
-                        value = -float(singleLabel[2])
-                        # reverse value 
-                        self.__perfumes.at[row, 'rank'] += value
-                    else:
-                        continue
-                # remove reasoning tags
-                print("Removed tags and reversed value from " + facts.loc[row], end ="")
-                #This gives a warning that it's making a copy, but that should be fine
-                facts.loc[row] = facts.loc[row].split("Q"+str(q_id),1)[0]
-                print("now left: " + facts.loc[row])
+            trueRows = self.__perfumes.facts.str.contains("Q"+str(q_id))
+            if(trueRows.any()):
+                print("  Found to reverse: ", trueRows.sum())
             else:
-                continue
+                print("  Nothing found to reverse.")
+
+            # for all rows that have been changed by the previous question
+            for row in trueRows.index:
+                if(trueRows.iloc[row]):
+                    #find the correct label
+                    for lab in facts.iloc[row].split(','):
+                        if(lab.startswith("Q"+str(q_id))):
+                            # extract value
+                            singleLabel = lab.split('+')
+                            value = -float(singleLabel[2])
+                            # reverse value 
+                            self.__perfumes.at[row, 'rank'] += value
+                        else:
+                            continue
+                    # remove reasoning tags
+                    print("Removed tags and reversed value from " + facts.loc[row], end ="")
+                    #This gives a warning that it's making a copy, but that should be fine
+                    facts.loc[row] = facts.loc[row].split("Q"+str(q_id),1)[0]
+                    print("now left: " + facts.loc[row])
+                else:
+                    continue
 
 
     #########################
@@ -251,6 +259,20 @@ class InferenceEngine:
 
     def get_traversed_path(self):
         return self.__traversed_path
+
+    def get_latest_path_value(self):
+        self.__traversed_path.pop()
+
+    def set_latest_path_value(self, value):
+        self.__traversed_path.append(value)
+        print("added q.id to traversed path:", self.__traversed_path)
+        print(self.__questions[self.__traversed_path.pop()].question)
+
+    def add_budget_to_path(self):
+        self.__previous_question_id = 18
+        self.__traversed_path.append(self.__previous_question_id)
+        print("added q.id to traversed path:", self.__traversed_path)
+
 
     # Returns the most recent previous question the user answered.
     def get_previous_question(self):
