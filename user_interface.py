@@ -391,6 +391,10 @@ class EndPage(tk.Frame):
                  font=('Alegreya Sans', 18, "bold"), fg='#8A5C3C', bg='#FBF8EE') \
             .grid(row=0, columnspan=3, pady=5)
 
+        tk.Label(self, text="Click on a perfume to see why it is recommended.",
+                 font=('Alegreya Sans', 12), fg='#8A5C3C', bg='#FBF8EE') \
+            .grid(row=1, columnspan=3, pady=2)
+
         recommendations = master.engine.get_recommendations()  # Pandas dataframe
 
         pd.pandas.set_option('display.max_columns', None)
@@ -402,7 +406,7 @@ class EndPage(tk.Frame):
         all = master.engine.get_all()
         # print(all)
 
-        start_row = 1
+        start_row = 2
         no_items = 5
         no_columns = 3
         im_width = 100
@@ -567,8 +571,13 @@ class ProductPage(tk.Frame):
                  wraplength=800,
                  pady=10,
                  text="This scent is recommended to you because of the following questions:").pack()
-        # tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',text=self.master.relevant_questions[self.master.relevant_index], wraplength=600).pack()
-        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=display_text, wraplength=600).pack()
+        if display_text.isalnum():
+            tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=display_text, wraplength=600).pack()
+        else:
+            tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',
+                     text="Uh-oh! The recommendation of this perfume was not based on any of your responses. "
+                          "Please answer more questions to receive personalized recommendations.",
+                     wraplength=600).pack()
 
         # Display a more detailed description of the product
         tk.Label(self,
