@@ -190,7 +190,9 @@ class NewPage(tk.Frame):
                 if len(self.sorted_droplist) > 28:
                     # add scrollbar to listbox if needed
                     scrollbar = tk.Scrollbar()
-                    scrollbar.place(relheight=0.81, anchor=tk.N, relx=0.8, rely=0.05)
+                    self.lbox.update()
+                    print("height:", self.lbox.winfo_reqheight())
+                    scrollbar.place(height=self.lbox.winfo_reqheight(), anchor=tk.N, relx=0.8, rely=0.05)
                     self.lbox.config(yscrollcommand=scrollbar.set)
                     scrollbar.config(command=self.lbox.yview)
                     self.widgets.append(scrollbar)
