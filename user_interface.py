@@ -110,7 +110,7 @@ class NewPage(tk.Frame):
         self.master.update()
         #self.pack()
         #self.update()
-        print("new dimensions:", self.master.winfo_height(), self.master.winfo_width())
+        #print("new dimensions:", self.master.winfo_height(), self.master.winfo_width())
         self.frame_height = self.master.winfo_height()
         self.frame_width = self.master.winfo_width()
 
@@ -208,8 +208,8 @@ class NewPage(tk.Frame):
                     self.master.update()
                     scroll_xpos = (self.frame_width - self.lbox.winfo_reqwidth()) / 2
                     scroll_xpos = self.frame_width - scroll_xpos
-                    print(scroll_xpos)
-                    print("height:", self.lbox.winfo_reqheight(), "x_pos:", self.lbox.winfo_reqwidth(), "xstart:", self.master.winfo_reqwidth())
+                    #print(scroll_xpos)
+                    #print("height:", self.lbox.winfo_reqheight(), "x_pos:", self.lbox.winfo_reqwidth(), "xstart:", self.master.winfo_reqwidth())
                     scrollbar.place(height=self.lbox.winfo_reqheight(), x=scroll_xpos,rely=0.05)
                     self.lbox.config(yscrollcommand=scrollbar.set)
                     scrollbar.config(command=self.lbox.yview)
@@ -431,6 +431,7 @@ class EndPage(tk.Frame):
         self.master.types = []
         self.master.prices = []
         self.master.handles = []
+        self.buttons = []
         self['bg'] = "#FBF8EE"
         tk.Label(self, text="Hi %s, here are your scent recommendations" % self.master.first_name.get(),
                  font=('Alegreya Sans', 18, "bold"), fg='#8A5C3C', bg='#FBF8EE') \
@@ -542,18 +543,23 @@ class EndPage(tk.Frame):
                 self.master.grid_rowconfigure(start_row + no_items, minsize=100)
                 start_row += no_items + 1
 
-        tk.Button(self, text="Modify price range", fg='#8A5C3C', bg="#FBF8EE",activebackground="#5a371e", activeforeground="#FBF8EE",
-                  command=self._modify_price, height = 2) \
-            .grid(row=start_row, columnspan=3)
 
-        tk.Button(self, text="Save the results to my Desktop", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
+        modify = tk.Button(text="\u140A" + " Modify price range", font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",activebackground="#5a371e", activeforeground="#FBF8EE",
+                  width=15, command=self._modify_price, height = 2)
+        modify.place(anchor=tk.W,rely=0.5, relx=0)
+        self.buttons.append(modify)
+
+        save = tk.Button(self, text="Save the results to my Desktop", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
                   activeforeground="#FBF8EE", height = 2,
-                  command=self.save_results(recommendations)) \
-            .grid(row=start_row + 1, columnspan=3)
+                  command=self.save_results(recommendations))
+        save.grid(row=start_row + 1, columnspan=3)
+        self.buttons.append(save)
 
-        tk.Button(self, text="Go back to start page", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
-                  activeforeground="#FBF8EE", height = 2, command=self._reset) \
-            .grid(row=start_row + 2, columnspan=3)
+        start = tk.Button(self, text="Go back to start page", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
+                  activeforeground="#FBF8EE", height = 2, command=self._reset)
+        
+        start.grid(row=start_row + 2, columnspan=3)
+        self.buttons.append(start)
 
         # for x in range(len(self.master.relevant_questions)):
         #    print("questions:",self.master.relevant_questions[x])
@@ -565,6 +571,9 @@ class EndPage(tk.Frame):
         self.master.switch_frame(StartPage)
 
     def _modify_price(self):
+        for button in self.buttons:
+            button.destroy()
+        self.buttons = []
         self.master.engine.set_question_direction(0)
         #undo the voting
         traversed = self.master.engine.get_traversed_path()
@@ -606,19 +615,25 @@ class ProductPage(tk.Frame):
         display_text = set(display_text.split("\n"))
         display_text.discard('')
         display_text = sorted(list(display_text))
+        display_text_len = len(display_text)
         display_text = '\n'.join(display_text)
         print("split:", type(display_text))
 
         # Display the motivation for recommending this product
-        tk.Label(self,
+        display_label = tk.Label(self,
                  fg='#8A5C3C',
                  bg='#FBF8EE',
                  font=('Alegreya Sans', 18, "bold"),
                  wraplength=800,
                  pady=10,
                  text="This scent is recommended to you because of the following questions:").pack()
+
+
         if display_text != '':
             tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=display_text, wraplength=600).pack()
+            if display_text_len < 3:
+                tk.Label(self,fg='#8A5C3C', bg='#FBF8EE', font=('Alegreya sans', 12, "italic"), text="Seeing fewer reasons than expected? Try answering more questions or modifying the price range.", wraplength=600).pack()
+
         else:
             tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',
                      text="Uh-oh! The recommendation of this perfume was not based on any of your responses. "
@@ -631,7 +646,7 @@ class ProductPage(tk.Frame):
                  bg='#FBF8EE',
                  font=('Alegreya Sans', 14, "bold"),
                  wraplength=800,
-                 text="More information about this product:").pack()
+                 text="More information about this product:").pack(pady=20)
         tk.Label(self,
                  fg='#8A5C3C',
                  bg='#FBF8EE',
