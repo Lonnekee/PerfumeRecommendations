@@ -279,7 +279,7 @@ class InferenceEngine:
         # The name question is the first, so we can't go back
         if not self.__previous_question_id == 0:
             # Get most recent answered question
-            self.__previous_question = self.__questions[self.__traversed_path[-1]]
+            self.__previous_question = self.__questions[self.__traversed_path.pop()]
             if self.__previous_question is None:
                 print("NOTE: previous question with ID ", self.__previous_question_id, " does not exist (yet).")
                 exit(1)
