@@ -122,38 +122,49 @@ class NewPage(tk.Frame):
             self.question = q
 
             # Display the question that this frame is about
-            label = tk.Label(text="%s" % q.question, wraplength=600, font=('Alegreya Sans', 12), fg='#8A5C3C',
+            label = tk.Label(text="%s" % q.question, wraplength=800, font=('Alegreya Sans', 12), fg='#8A5C3C',
                              bg='#FBF8EE')
-            label.pack(side=tk.TOP)
+            label.place(anchor=tk.N, relx=0.5, rely=0.01)
             self.widgets.append(label)
 
             # Add the appropriate buttons or fields for the answers
             if q.type == qt.SINGLE:  # radio buttons needed
                 self.given_answer = tk.IntVar()
                 if not q.id == 2:
-                    for i, answer in enumerate(q.answers):
-                        radios = tk.Radiobutton(self, text=answer, activebackground="#FBF8EE", background="#FBF8EE",
-                                                activeforeground="black",
-                                                foreground="black", selectcolor="#8A5C3C", width=50, indicatoron=0,
-                                                offrelief=tk.FLAT, bd=3, pady=8, variable=self.given_answer, value=i)
-                        radios.pack()
-                else:
+                    y_dist = 0.08
                     for i, answer in enumerate(q.answers):
                         radios = tk.Radiobutton(text=answer, activebackground="#FBF8EE", background="#FBF8EE",
                                                 activeforeground="black",
                                                 foreground="black", selectcolor="#8A5C3C", width=50, indicatoron=0,
                                                 offrelief=tk.FLAT, bd=3, pady=8, variable=self.given_answer, value=i)
-                        radios.pack()
+                        radios.place(anchor=tk.N, relx=0.5, rely=y_dist)
+                        #radios.pack()
+                        y_dist += 0.08
+                        self.widgets.append(radios)
+                else:
+                    y_dist = 0.08
+                    for i, answer in enumerate(q.answers):
+                        radios = tk.Radiobutton(text=answer, activebackground="#FBF8EE", background="#FBF8EE",
+                                                activeforeground="black",
+                                                foreground="black", selectcolor="#8A5C3C", width=50, indicatoron=0,
+                                                offrelief=tk.FLAT, bd=3, pady=8, variable=self.given_answer, value=i)
+                        radios.place(anchor=tk.N, relx=0.5, rely=y_dist)
+                        #radios.pack()
+                        y_dist += 0.08
                         self.widgets.append(radios)
 
             elif q.type == qt.MULTIPLE:  # selectable boxes or images needed (?)
                 self.given_answer = len(q.answers) * [0]
+                y_dist = 0.08
                 for i in range(len(q.answers)):
                     self.given_answer[i] = tk.IntVar()
-                    c = tk.Checkbutton(self, text=q.answers[i], bg="#FBF8EE", fg='#5a371e', activebackground="#5a371e",
+                    c = tk.Checkbutton(text=q.answers[i], bg="#FBF8EE", fg='#5a371e', activebackground="#5a371e",
                                        activeforeground="#FBF8EE", selectcolor="#FBF8EE", width=50, indicatoron=1,
                                        pady=8, bd=3, variable=self.given_answer[i])
-                    c.pack()
+                    c.place(anchor=tk.N, relx=0.5, rely=y_dist)
+                    self.widgets.append(c)
+                    #c.pack()
+                    y_dist += 0.08
 
             elif q.type == qt.DISPLAY:
                 print("Display, no buttons needed.")
@@ -161,7 +172,7 @@ class NewPage(tk.Frame):
             elif q.type == qt.DROPDOWN:  # a list is needed, where multiple items can be selected
                 self.droplist = q.get_list()
 
-                self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=65, height=24, selectbackground="#8A5C3C",
+                self.lbox = tk.Listbox(self.master,selectmode=tk.MULTIPLE, width=65, height=28, selectbackground="#8A5C3C",
                                        selectforeground="#FBF8EE")
 
                 self.sorted_droplist = sorted(self.droplist)
@@ -170,26 +181,28 @@ class NewPage(tk.Frame):
                     # Remove options the user can dislike, if they have previously indicated they like these options.
                     for item in self.master.chosen_products:
                         if item in self.droplist:
-                            self.droplist.remove(item)
+                            self.sorted_droplist.remove(item)
                     self.lbox.insert("end", *self.sorted_droplist)
                     self.master.chosen_products = []
                 else:
                     self.lbox.insert("end", *self.sorted_droplist)
 
-                if len(self.droplist) > 24:
+                if len(self.sorted_droplist) > 28:
                     # add scrollbar to listbox if needed
-                    scrollbar = tk.Scrollbar(self)
-                    scrollbar.grid(row=0, column=1, sticky=tk.NS)
+                    scrollbar = tk.Scrollbar()
+                    scrollbar.place(relheight=0.81, anchor=tk.N, relx=0.8, rely=0.05)
                     self.lbox.config(yscrollcommand=scrollbar.set)
                     scrollbar.config(command=self.lbox.yview)
+                    self.widgets.append(scrollbar)
 
-                self.lbox.grid(row=0, column=0)
+                self.lbox.place(anchor=tk.N, relx=0.5, rely=0.05)
+                self.widgets.append(self.lbox)
                 self.given_answer = tk.StringVar()
                 self.given_answer.set(self.droplist[0])
 
                 self.search_var = tk.StringVar()
                 self.search_bar = tk.Entry(textvariable=self.search_var)
-                self.search_bar.place(x=270, rely=0.835, relwidth=0.2, height=31)
+                self.search_bar.place(x=270, rely=0.87, relwidth=0.2, height=31)
                 self.widgets.append(self.search_bar)
 
                 def search_keyword():
@@ -213,49 +226,54 @@ class NewPage(tk.Frame):
                                    activeforeground="#FBF8EE", command=search_keyword)
                 clear = tk.Button(text="Clear", width=10, fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
                                   activeforeground="#FBF8EE", command=clear_list)
-                search.place(x=450, rely=0.835, relwidth=0.1, height=31)
-                clear.place(x=540, rely=0.835, relwidth=0.1, height=31)
+                search.place(x=450, rely=0.87, relwidth=0.1, height=31)
+                clear.place(x=540, rely=0.87, relwidth=0.1, height=31)
                 self.buttons.append(search)
                 self.buttons.append(clear)
 
             elif q.type == qt.BUDGET:
                 minPrice, maxPrice = master.engine.get_price_range()
                 self.given_answer = tk.DoubleVar()
-                scale_entry = tk.Scale(self, variable=self.given_answer, label='Maximum budget in euros:',
+                scale_entry = tk.Scale(variable=self.given_answer, label='Maximum budget in euros:',
                                        from_=minPrice, to=maxPrice, tickinterval=(maxPrice - minPrice),
                                        orient=tk.HORIZONTAL, length=200, fg='#8A5C3C', bg="#FBF8EE",
                                        activebackground="#FBF8EE", troughcolor="#5a371e")
                 scale_entry.set(int((maxPrice - minPrice) / 2 + minPrice))
-                scale_entry.pack()
+                scale_entry.place(anchor=tk.N, relx=0.5, rely=0.05)
+                self.widgets.append(scale_entry)
+                #scale_entry.pack()
 
             elif q.type == qt.NAME:
                 self.given_answer = tk.StringVar()
                 name_entry = tk.Entry(master, textvariable=self.given_answer)
-                name_entry.pack()
+                name_entry.place(anchor=tk.N, relx=0.5, rely=0.05)
                 self.widgets.append(name_entry)
 
             # Create submit button that can send the answer to the inference engine
             next_text = ["Next", "\u1405"]
             submit = tk.Button(text=next_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
-                               activebackground="#5a371e", activeforeground="#FBF8EE", width=15, command=self._send_result)
-            submit.pack(side=tk.RIGHT)
+                               activebackground="#5a371e", activeforeground="#FBF8EE", width=14, command=self._send_result)
+            #submit.pack(side=tk.RIGHT)
+            submit.place(anchor=tk.E,rely=0.5, relx=1)
 
             # only appears after the first answered question
             if len(self.master.engine.get_traversed_path()) > 0:
 
                 # Create button that can stop the program prematurely
                 stop_text = "Show my recommendations"
-                stop = tk.Button(text=stop_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
-                                activebackground="#5a371e", activeforeground="#FBF8EE",
+                stop = tk.Button(self.master,text=stop_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
+                                activebackground="#5a371e", activeforeground="#FBF8EE", height=1,
                                 command=self._premature_recommendations)
-                stop.pack(side=tk.BOTTOM) 
+                #stop.pack(side=tk.BOTTOM, anchor=tk.CENTER) 
+                stop.place(anchor=tk.S, relx=0.5, rely=1)
 
                 #Create button that goes to previous page and reverts answers given
                 previous_text = ["\u140A", "Previous"]
                 previous = tk.Button(text=previous_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C',
-                                     bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE", width=15,
+                                     bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE", width=14,
                                      command=self._revert_answers)
-                previous.pack(side=tk.LEFT)
+                #previous.pack(side=tk.LEFT)
+                previous.place(anchor=tk.W, relx=0, rely=0.5)
                 self.buttons.append(stop)
                 self.buttons.append(previous)
 

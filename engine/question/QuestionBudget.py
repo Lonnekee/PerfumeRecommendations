@@ -25,12 +25,11 @@ class QuestionBudget(Question):
     def reset_budget(self):
             self.perfumes.loc[self.exclude, ['included']] = True
             print("print rel_q",self.perfumes.loc[self.include, ['rel_q']])
-            for question in self.perfumes.loc[self.include, ['rel_q']]:
-                if str(self.value) in question:
-                    self.perfumes.loc[self.include, ['rel_q']][question] = ""
-                else:
-                    print("value not found")
-            #self.perfumes.loc[self.include, ['rel_q']] = ""
+
+            # Remove previous budget as reason
+            #self.perfumes.loc[self.include, ['rel_q']].replace(to_replace=self.value, value="")
+
             self.value = None
             self.exclude = None
             self.include = None
+            self.reason = None
