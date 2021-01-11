@@ -32,7 +32,7 @@ for f in fonts_path.glob("**/*.ttf"):
 class SampleApp(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
-        self.geometry('900x600')
+        self.geometry('900x630')
         self.title('Perfume Knowledge System')
         self.engine = ie.InferenceEngine()
         self._frame = None
@@ -570,19 +570,80 @@ class ProductPage(tk.Frame):
         # tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',text=self.master.relevant_questions[self.master.relevant_index], wraplength=600).pack()
         tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=display_text, wraplength=600).pack()
 
-        # TODO: Display a more detailed description of the product
-        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', font=('Alegreya Sans', 14, "bold"), wraplength=800,
+        # Display a more detailed description of the product
+        tk.Label(self,
+                 fg='#8A5C3C',
+                 bg='#FBF8EE',
+                 font=('Alegreya Sans', 14, "bold"),
+                 wraplength=800,
                  text="More information about this product:").pack()
-        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=self.master.vendors[self.master.relevant_index],
+        tk.Label(self,
+                 fg='#8A5C3C',
+                 bg='#FBF8EE',
+                 text="Vendor: " + self.master.vendors[self.master.relevant_index],
                  wraplength=600).pack()
-        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=self.master.titles[self.master.relevant_index],
+        tk.Label(self,
+                 fg='#8A5C3C',
+                 bg='#FBF8EE',
+                 text="Name: " + self.master.titles[self.master.relevant_index],
                  wraplength=600).pack()
-        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=self.master.types[self.master.relevant_index],
+        tk.Label(self,
+                 fg='#8A5C3C',
+                 bg='#FBF8EE',
+                 text="Type: " + self.master.types[self.master.relevant_index],
                  wraplength=600).pack()
-        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=self.master.prices[self.master.relevant_index],
+        tk.Label(self,
+                 fg='#8A5C3C',
+                 bg='#FBF8EE',
+                 text=self.master.prices[self.master.relevant_index],
                  wraplength=600).pack()
-        tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=self.master.extra_information[self.master.relevant_index],
-                 wraplength=600).pack()
+
+        extra_information = self.master.extra_information[self.master.relevant_index].split(',')
+        for index in range(len(extra_information)):
+            extra_information[index] = extra_information[index].strip()
+        for tag in ['Familie', 'ingr', 'Related', 'mood']:
+            text = ""
+            if tag == 'ingr':
+                text = "Ingredient"
+            elif tag == 'Familie':
+                text = "Family"
+            else:
+                text = tag.capitalize()
+            text += ": "
+
+            picked_labels = []
+            for label in extra_information:
+                if label.startswith(tag):
+                    picked_labels.append(label[len(tag)+1:])
+
+            if not picked_labels:
+                continue
+
+            for index, label in enumerate(picked_labels):
+                if index != 0:
+                    text += ", "
+                text += label
+
+            tk.Label(self,
+                     fg='#8A5C3C',
+                     bg='#FBF8EE',
+                     text=text,
+                     wraplength=600).pack()
+
+        if 'met sample' in extra_information:
+            tk.Label(self,
+                     fg='#8A5C3C',
+                     bg='#FBF8EE',
+                     text="Samples are available.",
+                     wraplength=600).pack()
+
+        if 'bodycare-available' in extra_information:
+            tk.Label(self,
+                     fg='#8A5C3C',
+                     bg='#FBF8EE',
+                     text="Matching body care is available.",
+                     wraplength=600).pack()
+
 
         # Create button that takes the user back to the overview of recommended products
         back_to_recs_button = tk.Button(text="Back to overview", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
