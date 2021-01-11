@@ -86,7 +86,7 @@ class StartPage(tk.Frame):
 
         start_label2.pack()
         start_button = tk.Button(text="Click here to start", font=('Alegreya Sans', '12', 'italic'), fg='#8A5C3C',
-                                 bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE", width=750,
+                                 bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE", width=750, height = 2,
                                  command=switch_and_clear)
         start_button.pack(side=tk.BOTTOM, pady=50)
 
@@ -252,7 +252,7 @@ class NewPage(tk.Frame):
             # Create submit button that can send the answer to the inference engine
             next_text = ["Next", "\u1405"]
             submit = tk.Button(text=next_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
-                               activebackground="#5a371e", activeforeground="#FBF8EE", width=14, command=self._send_result)
+                               activebackground="#5a371e", activeforeground="#FBF8EE", width=14, height=2, command=self._send_result)
             #submit.pack(side=tk.RIGHT)
             submit.place(anchor=tk.E,rely=0.5, relx=1)
 
@@ -262,7 +262,7 @@ class NewPage(tk.Frame):
                 # Create button that can stop the program prematurely
                 stop_text = "Show my recommendations"
                 stop = tk.Button(self.master,text=stop_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
-                                activebackground="#5a371e", activeforeground="#FBF8EE", height=1,
+                                activebackground="#5a371e", activeforeground="#FBF8EE", height=2,
                                 command=self._premature_recommendations)
                 #stop.pack(side=tk.BOTTOM, anchor=tk.CENTER) 
                 stop.place(anchor=tk.S, relx=0.5, rely=1)
@@ -270,7 +270,7 @@ class NewPage(tk.Frame):
                 #Create button that goes to previous page and reverts answers given
                 previous_text = ["\u140A", "Previous"]
                 previous = tk.Button(text=previous_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C',
-                                     bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE", width=14,
+                                     bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE", width=14, height=2,
                                      command=self._revert_answers)
                 #previous.pack(side=tk.LEFT)
                 previous.place(anchor=tk.W, relx=0, rely=0.5)
@@ -523,16 +523,16 @@ class EndPage(tk.Frame):
                 start_row += no_items + 1
 
         tk.Button(self, text="Modify price range", fg='#8A5C3C', bg="#FBF8EE",activebackground="#5a371e", activeforeground="#FBF8EE",
-                  command=self._modify_price) \
+                  command=self._modify_price, height = 2) \
             .grid(row=start_row, columnspan=3)
 
         tk.Button(self, text="Save the results to my Desktop", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
-                  activeforeground="#FBF8EE",
+                  activeforeground="#FBF8EE", height = 2,
                   command=self.save_results(recommendations)) \
             .grid(row=start_row + 1, columnspan=3)
 
         tk.Button(self, text="Go back to start page", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
-                  activeforeground="#FBF8EE", command=self._reset) \
+                  activeforeground="#FBF8EE", height = 2, command=self._reset) \
             .grid(row=start_row + 2, columnspan=3)
 
         # for x in range(len(self.master.relevant_questions)):
