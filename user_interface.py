@@ -234,30 +234,32 @@ class NewPage(tk.Frame):
                 name_entry.pack()
                 self.widgets.append(name_entry)
 
-            # Create button that can stop the program prematurely
-            stop_text = "Show my recommendations"
-            stop = tk.Button(text=stop_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
-                             activebackground="#5a371e", activeforeground="#FBF8EE",
-                             command=self._premature_recommendations)
-            stop.pack(side=tk.BOTTOM)  # , anchor=tk.NE)
-
             # Create submit button that can send the answer to the inference engine
             next_text = ["Next", "\u1405"]
             submit = tk.Button(text=next_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
                                activebackground="#5a371e", activeforeground="#FBF8EE", width=15, command=self._send_result)
             submit.pack(side=tk.RIGHT)
 
-            # Create button that goes to previous page and reverts answers given, only appears after the first answered question
+            # only appears after the first answered question
             if len(self.master.engine.get_traversed_path()) > 0:
+
+                # Create button that can stop the program prematurely
+                stop_text = "Show my recommendations"
+                stop = tk.Button(text=stop_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
+                                activebackground="#5a371e", activeforeground="#FBF8EE",
+                                command=self._premature_recommendations)
+                stop.pack(side=tk.BOTTOM) 
+
+                #Create button that goes to previous page and reverts answers given
                 previous_text = ["\u140A", "Previous"]
                 previous = tk.Button(text=previous_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C',
                                      bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE", width=15,
                                      command=self._revert_answers)
                 previous.pack(side=tk.LEFT)
+                self.buttons.append(stop)
                 self.buttons.append(previous)
 
             self.buttons.append(submit)
-            self.buttons.append(stop)
 
     # show recommendations before the end of the program
     def _premature_recommendations(self):
