@@ -49,6 +49,8 @@ class SampleApp(tk.Tk):
             self._frame.destroy()
         self._frame = new_frame
         self._frame.pack()
+        #self._frame.update()
+        #print("dimensions:",self._frame.winfo_height(), self._frame.winfo_width())
 
 
 class StartPage(tk.Frame):
@@ -104,6 +106,14 @@ class NewPage(tk.Frame):
         self.value = []
         self.product_index = []
 
+        self.master._frame.update()
+        self.master.update()
+        #self.pack()
+        #self.update()
+        print("new dimensions:", self.master.winfo_height(), self.master.winfo_width())
+        self.frame_height = self.master.winfo_height()
+        self.frame_width = self.master.winfo_width()
+
         # Recursive call: make new page for each question until you reach the last
         if master.engine.has_reached_goal():
             master.switch_frame(EndPage)
@@ -122,9 +132,9 @@ class NewPage(tk.Frame):
             self.question = q
 
             # Display the question that this frame is about
-            label = tk.Label(text="%s" % q.question, wraplength=800, font=('Alegreya Sans', 15), fg='#8A5C3C',
+            label = tk.Label(text="%s" % q.question, wraplength=self.frame_width, font=('Alegreya Sans', 15), fg='#8A5C3C',
                              bg='#FBF8EE')
-            label.place(anchor=tk.N, relx=0.5, rely=0.01)
+            label.place(anchor=tk.N, relx=0.5, rely=0)
             self.widgets.append(label)
 
             # Add the appropriate buttons or fields for the answers
@@ -172,8 +182,12 @@ class NewPage(tk.Frame):
             elif q.type == qt.DROPDOWN:  # a list is needed, where multiple items can be selected
                 self.droplist = q.get_list()
 
-                self.lbox = tk.Listbox(self.master,selectmode=tk.MULTIPLE, width=65, height=28, selectbackground="#8A5C3C",
-                                       selectforeground="#FBF8EE")
+                #self.master._frame.update()
+                #self.master.update()
+                #self.Frame.update()
+                #print("frame:", self.master.height, self.master.width)
+                self.lbox = tk.Listbox(self.master,selectmode=tk.MULTIPLE, width=int(self.frame_width/14), height=int(self.frame_height/22), selectbackground="#8A5C3C",
+                                        selectforeground="#FBF8EE")
 
                 self.sorted_droplist = sorted(self.droplist)
 
@@ -191,8 +205,12 @@ class NewPage(tk.Frame):
                     # add scrollbar to listbox if needed
                     scrollbar = tk.Scrollbar()
                     self.lbox.update()
-                    print("height:", self.lbox.winfo_reqheight())
-                    scrollbar.place(height=self.lbox.winfo_reqheight(), anchor=tk.N, relx=0.8, rely=0.05)
+                    self.master.update()
+                    scroll_xpos = (self.frame_width - self.lbox.winfo_reqwidth()) / 2
+                    scroll_xpos = self.frame_width - scroll_xpos
+                    print(scroll_xpos)
+                    print("height:", self.lbox.winfo_reqheight(), "x_pos:", self.lbox.winfo_reqwidth(), "xstart:", self.master.winfo_reqwidth())
+                    scrollbar.place(height=self.lbox.winfo_reqheight(), x=scroll_xpos,rely=0.05)
                     self.lbox.config(yscrollcommand=scrollbar.set)
                     scrollbar.config(command=self.lbox.yview)
                     self.widgets.append(scrollbar)
