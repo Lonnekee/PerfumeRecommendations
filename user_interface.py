@@ -96,6 +96,7 @@ class NewPage(tk.Frame):
     question = None
 
     def __init__(self, master):
+        super(NewPage, self).__init__()
         self.master = master
         self.buttons = []
         self.widgets = []
@@ -163,15 +164,17 @@ class NewPage(tk.Frame):
                 self.lbox = tk.Listbox(self, selectmode=tk.MULTIPLE, width=65, height=24, selectbackground="#8A5C3C",
                                        selectforeground="#FBF8EE")
 
+                self.sorted_droplist = sorted(self.droplist)
+
                 if self.master.chosen_products != []:
                     # Remove options the user can dislike, if they have previously indicated they like these options.
                     for item in self.master.chosen_products:
                         if item in self.droplist:
                             self.droplist.remove(item)
-                    self.lbox.insert("end", *self.droplist)
+                    self.lbox.insert("end", *self.sorted_droplist)
                     self.master.chosen_products = []
                 else:
-                    self.lbox.insert("end", *self.droplist)
+                    self.lbox.insert("end", *self.sorted_droplist)
 
                 if len(self.droplist) > 24:
                     # add scrollbar to listbox if needed
@@ -241,14 +244,14 @@ class NewPage(tk.Frame):
             # Create submit button that can send the answer to the inference engine
             next_text = ["Next", "\u1405"]
             submit = tk.Button(text=next_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
-                               activebackground="#5a371e", activeforeground="#FBF8EE", command=self._send_result)
+                               activebackground="#5a371e", activeforeground="#FBF8EE", width=15, command=self._send_result)
             submit.pack(side=tk.RIGHT)
 
             # Create button that goes to previous page and reverts answers given, only appears after the first answered question
             if len(self.master.engine.get_traversed_path()) > 0:
                 previous_text = ["\u140A", "Previous"]
                 previous = tk.Button(text=previous_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C',
-                                     bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",
+                                     bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE", width=15,
                                      command=self._revert_answers)
                 previous.pack(side=tk.LEFT)
                 self.buttons.append(previous)
@@ -257,7 +260,6 @@ class NewPage(tk.Frame):
             self.buttons.append(stop)
 
     # show recommendations before the end of the program
-    # TODO: SOMS GEEFT HIJ RARE ERROR, SOMS NIET
     def _premature_recommendations(self):
         ans = tk.messagebox.askquestion('Stop recommending',
                                         'You have not answered all the questions yet. Are you sure you want to see your recommendations already?')
@@ -369,6 +371,7 @@ class EndPage(tk.Frame):
         f.close()
 
     def __init__(self, master):
+        super(EndPage, self).__init__()
         tk.Frame.__init__(self, master)
         self.master.relevant_questions = []
         self.master.relevant_answers = []
@@ -439,9 +442,9 @@ class EndPage(tk.Frame):
             image = ImageTk.PhotoImage(im)
 
             # Create an image button that takes you to the product page
-            image_button = tk.Button(self, image=image, command=partial(switch_to_end, index))
+            image_button = tk.Button(self, image=image,command=partial(switch_to_end, index))
             self.master.button_identities.append(image_button)
-            image_button.grid(row=start_row + 0, column=column, pady=20)
+            image_button.grid(row=start_row + 0, column=column, pady=10)
             image_button_ttp = CreateToolTip(image_button, text="Click to see why this product was recommended...")
 
             # self.image_buttons.append(image_button)
@@ -488,10 +491,14 @@ class EndPage(tk.Frame):
                 self.master.grid_rowconfigure(start_row + no_items, minsize=100)
                 start_row += no_items + 1
 
+        tk.Button(self, text="Modify price range", fg='#8A5C3C', bg="#FBF8EE",activebackground="#5a371e", activeforeground="#FBF8EE",
+                  command=self._modify_price) \
+            .grid(row=start_row, columnspan=3)
+
         tk.Button(self, text="Save the results to my Desktop", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
                   activeforeground="#FBF8EE",
                   command=self.save_results(recommendations)) \
-            .grid(row=start_row, columnspan=3)
+            .grid(row=start_row + 1, columnspan=3)
 
         tk.Button(self, text="Go back to start page", fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
                   activeforeground="#FBF8EE", command=self._reset) \
@@ -506,11 +513,34 @@ class EndPage(tk.Frame):
         self.master.engine.reset()
         self.master.switch_frame(StartPage)
 
+    def _modify_price(self):
+        #undo the voting
+        traversed = self.master.engine.get_traversed_path()
+        #self.master.engine.add_budget_to_path()
+        print("traversed path:", traversed)
+
+        if traversed.count(35) > 0:
+            print("CONTAINS BUDGET QUESTION")
+            prev_id = traversed[-1]
+            print("prev_id:",prev_id)
+            self.master.engine.get_latest_path_value()
+            self.master.engine.reverseAnswer(prev_id)
+        else:
+            print("add")
+            self.master.engine.add_budget_to_path()
+        #print("print facts:",self.master.facts)
+
+        # Go back to the previous page
+        #self.master.engine.get_latest_path_value()
+        self.master.engine.set_question_direction(0)
+        self.master.switch_frame(NewPage)
+
 
 # Frame class containing a single recommended product with description/motivation for it
 class ProductPage(tk.Frame):
 
     def __init__(self, master):
+        super(ProductPage, self).__init__()
         def switch_back_to_recs():
             back_to_recs_button.destroy()
             PL_button.destroy()
@@ -570,9 +600,7 @@ class ProductPage(tk.Frame):
         PL_button.pack(side=tk.BOTTOM)
 
 
-# TODO: GEBRUIKEN WE DIT?
 # This class creates a tooltip: a box of text that appears when hovering over a widget. 
-# TODO: copied code, modify where needed!
 class CreateToolTip(object):
     def __init__(self, widget, text='widget info'):
         self.waittime = 200  # miliseconds
