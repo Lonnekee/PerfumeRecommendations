@@ -269,7 +269,7 @@ class InferenceEngine:
         print(self.__questions[self.__traversed_path[-1]].question)
 
     def add_budget_to_path(self):
-        self.__previous_question_id = 18
+        self.__previous_question_id = 35
         self.__traversed_path.append(self.__previous_question_id)
         print("added q.id to traversed path:", self.__traversed_path)
 

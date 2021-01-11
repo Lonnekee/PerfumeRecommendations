@@ -520,6 +520,7 @@ class EndPage(tk.Frame):
         self.master.switch_frame(StartPage)
 
     def _modify_price(self):
+        self.master.engine.set_question_direction(0)
         #undo the voting
         traversed = self.master.engine.get_traversed_path()
         #self.master.engine.add_budget_to_path()
@@ -529,7 +530,7 @@ class EndPage(tk.Frame):
             print("CONTAINS BUDGET QUESTION")
             prev_id = traversed[-1]
             print("prev_id:",prev_id)
-            self.master.engine.get_latest_path_value()
+            #self.master.engine.get_latest_path_value()
             self.master.engine.reverseAnswer(prev_id)
         else:
             print("add")
@@ -538,8 +539,8 @@ class EndPage(tk.Frame):
 
         # Go back to the previous page
         #self.master.engine.get_latest_path_value()
-        self.master.engine.set_question_direction(0)
         self.master.switch_frame(NewPage)
+        self.master.engine.set_question_direction(1)
 
 
 # Frame class containing a single recommended product with description/motivation for it
