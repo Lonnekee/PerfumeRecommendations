@@ -86,6 +86,7 @@ class QuestionDropdown(Question):
 
                     # Add the value linked to this question
                     self.perfumes.loc[rows, ['rank']] += float(self.value[0])
+                    print("  Updated with: ", float(self.value[0]/4))
 
                     # Store what tag was updated and how
                     self.perfumes.loc[rows, ['facts']] += "Q" + str(self.q_id) + "+" + lab + "+" + str(self.value[0]) + ","

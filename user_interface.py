@@ -64,13 +64,13 @@ class StartPage(tk.Frame):
             master.switch_frame(NewPage)
 
         start_label = tk.Label(self,
-                               text="Welcome to the perfume knowledge system! After you have answered the questions, the system will determine the ideal scented product for your personal use.",
+                               text="Welcome to the Perfume Knowledge System!\n\n\n",
                                wraplength=700, font=('Alegreya Sans Regular', 18), fg='#8A5C3C', bg='#FBF8EE')
+        start_label2 = tk.Label(self,
+                               text="\n\n\nPerfume can be your most personal accessory, but how to find amongst the enormous offer of perfumes your ideal scented product? We have bundled the expertise of perfumers and scent experts to be able to determine your ideal fragrance. Discover now!",
+                               wraplength=700, font=('Alegreya Sans Regular', 14), fg='#8A5C3C', bg='#FBF8EE')
         start_label.pack()
-        start_button = tk.Button(text="Click here to start", font=('Alegreya Sans', '12', 'italic'), fg='#8A5C3C',
-                                 bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE", width=750,
-                                 command=switch_and_clear)
-        start_button.pack(side=tk.BOTTOM, pady=50)
+
         im_path = (PATH / "data/Logo-PL-liggend.png").resolve()
 
         self.img = Image.open(im_path)
@@ -83,6 +83,12 @@ class StartPage(tk.Frame):
         canvas.pack()
 
         canvas.create_image(img_width / 2 + 1, img_height / 2, image=self.img, anchor=tk.CENTER)
+
+        start_label2.pack()
+        start_button = tk.Button(text="Click here to start", font=('Alegreya Sans', '12', 'italic'), fg='#8A5C3C',
+                                 bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE", width=750,
+                                 command=switch_and_clear)
+        start_button.pack(side=tk.BOTTOM, pady=50)
 
 
 class NewPage(tk.Frame):
@@ -435,7 +441,7 @@ class EndPage(tk.Frame):
             # Create an image button that takes you to the product page
             image_button = tk.Button(self, image=image, command=partial(switch_to_end, index))
             self.master.button_identities.append(image_button)
-            image_button.grid(row=start_row + 0, column=column, pady=(20, 0))
+            image_button.grid(row=start_row + 0, column=column, pady=20)
             image_button_ttp = CreateToolTip(image_button, text="Click to see why this product was recommended...")
 
             # self.image_buttons.append(image_button)
@@ -467,7 +473,7 @@ class EndPage(tk.Frame):
             self.master.types.append(row['Type'])
 
             # Price
-            price = "From €" + "{:.2f}".format(row['Price'])
+            price = "From €{:.2f}".format(row['Price'])
             price = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=price, font=("Courier", 12)) \
                 .grid(row=start_row + 4, column=column)
             self.master.prices.append(price)
@@ -527,7 +533,7 @@ class ProductPage(tk.Frame):
                  bg='#FBF8EE',
                  font=('Alegreya Sans', 18, "bold"),
                  wraplength=800,
-                 pady=(10, 0),
+                 pady=10,
                  text="This scent is recommended to you because of the following questions:").pack()
         # tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',text=self.master.relevant_questions[self.master.relevant_index], wraplength=600).pack()
         tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=display_text, wraplength=600).pack()
