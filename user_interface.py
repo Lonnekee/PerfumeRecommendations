@@ -202,7 +202,7 @@ class NewPage(tk.Frame):
 
                 self.search_var = tk.StringVar()
                 self.search_bar = tk.Entry(textvariable=self.search_var)
-                self.search_bar.place(x=270, rely=0.87, relwidth=0.2, height=31)
+                self.search_bar.place(relx=0.3, rely=0.87, relwidth=0.35, height=31)
                 self.widgets.append(self.search_bar)
 
                 def search_keyword():
@@ -226,8 +226,8 @@ class NewPage(tk.Frame):
                                    activeforeground="#FBF8EE", command=search_keyword)
                 clear = tk.Button(text="Clear", width=10, fg='#8A5C3C', bg="#FBF8EE", activebackground="#5a371e",
                                   activeforeground="#FBF8EE", command=clear_list)
-                search.place(x=450, rely=0.87, relwidth=0.1, height=31)
-                clear.place(x=540, rely=0.87, relwidth=0.1, height=31)
+                search.place(relx=0.55, rely=0.87, relwidth=0.1, height=31)
+                clear.place(relx=0.65, rely=0.87, relwidth=0.1, height=31)
                 self.buttons.append(search)
                 self.buttons.append(clear)
 
@@ -486,7 +486,7 @@ class EndPage(tk.Frame):
                               fg='#323232',
                               bg='#FBF8EE',
                               text=row['Vendor'].upper(),
-                              font=("Courier", 12),
+                              font=("Courier", 11),
                               wraplength=wraplength)\
                 .grid(row=start_row + 1, column=column)
             self.master.vendors.append(row['Vendor'])
@@ -496,19 +496,19 @@ class EndPage(tk.Frame):
                              fg='#323232',
                              bg='#FBF8EE',
                              text=row['Title'],
-                             font=("Marcellus", 14),
+                             font=("Marcellus", 13),
                              wraplength=wraplength) \
                 .grid(row=start_row + 2, column=column)
             self.master.titles.append(row['Title'])
 
             # Type of perfume (eau de parfum, eau de toilette, etc.)
             perfume_type = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=row['Type'].upper(),
-                                    font=("Courier", 12)).grid(row=start_row + 3, column=column)
+                                    font=("Courier", 11)).grid(row=start_row + 3, column=column)
             self.master.types.append(row['Type'])
 
             # Price
             price = "From €{:.2f}".format(row['Price'])
-            price = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=price, font=("Courier", 12)) \
+            price = tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=price, font=("Courier", 11)) \
                 .grid(row=start_row + 4, column=column)
             self.master.prices.append(price)
 
@@ -587,7 +587,7 @@ class ProductPage(tk.Frame):
         display_text.discard('')
         display_text = sorted(list(display_text))
         display_text = '\n'.join(display_text)
-        print("split:", display_text)
+        print("split:", type(display_text))
 
         # Display the motivation for recommending this product
         tk.Label(self,
@@ -597,7 +597,7 @@ class ProductPage(tk.Frame):
                  wraplength=800,
                  pady=10,
                  text="This scent is recommended to you because of the following questions:").pack()
-        if display_text.isalnum():
+        if display_text != '':
             tk.Label(self, fg='#8A5C3C', bg='#FBF8EE', text=display_text, wraplength=600).pack()
         else:
             tk.Label(self, fg='#8A5C3C', bg='#FBF8EE',
