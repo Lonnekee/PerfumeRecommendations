@@ -354,6 +354,13 @@ class NewPage(tk.Frame):
         elif self.question.type == qt.NAME:
             first_name = self.given_answer.get()
             if first_name != '':
+                # Cut off name if it is too long to prevent formatting issues at recommendation page
+                if len(list(first_name))>20:
+                    print("was:", first_name)
+                    first_name = list(first_name)[:15]
+                    first_name = ('').join(first_name)
+                    print("now:", first_name)
+
                 self.master.first_name.set(first_name)
                 self.master.title('Perfume Recommendations for %s' % first_name)
 
@@ -410,8 +417,8 @@ class EndPage(tk.Frame):
             .grid(row=0, columnspan=3, pady=5)
 
         tk.Label(self, text="Click on a perfume to see why it is recommended.",
-                 font=('Alegreya Sans', 12), fg='#8A5C3C', bg='#FBF8EE') \
-            .grid(row=1, columnspan=3, pady=2)
+                 font=('Alegreya Sans', 10), fg='#8A5C3C', bg='#FBF8EE') \
+            .grid(row=1, columnspan=3, pady=1)
 
         recommendations = master.engine.get_recommendations()  # Pandas dataframe
 
