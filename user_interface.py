@@ -238,14 +238,14 @@ class NewPage(tk.Frame):
             # Create submit button that can send the answer to the inference engine
             next_text = ["Next", "\u1405"]
             submit = tk.Button(text=next_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C', bg="#FBF8EE",
-                               activebackground="#5a371e", activeforeground="#FBF8EE", command=self._send_result)
+                               activebackground="#5a371e", activeforeground="#FBF8EE", width=15, command=self._send_result)
             submit.pack(side=tk.RIGHT)
 
             # Create button that goes to previous page and reverts answers given, only appears after the first answered question
             if len(self.master.engine.get_traversed_path()) > 0:
                 previous_text = ["\u140A", "Previous"]
                 previous = tk.Button(text=previous_text, font=('Alegrya sans', '12', 'italic'), fg='#8A5C3C',
-                                     bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE",
+                                     bg="#FBF8EE", activebackground="#5a371e", activeforeground="#FBF8EE", width=15,
                                      command=self._revert_answers)
                 previous.pack(side=tk.LEFT)
                 self.buttons.append(previous)
@@ -437,7 +437,7 @@ class EndPage(tk.Frame):
             image = ImageTk.PhotoImage(im)
 
             # Create an image button that takes you to the product page
-            image_button = tk.Button(self, image=image, command=partial(switch_to_end, index))
+            image_button = tk.Button(self, image=image,command=partial(switch_to_end, index))
             self.master.button_identities.append(image_button)
             image_button.grid(row=start_row + 0, column=column, pady=10)
             image_button_ttp = CreateToolTip(image_button, text="Click to see why this product was recommended...")

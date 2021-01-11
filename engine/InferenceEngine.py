@@ -266,7 +266,7 @@ class InferenceEngine:
     def set_latest_path_value(self, value):
         self.__traversed_path.append(value)
         print("added q.id to traversed path:", self.__traversed_path)
-        print(self.__questions[self.__traversed_path.pop()].question)
+        print(self.__questions[self.__traversed_path[-1]].question)
 
     def add_budget_to_path(self):
         self.__previous_question_id = 18
@@ -279,7 +279,7 @@ class InferenceEngine:
         # The name question is the first, so we can't go back
         if not self.__previous_question_id == 0:
             # Get most recent answered question
-            self.__previous_question = self.__questions[self.__traversed_path.pop()]
+            self.__previous_question = self.__questions[self.__traversed_path[-1]]
             if self.__previous_question is None:
                 print("NOTE: previous question with ID ", self.__previous_question_id, " does not exist (yet).")
                 exit(1)
