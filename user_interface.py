@@ -568,6 +568,9 @@ class EndPage(tk.Frame):
         # print("buttons:", self.master.button_identities)
 
     def _reset(self):
+        for button in self.buttons:
+            button.destroy()
+        self.buttons = []
         self.master.first_name.set('')
         self.master.engine.reset()
         self.master.switch_frame(StartPage)
