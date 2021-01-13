@@ -196,7 +196,7 @@ class NewPage(tk.Frame):
                 if self.master.chosen_products != []:
                     # Remove options the user can dislike, if they have previously indicated they like these options.
                     for item in self.master.chosen_products:
-                        if item in self.droplist:
+                        if item in self.sorted_droplist:
                             self.sorted_droplist.remove(item)
                     self.lbox.insert("end", *self.sorted_droplist)
                     self.master.chosen_products = []
