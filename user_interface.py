@@ -10,7 +10,7 @@ from PIL import Image, ImageTk
 import os
 import pandas as pd
 pd.options.mode.chained_assignment = None  # default='warn'
-
+import platform
 from functools import partial
 import webbrowser
 from pyglet import font
@@ -21,10 +21,13 @@ from engine.question.QuestionType import QuestionType as qt
 from pathlib import Path
 from paths import logo_path, fonts_path
 
-
-# Add fonts
-for f in fonts_path.glob("**/*.ttf"):
-    font.add_file(os.path.join(fonts_path, f))
+#fonts work differently on MacOs, just download them there
+if(platform.system() != "Darwin"):
+    # Add fonts
+    for f in fonts_path.glob("**/*.ttf"):
+        print(os.path.join(fonts_path, f))
+        font.add_file(os.path.join(fonts_path, f))
+        font.add_file("data/fonts/AlegreyaSans-Black.ttf")
 
 
 # Create the application's frame
