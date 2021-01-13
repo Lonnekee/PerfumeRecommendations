@@ -203,8 +203,7 @@ class InferenceEngine:
     def reverseAnswer(self, q_id):
         print("Reversing question " +str(q_id))
 
-        facts = self.__perfumes.facts
-        print(facts)
+        print(self.__perfumes.facts)
         print("match type:", self.__questions[q_id])
         if "QuestionBudget" in str(self.__questions[q_id]):
             print("budget")
@@ -220,7 +219,7 @@ class InferenceEngine:
             for row in trueRows.index:
                 if(trueRows.iloc[row]):
                     #find the correct label
-                    for lab in facts.iloc[row].split(','):
+                    for lab in self.__perfumes.facts.iloc[row].split(','):
                         if(lab.startswith("Q"+str(q_id))):
                             # extract value
                             singleLabel = lab.split('+')
@@ -230,10 +229,10 @@ class InferenceEngine:
                         else:
                             continue
                     # remove reasoning tags
-                    print("Removed tags and reversed value from " + facts.loc[row], end ="")
+                    print("Removed tags and reversed value from " + self.__perfumes.facts.loc[row], end ="")
                     #This gives a warning that it's making a copy, but that should be fine
-                    facts.loc[row] = facts.loc[row].split("Q"+str(q_id),1)[0]
-                    print("now left: " + facts.loc[row])
+                    self.__perfumes.facts.loc[row] = self.__perfumes.facts.loc[row].split("Q"+str(q_id),1)[0]
+                    print("now left: " + self.__perfumes.facts.loc[row])
                 else:
                     continue
 
@@ -329,7 +328,7 @@ class InferenceEngine:
     def get_recommendations(self):
         possibilities = self.__perfumes[self.__perfumes['included'] == True]
         sorted_list = possibilities.sort_values(axis=0, by="rank", ascending=False, inplace=False)
-        return sorted_list.iloc[0:5, :]
+        return sorted_list.iloc[0:6, :]
 
     # Returns the min and max price of the top 20 products that are left.
     def get_price_range(self):

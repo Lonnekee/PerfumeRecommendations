@@ -10,6 +10,8 @@ from PIL import Image, ImageTk
 import os
 from pathlib import Path
 import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
+
 from functools import partial
 import webbrowser
 from pyglet import font
@@ -674,9 +676,9 @@ class ProductPage(tk.Frame):
         for tag in ['Familie', 'ingr', 'Related', 'mood']:
             text = ""
             if tag == 'ingr':
-                text = "Ingredient"
+                text = "Ingredients"
             elif tag == 'Familie':
-                text = "Family"
+                text = "Families"
             else:
                 text = tag.capitalize()
             text += ": "
