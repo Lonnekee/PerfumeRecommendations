@@ -202,9 +202,7 @@ class InferenceEngine:
     def reverseAnswer(self, q_id):
         print("Reversing question " +str(q_id))
 
-        facts = self.__perfumes.facts
         if "QuestionBudget" in str(self.__questions[q_id]):
-            print("budget")
             self.__questions[q_id].reset_budget()
         else:
             trueRows = self.__perfumes.facts.str.contains("Q"+str(q_id))
@@ -217,7 +215,7 @@ class InferenceEngine:
             for row in trueRows.index:
                 if(trueRows.iloc[row]):
                     #find the correct label
-                    for lab in facts.iloc[row].split(','):
+                    for lab in self.__perfumes.facts.iloc[row].split(','):
                         if(lab.startswith("Q"+str(q_id))):
                             # extract value
                             singleLabel = lab.split('+')
@@ -227,10 +225,7 @@ class InferenceEngine:
                         else:
                             continue
                     # remove reasoning tags
-                    print("Removed tags and reversed value from " + facts.loc[row], end ="")
-                    #This gives a warning that it's making a copy, but that should be fine
-                    facts.loc[row] = facts.loc[row].split("Q"+str(q_id),1)[0]
-                    print("now left: " + facts.loc[row])
+                    self.__perfumes.facts.loc[row] = self.__perfumes.facts.loc[row].split("Q"+str(q_id),1)[0]
                 else:
                     continue
 
@@ -319,14 +314,14 @@ class InferenceEngine:
 
         # Add questionID that was just answered to the path of questions
         self.__traversed_path.append(q.id)
-        print(self.__traversed_path)
+        # print(self.__traversed_path)
         print("\nNext up: ", self.__next_question_id)
 
     # Returns a number of recommended perfumes based on the current state of the knowledge base.
     def get_recommendations(self):
         possibilities = self.__perfumes[self.__perfumes['included'] == True]
         sorted_list = possibilities.sort_values(axis=0, by="rank", ascending=False, inplace=False)
-        return sorted_list.iloc[0:5, :]
+        return sorted_list.iloc[0:6, :]
 
     # Returns the min and max price of the top 20 products that are left.
     def get_price_range(self):

@@ -10,6 +10,8 @@ from PIL import Image, ImageTk
 import os
 from pathlib import Path
 import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
+
 from functools import partial
 import webbrowser
 from pyglet import font
@@ -194,7 +196,7 @@ class NewPage(tk.Frame):
                 if self.master.chosen_products != []:
                     # Remove options the user can dislike, if they have previously indicated they like these options.
                     for item in self.master.chosen_products:
-                        if item in self.droplist:
+                        if item in self.sorted_droplist:
                             self.sorted_droplist.remove(item)
                     self.lbox.insert("end", *self.sorted_droplist)
                     self.master.chosen_products = []
@@ -330,7 +332,6 @@ class NewPage(tk.Frame):
 
         # undo the voting
         traversed = self.master.engine.get_traversed_path()
-        print(traversed)
         if traversed:
             prev_id = traversed[-1]
             print(prev_id)
@@ -457,7 +458,6 @@ class EndPage(tk.Frame):
             row = recommendations.iloc[index]
             column = index % no_columns
 
-            print("Facts:", index, row['rel_q'])
             self.master.relevant_questions.append(row['rel_q'])
             self.master.relevant_answers.append(row['facts'])
 
@@ -559,6 +559,9 @@ class EndPage(tk.Frame):
         # print("buttons:", self.master.button_identities)
 
     def _reset(self):
+        for button in self.buttons:
+            button.destroy()
+        self.buttons = []
         self.master.first_name.set('')
         self.master.engine.reset()
         self.master.switch_frame(StartPage)
@@ -571,16 +574,12 @@ class EndPage(tk.Frame):
         #undo the voting
         traversed = self.master.engine.get_traversed_path()
         #self.master.engine.add_budget_to_path()
-        print("traversed path:", traversed)
 
         if traversed.count(35) > 0:
-            print("CONTAINS BUDGET QUESTION")
             prev_id = traversed[-1]
-            print("prev_id:",prev_id)
             #self.master.engine.get_latest_path_value()
             self.master.engine.reverseAnswer(prev_id)
         else:
-            print("add")
             self.master.engine.add_budget_to_path()
         #print("print facts:",self.master.facts)
 
@@ -667,9 +666,9 @@ class ProductPage(tk.Frame):
         for tag in ['Familie', 'ingr', 'Related', 'mood']:
             text = ""
             if tag == 'ingr':
-                text = "Ingredient"
+                text = "Ingredients"
             elif tag == 'Familie':
-                text = "Family"
+                text = "Families"
             else:
                 text = tag.capitalize()
             text += ": "
