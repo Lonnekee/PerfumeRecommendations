@@ -446,11 +446,6 @@ class EndPage(tk.Frame):
         pd.pandas.set_option('display.max_columns', None)
         pd.pandas.set_option('display.max_rows', None)
         pd.set_option('display.max_colwidth', None)
-        print(recommendations.facts)
-        print(recommendations.rel_q)
-
-        all = master.engine.get_all()
-        # print(all)
 
         start_row = 2
         no_items = 5
@@ -458,9 +453,7 @@ class EndPage(tk.Frame):
         im_width = 100
         wraplength = 200
 
-        # print("len:",len(recommendations.index))
         for index in range(len(recommendations.index)):
-            # print(index)
             row = recommendations.iloc[index]
             column = index % no_columns
 

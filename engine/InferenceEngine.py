@@ -195,7 +195,6 @@ class InferenceEngine:
             return False
         else:
             return False
-        # TODO Maybe we should add an option st the user is able to stop earlier?
 
     def add_additional_info(self, entry_name, value):
         self.__additional_info[entry_name] = value
@@ -204,8 +203,6 @@ class InferenceEngine:
         print("Reversing question " +str(q_id))
 
         facts = self.__perfumes.facts
-        print(facts)
-        print("match type:", self.__questions[q_id])
         if "QuestionBudget" in str(self.__questions[q_id]):
             print("budget")
             self.__questions[q_id].reset_budget()
@@ -338,11 +335,6 @@ class InferenceEngine:
         maxPrice = math.ceil(float(top20['Price'].max()))
         minPrice = math.ceil(float(top20['Price'].min()))
         return minPrice, maxPrice
-
-    #TODO DELETE LATER, FOR DEBUGGING
-    def get_all(self):
-        return self.__perfumes.facts
-
 
 if __name__ == "__main__":
     engine = InferenceEngine()
