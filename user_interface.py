@@ -461,6 +461,9 @@ class EndPage(tk.Frame):
             # self.master.relevant_index.append(index)
 
             def switch_to_end(button_id):
+                for button in self.buttons:
+                    button.destroy()
+                self.buttons = []
                 # print("index:", self.master.relevant_index)
                 self.master.relevant_index = index
                 bname = list(str(self.master.button_identities[button_id]))
