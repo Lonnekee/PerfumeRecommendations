@@ -1,7 +1,8 @@
-from pathlib import Path
 import pandas as pd
 from engine.question.Question import Question
 from engine.question.QuestionType import QuestionType as qt
+
+from paths import perfumes_path, families_path, ingredients_path
 
 
 class QuestionDropdown(Question):
@@ -30,8 +31,6 @@ class QuestionDropdown(Question):
             return None
 
     def __get_perfumes(self):
-        base_path = Path(__file__).parent
-        perfumes_path = (base_path / "../../data/filteredDatabase.csv").resolve()
         perfumes = pd.read_csv(open(perfumes_path), encoding="utf-8")
 
         relevant = perfumes.loc[(perfumes['Type'] == "eau de parfum") | (perfumes['Type'] == "eau de toilette") | (perfumes['Type'] == "parfum") | (perfumes['Type'] == "eau de cologne")].reset_index()
@@ -56,15 +55,11 @@ class QuestionDropdown(Question):
         return products # send all products in a list
 
     def __get_families(self):
-        base_path = Path(__file__).parent
-        families_path = (base_path / "../../data/olfactory_families.csv").resolve()
         families = pd.read_csv(open(families_path), encoding="utf-8")
         self.tags = families["Tag"].tolist() 
         return families["Family"].tolist()  # send all families in a list
 
     def __get_ingredients(self):
-        base_path = Path(__file__).parent
-        ingredients_path = (base_path / "../../data/ingredients.csv").resolve()
         ingredients = pd.read_csv(open(ingredients_path), encoding="utf-8")
         self.tags = ingredients["Tag"].tolist()
         return ingredients["Ingredient"].tolist() # send all ingredients  in a list
@@ -124,18 +119,3 @@ class QuestionDropdown(Question):
         if "takePerfume" in self.labels:
             print("Downvote selected perfumes")
             self.perfumes.loc[indices, ['rank']] += -100
-
-
-if __name__ == "__main__":
-    # Store all perfumes and their initial 'truth-values'.
-    base_path = Path(__file__).parent
-    # print(base_path)
-    # Set explicit path to filteredDatabase.csv
-    database_path = (base_path / "../../data/filteredDatabase.csv").resolve()
-    # print(database_path)
-    perfumes = pd.read_csv(open(database_path, encoding="utf-8"))
-    truth_values = [0] * len(perfumes.index)
-    perfumes['rank'] = truth_values
-
-    q = QuestionDropdown(1, "hello?", None, None, ["doesn't matter"], 1.0, perfumes)
-    q.set_answer([2, 4])

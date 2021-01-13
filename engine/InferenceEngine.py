@@ -12,6 +12,8 @@ from engine.question.QuestionBudget import QuestionBudget
 from engine.question.QuestionName import QuestionName
 from engine.question.QuestionType import QuestionType as qt
 
+from paths import perfumes_path, questionanswer_path
+
 
 # The inference engine uses forward chaining and is based on a sort of fuzzy logic.
 # Based on the answer to every questions, perfumes will be upvoted or downvoted.
@@ -32,10 +34,8 @@ class InferenceEngine:
     def __init__(self):
         # 1. Store all perfumes and their initial 'truth-values'.
 
-        # 1a. Set explicit path to filteredDatabase.csv
-        base_path = Path(__file__).parent
-        database_path = (base_path / "../data/filteredDatabase.csv").resolve()
-        self.__perfumes = pd.read_csv(open(database_path, encoding="utf-8"))
+        # 1a. Get filteredDatabase.csv
+        self.__perfumes = pd.read_csv(open(perfumes_path, encoding="utf-8"))
 
         # 1b. Add the two ways based on which we recommend perfumes, ranks and inclusion/exclusion.
         #  - Add truth-values, also known as ranks.
@@ -61,14 +61,6 @@ class InferenceEngine:
     ## Methods ##
 
     def reset(self):
-        # Store all perfumes and their initial 'truth-values'.
-        # base_path = Path(__file__).parent
-
-        # Set explicit path to filteredDatabase.csv
-        # database_path = (base_path / "../filteredDatabase.csv").resolve()
-
-        # self.__perfumes = pd.read_csv(open(database_path, encoding="utf-8"))
-
         # Reset ranks
         truth_values = [0.0] * len(self.__perfumes.index)
         self.__perfumes['rank'] = truth_values
@@ -93,9 +85,6 @@ class InferenceEngine:
 
 
     def _read_questions(self):
-        base_path = Path(__file__).parent
-        # Set explicit path to question_answer_pairs.csv
-        questionanswer_path = (base_path / "../data/question_answer_pairs.csv").resolve()
         questions = pd.read_csv(open(questionanswer_path), encoding="utf-8")
         no_questions = len(questions.index)
         max_question_id = questions["ID"].iloc[no_questions - 1]

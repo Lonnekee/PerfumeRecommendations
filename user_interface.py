@@ -8,7 +8,6 @@ import io
 import urllib.request
 from PIL import Image, ImageTk
 import os
-from pathlib import Path
 import pandas as pd
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -19,15 +18,13 @@ from pyglet import font
 import engine.InferenceEngine as ie
 from engine.question.QuestionType import QuestionType as qt
 
-PATH = Path(__file__).parent
-if not (PATH / "data/").resolve().exists():
-    # The executable is running, not the source files.
-    PATH = PATH.parent.parent
+from pathlib import Path
+from paths import logo_path, fonts_path
+
 
 # Add fonts
-fonts_path = (PATH / "fonts").resolve()
 for f in fonts_path.glob("**/*.ttf"):
-    font.add_file((fonts_path / f).resolve())
+    font.add_file(os.path.join(fonts_path, f))
 
 
 # Create the application's frame
@@ -75,8 +72,7 @@ class StartPage(tk.Frame):
                                wraplength=700, font=('Alegreya Sans Regular', 14), fg='#8A5C3C', bg='#FBF8EE')
         start_label.pack()
 
-        im_path = (PATH / "data/Logo-PL-liggend.png").resolve()
-
+        im_path = logo_path
         self.img = Image.open(im_path)
         img_width, img_height = self.img.size
         img_width = int(img_width / 4)
