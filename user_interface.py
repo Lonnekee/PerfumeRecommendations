@@ -137,8 +137,14 @@ class NewPage(tk.Frame):
                              font=('Alegreya Sans', 15),
                              fg='#8A5C3C',
                              bg='#FBF8EE')
-            label.place(anchor=tk.N, relx=0.5, rely=0)
+            #label.place(anchor=tk.N, relx=0.5, rely=0)
+            label.pack()
             self.widgets.append(label)
+
+            whitespace = tk.Label(text="\n", background="#FBF8EE")
+            #whitespace.place(anchor=tk.N, relx=0.5, rely=0)
+            whitespace.pack()
+            self.widgets.append(whitespace)
 
             # Add the appropriate buttons or fields for the answers
             if q.type == qt.SINGLE:  # radio buttons needed
@@ -150,8 +156,8 @@ class NewPage(tk.Frame):
                                                 activeforeground="black",
                                                 foreground="black", selectcolor="#8A5C3C", width=50, indicatoron=0,
                                                 offrelief=tk.FLAT, bd=3, pady=8, variable=self.given_answer, value=i)
-                        radios.place(anchor=tk.N, relx=0.5, rely=y_dist)
-                        # radios.pack()
+                        #radios.place(anchor=tk.N, relx=0.5, rely=y_dist)
+                        radios.pack()
                         y_dist += 0.08
                         self.widgets.append(radios)
                 else:
@@ -161,8 +167,8 @@ class NewPage(tk.Frame):
                                                 activeforeground="black",
                                                 foreground="black", selectcolor="#8A5C3C", width=50, indicatoron=0,
                                                 offrelief=tk.FLAT, bd=3, pady=8, variable=self.given_answer, value=i)
-                        radios.place(anchor=tk.N, relx=0.5, rely=y_dist)
-                        # radios.pack()
+                        #radios.place(anchor=tk.N, relx=0.5, rely=y_dist)
+                        radios.pack()
                         y_dist += 0.08
                         self.widgets.append(radios)
 
@@ -174,9 +180,9 @@ class NewPage(tk.Frame):
                     c = tk.Checkbutton(text=q.answers[i], bg="#FBF8EE", fg='#5a371e', activebackground="#5a371e",
                                        activeforeground="#FBF8EE", selectcolor="#FBF8EE", width=50, indicatoron=1,
                                        pady=8, bd=3, variable=self.given_answer[i])
-                    c.place(anchor=tk.N, relx=0.5, rely=y_dist)
+                    #c.place(anchor=tk.N, relx=0.5, rely=y_dist)
                     self.widgets.append(c)
-                    # c.pack()
+                    c.pack()
                     y_dist += 0.08
 
             elif q.type == qt.DISPLAY:
@@ -190,7 +196,7 @@ class NewPage(tk.Frame):
                 # self.Frame.update()
                 # print("frame:", self.master.height, self.master.width)
                 self.lbox = tk.Listbox(self.master, selectmode=tk.MULTIPLE, width=int(self.frame_width / 14),
-                                       height=int(self.frame_height / 22), selectbackground="#8A5C3C",
+                                       height=int(self.frame_height / 24), selectbackground="#8A5C3C",
                                        selectforeground="#FBF8EE")
 
                 self.sorted_droplist = sorted(self.droplist)
@@ -205,7 +211,7 @@ class NewPage(tk.Frame):
                 else:
                     self.lbox.insert("end", *self.sorted_droplist)
 
-                if len(self.sorted_droplist) > 28:
+                if len(self.sorted_droplist) > 24:
                     # add scrollbar to listbox if needed
                     scrollbar = tk.Scrollbar()
                     self.lbox.update()
@@ -214,12 +220,12 @@ class NewPage(tk.Frame):
                     scroll_xpos = self.frame_width - scroll_xpos
                     # print(scroll_xpos)
                     # print("height:", self.lbox.winfo_reqheight(), "x_pos:", self.lbox.winfo_reqwidth(), "xstart:", self.master.winfo_reqwidth())
-                    scrollbar.place(height=self.lbox.winfo_reqheight(), x=scroll_xpos, rely=0.05)
+                    scrollbar.place(height=self.lbox.winfo_reqheight(), x=scroll_xpos, rely=0.1)
                     self.lbox.config(yscrollcommand=scrollbar.set)
                     scrollbar.config(command=self.lbox.yview)
                     self.widgets.append(scrollbar)
 
-                self.lbox.place(anchor=tk.N, relx=0.5, rely=0.05)
+                self.lbox.place(anchor=tk.N, relx=0.5, rely=0.1)
                 self.widgets.append(self.lbox)
                 self.given_answer = tk.StringVar()
                 self.given_answer.set(self.droplist[0])
@@ -263,14 +269,15 @@ class NewPage(tk.Frame):
                                        orient=tk.HORIZONTAL, length=200, fg='#8A5C3C', bg="#FBF8EE",
                                        activebackground="#FBF8EE", troughcolor="#5a371e")
                 scale_entry.set(int((maxPrice - minPrice) / 2 + minPrice))
-                scale_entry.place(anchor=tk.N, relx=0.5, rely=0.05)
+                #scale_entry.place(anchor=tk.N, relx=0.5, rely=0.05)
                 self.widgets.append(scale_entry)
-                # scale_entry.pack()
+                scale_entry.pack()
 
             elif q.type == qt.NAME:
                 self.given_answer = tk.StringVar()
                 name_entry = tk.Entry(master, textvariable=self.given_answer)
-                name_entry.place(anchor=tk.N, relx=0.5, rely=0.05)
+                #name_entry.place(anchor=tk.N, relx=0.5, rely=0.1)
+                name_entry.pack()
                 self.widgets.append(name_entry)
 
             # Create submit button that can send the answer to the inference engine
