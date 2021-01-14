@@ -1,5 +1,9 @@
 # PerfumeRecommendations
 
+This project has been developed for the course Knowledge Technology Practical
+at the University of Groningen. It is a perfume recommendation system created
+together with the expert knowledge of the [Perfume Lounge](https://www.https://www.perfumelounge.nl/).
+
 ## Requirements
 For the requirements, please take a look at the requirements.txt file.
 
